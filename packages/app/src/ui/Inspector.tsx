@@ -991,13 +991,23 @@ function ConnectionsSection({ component }: { component: VisualComponent }): JSX.
       const cx = target.position.x + shape.bbox.w / 2;
       const cy = target.position.y + shape.bbox.h / 2;
       const vp = useAppStore.getState().viewport;
-      const screenW = window.innerWidth;
-      const screenH = window.innerHeight;
+      // Account for the docked sidebars (palette left + inspector
+      // right) so the component lands in the *visible* editor center,
+      // not the raw window center.
+      const paletteOpen = useAppStore.getState().paletteOpen;
+      const leftDock = paletteOpen ? 292 : 44; // activity bar (+ palette)
+      const inspectorW = readInspectorWidth();
+      const visibleW = window.innerWidth - leftDock - inspectorW;
+      const visibleH = window.innerHeight - 78 - 24;
       setViewport({
         zoom: vp.zoom,
-        panX: cx - screenW / vp.zoom / 2,
-        panY: cy - screenH / vp.zoom / 2,
+        panX: cx - leftDock / vp.zoom - visibleW / vp.zoom / 2,
+        panY: cy - 78 / vp.zoom - visibleH / vp.zoom / 2,
       });
+      // Pulse the landing spot so the user catches what just moved.
+      window.dispatchEvent(
+        new CustomEvent('gatecraft:pulse-at', { detail: { x: cx, y: cy } }),
+      );
     } catch {
       /* shape missing — selection alone is fine */
     }

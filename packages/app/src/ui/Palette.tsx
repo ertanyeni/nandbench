@@ -20,7 +20,7 @@ interface PaletteCategory {
   readonly items: readonly PaletteItem[];
 }
 
-const CATEGORIES: readonly PaletteCategory[] = [
+export const PALETTE_CATEGORIES: readonly PaletteCategory[] = [
   {
     nameKey: 'palette.categories.wiring',
     items: [
@@ -128,8 +128,8 @@ export function Palette(): JSX.Element | null {
   // Filter categories by the search query. Empty query → unfiltered.
   const filteredCategories = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return CATEGORIES;
-    return CATEGORIES.map((cat) => ({
+    if (!q) return PALETTE_CATEGORIES;
+    return PALETTE_CATEGORIES.map((cat) => ({
       ...cat,
       items: cat.items.filter((it) => {
         const hint = t(it.hintKey).toLowerCase();

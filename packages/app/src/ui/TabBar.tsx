@@ -85,7 +85,25 @@ export function TabBar(): JSX.Element {
         editingId={editingId}
         onSwitch={switchDoc}
         onClose={(id, dirty) => {
-          if (dirty && !window.confirm(t('tabs.closeConfirm'))) return;
+          // Always confirm — even a clean tab carries its own undo
+          // history that disappears with the close. Library entries
+          // remain in the palette either way; the *editing session*
+          // is what's being thrown away.
+          const docName =
+            id === useAppStore.getState().activeDocumentId
+              ? useAppStore.getState().activeDocumentName
+              : useAppStore.getState().documents.get(id)?.name ?? '';
+          const isLibrary = useAppStore
+            .getState()
+            .documents.get(id)?.origin?.kind === 'library' ||
+            (id === useAppStore.getState().activeDocumentId &&
+              useAppStore.getState().activeDocumentOrigin?.kind === 'library');
+          const msg = dirty
+            ? t('tabs.closeConfirmDirty', { name: docName })
+            : isLibrary
+              ? t('tabs.closeConfirmLibrary', { name: docName })
+              : t('tabs.closeConfirm', { name: docName });
+          if (!window.confirm(msg)) return;
           closeDoc(id);
         }}
         onPublish={() => {

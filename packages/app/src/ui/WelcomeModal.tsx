@@ -105,6 +105,8 @@ export function WelcomeModal(): JSX.Element | null {
             {t('welcome.subtitle')}
           </div>
         </div>
+        <LayoutGuide />
+        <ShortcutsStrip />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
           <Cta
             title={t('welcome.cta.tour')}
@@ -147,6 +149,80 @@ export function WelcomeModal(): JSX.Element | null {
           {t('welcome.skipNext')}
         </label>
       </div>
+    </div>
+  );
+}
+
+function LayoutGuide(): JSX.Element {
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '24px 1fr',
+        rowGap: 8,
+        columnGap: 12,
+        padding: 12,
+        background: '#0c1018',
+        border: '1px solid #1c2230',
+        borderRadius: 8,
+        fontSize: 12,
+        color: '#a8b4c7',
+        lineHeight: 1.5,
+      }}
+    >
+      <span style={{ textAlign: 'center', color: '#a78bfa' }}>◧</span>
+      <span>{t('welcome.layout.activity')}</span>
+      <span style={{ textAlign: 'center', color: '#60a5fa' }}>▦</span>
+      <span>{t('welcome.layout.palette')}</span>
+      <span style={{ textAlign: 'center', color: '#86efac' }}>▶</span>
+      <span>{t('welcome.layout.editor')}</span>
+      <span style={{ textAlign: 'center', color: '#f59e0b' }}>▤</span>
+      <span>{t('welcome.layout.inspector')}</span>
+    </div>
+  );
+}
+
+function ShortcutsStrip(): JSX.Element {
+  const items: Array<[string, string]> = [
+    ['⌘P', t('welcome.shortcut.quickopen')],
+    ['⌘S', t('welcome.shortcut.save')],
+    ['⌘F', t('welcome.shortcut.fit')],
+    ['⌘/', t('welcome.shortcut.tour')],
+    ['R', t('welcome.shortcut.rotate')],
+  ];
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      {items.map(([key, label]) => (
+        <span
+          key={key}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '4px 10px',
+            background: '#13161d',
+            border: '1px solid #1c2230',
+            borderRadius: 5,
+            fontSize: 11,
+            color: '#a8b4c7',
+          }}
+        >
+          <kbd
+            style={{
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+              fontSize: 10,
+              color: '#dde4ef',
+              background: '#0c1018',
+              padding: '1px 5px',
+              borderRadius: 3,
+              border: '1px solid #2a3548',
+            }}
+          >
+            {key}
+          </kbd>
+          {label}
+        </span>
+      ))}
     </div>
   );
 }

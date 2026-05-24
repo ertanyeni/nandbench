@@ -407,15 +407,30 @@ function OverflowMenu({
   items: readonly { label: string; onClick: () => void }[];
 }): JSX.Element {
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
   const ref = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  // Filter items by search query (case-insensitive substring).
+  const filtered = search.trim()
+    ? items.filter((it) => it.label.toLowerCase().includes(search.trim().toLowerCase()))
+    : items;
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      setSearch('');
+      return;
+    }
+    inputRef.current?.focus();
     const onClick = (ev: MouseEvent): void => {
       if (ref.current && !ref.current.contains(ev.target as Node)) setOpen(false);
     };
     const onKey = (ev: KeyboardEvent): void => {
       if (ev.key === 'Escape') setOpen(false);
+      else if (ev.key === 'Enter' && filtered.length > 0) {
+        setOpen(false);
+        filtered[0]!.onClick();
+      }
     };
     window.addEventListener('mousedown', onClick);
     window.addEventListener('keydown', onKey);
@@ -423,7 +438,7 @@ function OverflowMenu({
       window.removeEventListener('mousedown', onClick);
       window.removeEventListener('keydown', onKey);
     };
-  }, [open]);
+  }, [open, filtered]);
 
   return (
     <div ref={ref} style={{ position: 'relative' }}>
@@ -460,9 +475,42 @@ function OverflowMenu({
             display: 'flex',
             flexDirection: 'column',
             boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+            maxHeight: '60vh',
+            overflow: 'hidden',
           }}
         >
-          {items.map((it, i) => (
+          <input
+            ref={inputRef}
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t('toolbar.menuSearchPlaceholder')}
+            style={{
+              margin: 4,
+              padding: '5px 8px',
+              background: '#0c1018',
+              border: '1px solid #2a3548',
+              borderRadius: 4,
+              color: '#dde4ef',
+              font: 'inherit',
+              fontSize: 12,
+              outline: 'none',
+            }}
+          />
+          <div style={{ overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+          {filtered.length === 0 ? (
+            <div
+              style={{
+                padding: '10px 12px',
+                color: '#7c8696',
+                fontSize: 12,
+                fontStyle: 'italic',
+              }}
+            >
+              {t('toolbar.menuNoMatch')}
+            </div>
+          ) : null}
+          {filtered.map((it, i) => (
             <button
               key={i}
               onClick={() => {
@@ -486,6 +534,7 @@ function OverflowMenu({
               {it.label}
             </button>
           ))}
+          </div>
         </div>
       ) : null}
     </div>

@@ -13,6 +13,7 @@ import { Inspector } from './ui/Inspector.js';
 import { LessonsPanel } from './ui/LessonsPanel.js';
 import { Palette } from './ui/Palette.js';
 import { PersistenceBridge } from './ui/PersistenceBridge.js';
+import { QuickopenModal } from './ui/QuickopenModal.js';
 import { SuggestionBridge } from './ui/SuggestionBridge.js';
 import { SuggestionTooltip } from './ui/SuggestionTooltip.js';
 import { StatusBar } from './ui/StatusBar.js';
@@ -83,6 +84,7 @@ export function App(): JSX.Element {
       <AssistantPanel />
       <WaveformPanel />
       <ContextMenu />
+      <QuickopenModal />
       <SuggestionTooltip />
       <HistoryPanel />
       <LlmSettingsModal />
