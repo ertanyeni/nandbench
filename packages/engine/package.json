@@ -1,0 +1,25 @@
+{
+  "name": "@gatecraft/engine",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Framework-agnostic digital logic simulation engine. No React, no DOM.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.4"
+  }
+}

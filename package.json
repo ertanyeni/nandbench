@@ -1,0 +1,20 @@
+{
+  "name": "gatecraft",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Web-based, real-time digital logic circuit simulator and editor",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "test:engine": "pnpm --filter @gatecraft/engine test",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  },
+  "packageManager": "pnpm@10.30.3",
+  "engines": {
+    "node": ">=20"
+  }
+}

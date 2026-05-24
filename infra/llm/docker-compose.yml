@@ -1,0 +1,47 @@
+version: "3.9"
+# Self-hosted LLM stack for gatecraft. Run on the Hetzner box:
+#   cd /home/deploy/gatecraft/infra/llm
+#   docker compose up -d
+#
+# Ollama exposes a JSON API on :11434. Caddy fronts it with a public TLS
+# domain and a single shared secret in the Authorization header — gatecraft's
+# `AssistantBridge` sends the same header from the browser.
+#
+# Recommended models (CPU-friendly, ≤8GB RAM):
+#   qwen2.5:1.5b-instruct   small + multilingual, ~1GB
+#   qwen2.5:3b-instruct     better reasoning, ~2GB
+#   llama3.2:3b-instruct    Meta, ~2GB, good explainer
+# Pull on first run:
+#   docker compose exec ollama ollama pull qwen2.5:3b-instruct
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: gatecraft-ollama
+    restart: unless-stopped
+    volumes:
+      - ./ollama-data:/root/.ollama
+    environment:
+      OLLAMA_KEEP_ALIVE: "30m"
+      OLLAMA_NUM_PARALLEL: "1"
+    # Don't publish the port directly — Caddy proxies it.
+    networks:
+      - llm
+
+  caddy:
+    image: caddy:2
+    container_name: gatecraft-llm-proxy
+    restart: unless-stopped
+    ports:
+      - "8443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy-data:/data
+      - ./caddy-config:/config
+    depends_on:
+      - ollama
+    networks:
+      - llm
+
+networks:
+  llm:
+    driver: bridge

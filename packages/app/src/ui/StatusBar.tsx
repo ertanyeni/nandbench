@@ -1,0 +1,145 @@
+import { useEffect, useState } from 'react';
+import { t } from '../i18n/index.js';
+import { useAppStore } from '../model/store.js';
+import { suggestionsFor } from '../model/suggestions.js';
+import { SURFACE } from './palette-tokens.js';
+
+export function StatusBar(): JSX.Element {
+  const [savedFlash, setSavedFlash] = useState(false);
+  useEffect(() => {
+    const handler = (): void => {
+      setSavedFlash(true);
+      window.setTimeout(() => setSavedFlash(false), 1500);
+    };
+    window.addEventListener('gatecraft:saved-toast', handler);
+    return () => window.removeEventListener('gatecraft:saved-toast', handler);
+  }, []);
+  const viewport = useAppStore((s) => s.viewport);
+  const selection = useAppStore((s) => s.selection);
+  const document = useAppStore((s) => s.document);
+  const tool = useAppStore((s) => s.tool);
+  const diagnostics = useAppStore((s) => s.compiled.diagnostics);
+  const lastPlacedKind = useAppStore((s) => s.lastPlacedKind);
+  const publishedFlash = useAppStore((s) => s.publishedFlash);
+  const setPublishedFlash = useAppStore((s) => s.setPublishedFlash);
+  const locale = useAppStore((s) => s.locale);
+  void locale;
+
+  // Auto-dismiss the publish toast after 5s so it doesn't linger forever.
+  useEffect(() => {
+    if (!publishedFlash) return;
+    const id = window.setTimeout(() => setPublishedFlash(null), 5000);
+    return () => window.clearTimeout(id);
+  }, [publishedFlash, setPublishedFlash]);
+
+  const zoomPct = Math.round(viewport.zoom * 100);
+  const selCount = selection.componentIds.size;
+  const selected =
+    selCount === 1
+      ? document.components.find((c) => selection.componentIds.has(c.id))
+      : undefined;
+
+  const toolLabel =
+    tool.type === 'idle'
+      ? t('statusBar.idle')
+      : tool.type === 'place'
+        ? t('statusBar.toolPlace', { kind: tool.kind })
+        : tool.type === 'wire'
+          ? t('statusBar.toolWire', {
+              comp: String(tool.startPin.componentId).slice(0, 8),
+              port: tool.startPin.portName,
+            })
+          : tool.type === 'marquee'
+            ? t('statusBar.toolMarquee')
+            : t('statusBar.toolMove', { n: tool.originalPositions.size });
+
+  const diagCounts = countByKind(diagnostics);
+  const diagLabel =
+    diagnostics.length === 0
+      ? t('statusBar.noDiagnostics')
+      : Object.entries(diagCounts)
+          .map(([k, n]) => `${n} ${k}`)
+          .join(' · ');
+
+  const suggestedKinds = lastPlacedKind ? suggestionsFor(lastPlacedKind).slice(0, 4) : [];
+  const suggestionLabel =
+    suggestedKinds.length > 0
+      ? t('statusBar.suggestion', { kinds: suggestedKinds.map((k) => k.toUpperCase()).join(' · ') })
+      : '';
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: 24,
+        padding: '4px 14px 4px 56px',
+        background: SURFACE.chromeBg,
+        borderTop: `1px solid ${SURFACE.borderColor}`,
+        fontSize: 11,
+        display: 'flex',
+        gap: 16,
+        alignItems: 'center',
+        color: SURFACE.itemSubText,
+        pointerEvents: 'none',
+      }}
+    >
+      <span>{t('statusBar.zoom', { n: zoomPct })}</span>
+      <span>{t('statusBar.pan', { x: viewport.panX.toFixed(0), y: viewport.panY.toFixed(0) })}</span>
+      <span>{toolLabel}</span>
+      <span style={{ color: diagnostics.length > 0 ? '#f59e0b' : '#9aa4b2' }}>{diagLabel}</span>
+      {suggestionLabel ? (
+        <span style={{ color: '#60a5fa' }}>{suggestionLabel}</span>
+      ) : null}
+      {savedFlash ? (
+        <span
+          className="gc-fade-in"
+          style={{
+            color: '#86efac',
+            background: 'rgba(34,197,94,0.12)',
+            padding: '2px 8px',
+            borderRadius: 4,
+            fontWeight: 700,
+          }}
+        >
+          {t('statusBar.saved')}
+        </span>
+      ) : null}
+      {publishedFlash ? (
+        <button
+          onClick={() => setPublishedFlash(null)}
+          className="gc-fade-in"
+          title={t('statusBar.publishedDismiss')}
+          style={{
+            color: '#dbeafe',
+            background: 'rgba(96, 165, 250, 0.18)',
+            border: '1px solid #3b6ec3',
+            padding: '2px 10px',
+            borderRadius: 4,
+            fontWeight: 600,
+            cursor: 'pointer',
+            font: 'inherit',
+            fontSize: 11,
+          }}
+        >
+          ↗ {t('statusBar.publishedToast', { name: publishedFlash.name })}
+        </button>
+      ) : null}
+      <span style={{ marginLeft: 'auto' }}>
+        {selCount === 0
+          ? t('statusBar.noSelection')
+          : selected
+            ? t('statusBar.selectedSingle', { kind: selected.kind, id: selected.id.slice(0, 8) })
+            : t('statusBar.selectedMulti', { n: selCount })}
+      </span>
+    </div>
+  );
+}
+
+function countByKind(diags: readonly { kind: string }[]): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const d of diags) out[d.kind] = (out[d.kind] ?? 0) + 1;
+  return out;
+}
