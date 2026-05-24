@@ -5,6 +5,7 @@ import {
   type ComponentId,
   type ComponentParams,
   type ComponentRegistry,
+  type Diagnostic,
   type PortRef,
   type SignalValue,
 } from '@gatecraft/engine';
@@ -31,6 +32,8 @@ export function Inspector(): JSX.Element | null {
   const document = useAppStore((s) => s.document);
   const selection = useAppStore((s) => s.selection);
   const dispatch = useAppStore((s) => s.dispatch);
+  const compiled = useAppStore((s) => s.compiled);
+  const simDiagnostics = useAppStore((s) => s.simDiagnostics);
 
   const locale = useAppStore((s) => s.locale);
   void locale; // ensure re-render on locale flip
@@ -104,25 +107,60 @@ export function Inspector(): JSX.Element | null {
   );
   const connectionsTab = <ConnectionsSection component={component} />;
 
+  // Surface diagnostic + connection counts as small tab badges so the
+  // user knows there's something worth checking without clicking each
+  // tab. Diagnostics targeting *this* component count for the Live tab.
+  const myDiagCount = [...compiled.diagnostics, ...simDiagnostics].filter((d) =>
+    diagnosticTouchesComponent(d, component.id),
+  ).length;
+  const incidentCount = document.wires.filter(
+    (w) =>
+      w.endpoints[0].componentId === component.id ||
+      w.endpoints[1].componentId === component.id,
+  ).length;
+
   return (
     <Frame>
       <Header sub={subhead}>{headerText}</Header>
       {help ? <HelpBlock description={help.description} cheats={help.cheats} /> : null}
       <InspectorTabs
         tabs={[
-          { id: 'live', label: t('inspector.tab.live'), content: liveTab },
+          {
+            id: 'live',
+            label: t('inspector.tab.live'),
+            content: liveTab,
+            badge: myDiagCount > 0 ? { kind: 'alert', count: myDiagCount } : undefined,
+          },
           { id: 'params', label: t('inspector.tab.params'), content: paramsTab },
-          { id: 'connections', label: t('inspector.tab.connections'), content: connectionsTab },
+          {
+            id: 'connections',
+            label: t('inspector.tab.connections'),
+            content: connectionsTab,
+            badge: incidentCount > 0 ? { kind: 'count', count: incidentCount } : undefined,
+          },
         ]}
       />
     </Frame>
   );
 }
 
+function diagnosticTouchesComponent(d: Diagnostic, id: ComponentId): boolean {
+  if (d.kind === 'width-mismatch' || d.kind === 'floating-input') {
+    return d.port.componentId === id;
+  }
+  if (d.kind === 'multi-driver') return d.drivers.some((p) => p.componentId === id);
+  return false;
+}
+
 function InspectorTabs({
   tabs,
 }: {
-  tabs: readonly { id: string; label: string; content: React.ReactNode }[];
+  tabs: readonly {
+    id: string;
+    label: string;
+    content: React.ReactNode;
+    badge?: { kind: 'alert' | 'count'; count: number };
+  }[];
 }): JSX.Element {
   const [active, setActive] = useState(tabs[0]?.id ?? '');
   const activeTab = tabs.find((t) => t.id === active) ?? tabs[0];
@@ -153,9 +191,35 @@ function InspectorTabs({
               fontSize: 11,
               fontWeight: tab.id === active ? 700 : 500,
               transition: 'color 120ms, border-color 120ms',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 5,
             }}
           >
-            {tab.label}
+            <span>{tab.label}</span>
+            {tab.badge ? (
+              <span
+                aria-label={`${tab.badge.count}`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minWidth: 14,
+                  height: 14,
+                  padding: '0 4px',
+                  borderRadius: 7,
+                  fontSize: 9,
+                  fontWeight: 700,
+                  color: tab.badge.kind === 'alert' ? '#fee2e2' : '#dbeafe',
+                  background:
+                    tab.badge.kind === 'alert'
+                      ? 'rgba(239, 68, 68, 0.85)'
+                      : 'rgba(96, 165, 250, 0.32)',
+                }}
+              >
+                {tab.badge.count}
+              </span>
+            ) : null}
           </button>
         ))}
       </div>

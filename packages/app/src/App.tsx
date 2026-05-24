@@ -14,6 +14,7 @@ import { LessonsPanel } from './ui/LessonsPanel.js';
 import { Palette } from './ui/Palette.js';
 import { PersistenceBridge } from './ui/PersistenceBridge.js';
 import { SuggestionBridge } from './ui/SuggestionBridge.js';
+import { SuggestionTooltip } from './ui/SuggestionTooltip.js';
 import { StatusBar } from './ui/StatusBar.js';
 import { ActivityBar } from './ui/ActivityBar.js';
 import { AssistantPanel } from './ui/AssistantPanel.js';
@@ -82,6 +83,7 @@ export function App(): JSX.Element {
       <AssistantPanel />
       <WaveformPanel />
       <ContextMenu />
+      <SuggestionTooltip />
       <HistoryPanel />
       <LlmSettingsModal />
       <TourOverlay />

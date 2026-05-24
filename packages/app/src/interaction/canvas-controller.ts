@@ -259,6 +259,16 @@ export function attachCanvasController(
     } else if (store.tool.type === 'idle') {
       const pinHit = renderer.hitTestPin(world.x, world.y);
       renderer.setHoverPin(pinHit);
+      // Hover-tooltip for suggestion hints — emits a screen-space
+      // event so a DOM overlay can render the kind's short description.
+      const sugHit = renderer.hitTestSuggestion(world.x, world.y);
+      window.dispatchEvent(
+        new CustomEvent('gatecraft:hover-suggestion', {
+          detail: sugHit
+            ? { kind: sugHit.kind, screenX: ev.clientX, screenY: ev.clientY }
+            : null,
+        }),
+      );
     }
 
     if (!session.active) return;

@@ -474,8 +474,47 @@ export class Canvas2DRenderer implements Renderer {
       if (c.kind.startsWith('composite:')) {
         this.drawCompositeBadge(shape);
       }
+      if (selected && this.selection.componentIds.size === 1) {
+        this.drawSelectionInfoChip(c, shape);
+      }
       ctx.restore();
     }
+  }
+
+  /**
+   * Faint kind/info chip above the bbox of a singularly-selected
+   * component — saves the user a glance at the Inspector when they
+   * just need a reminder of what's selected.
+   */
+  private drawSelectionInfoChip(c: VisualComponent, shape: ComponentShape): void {
+    const { ctx } = this;
+    const text = chipTextFor(c);
+    if (!text) return;
+    ctx.save();
+    ctx.font = '600 10px ui-sans-serif, system-ui';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    const padX = 5;
+    const padY = 2;
+    const m = ctx.measureText(text);
+    const w = m.width + padX * 2;
+    const h = 14;
+    // Place at the top-left of the bbox, just outside the shape so it
+    // doesn't sit on top of pins or a user label.
+    const x = 0;
+    const y = -h - 4;
+    ctx.fillStyle = 'rgba(96, 165, 250, 0.18)';
+    ctx.strokeStyle = '#60a5fa';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect?.(x, y, w, h, 3);
+    if (!ctx.roundRect) ctx.rect(x, y, w, h);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#dbeafe';
+    ctx.fillText(text, x + padX, y + h / 2);
+    ctx.restore();
+    void shape;
   }
 
   /**
@@ -1124,21 +1163,28 @@ export class Canvas2DRenderer implements Renderer {
     const comp = this.document.components.find((c) => c.id === anchor.componentId);
     if (!comp) return;
     const shape = this.getOrCacheShape(comp);
-    // Pick rightmost pin (output side) as the visual departure point.
+    // Departure point + extension direction follow the component's
+    // natural output side. Output-style parts (LEDs, outputs) have only
+    // a left pin — their suggestions then extend to the *left*.
+    const rightPin = shape.pins.find((p) => p.side === 'right');
+    const leftPin = shape.pins.find((p) => p.side === 'left');
+    const useLeftSide = !rightPin && !!leftPin;
+    const sourcePin = rightPin ?? leftPin;
     let pinPos: Point = {
-      x: comp.position.x + shape.bbox.w,
+      x: comp.position.x + (useLeftSide ? 0 : shape.bbox.w),
       y: comp.position.y + shape.bbox.h / 2,
     };
-    const rightPin = shape.pins.find((p) => p.side === 'right');
-    if (rightPin) {
+    if (sourcePin) {
       pinPos = {
-        x: comp.position.x + rightPin.position.x,
-        y: comp.position.y + rightPin.position.y,
+        x: comp.position.x + sourcePin.position.x,
+        y: comp.position.y + sourcePin.position.y,
       };
     }
-    const baseOffset = 80;
-    const spacing = 36;
-    const kinds = anchor.kinds.slice(0, 3);
+    const baseOffset = useLeftSide ? -80 : 80;
+    const spacing = 34;
+    // Show up to 5 suggestions when the table provides them — gives the
+    // user a richer "what comes next" picture without overcrowding.
+    const kinds = anchor.kinds.slice(0, 5);
     const { ctx } = this;
     const phase = (Date.now() % 1500) / 1500;
     const pulse = 0.65 + 0.35 * Math.sin(phase * Math.PI * 2);
@@ -1151,18 +1197,18 @@ export class Canvas2DRenderer implements Renderer {
       ctx.fillStyle = `rgba(96, 165, 250, ${(0.18 * pulse).toFixed(3)})`;
       ctx.strokeStyle = `rgba(96, 165, 250, ${(0.85 * pulse).toFixed(3)})`;
       ctx.lineWidth = 1.4 / this.viewport.zoom;
-      // Dashed connector from the pin to the hint.
+      // Dashed connector from the pin to the hint, ending at the
+      // hint circle's near edge.
       ctx.setLineDash([4 / this.viewport.zoom, 3 / this.viewport.zoom]);
       ctx.beginPath();
       ctx.moveTo(pinPos.x, pinPos.y);
-      ctx.lineTo(x - r, y);
+      ctx.lineTo(x + (useLeftSide ? r : -r), y);
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
-      // "+" symbol + kind label
       ctx.strokeStyle = '#60a5fa';
       ctx.lineWidth = 1.5 / this.viewport.zoom;
       ctx.beginPath();
@@ -1173,9 +1219,9 @@ export class Canvas2DRenderer implements Renderer {
       ctx.stroke();
       ctx.fillStyle = '#cbd5e1';
       ctx.font = `${Math.max(8, 10 / this.viewport.zoom)}px ui-sans-serif, system-ui`;
-      ctx.textAlign = 'left';
+      ctx.textAlign = useLeftSide ? 'right' : 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(k, x + r + 4, y);
+      ctx.fillText(k, x + (useLeftSide ? -(r + 4) : r + 4), y);
       ctx.restore();
     });
     this.scheduleRender();
@@ -1273,6 +1319,23 @@ function shapeCacheKey(kind: string, params: ComponentParams): string {
   // Stable key by sorting param entries.
   const entries = Object.entries(params).sort(([a], [b]) => a.localeCompare(b));
   return `${kind}|${entries.map(([k, v]) => `${k}=${String(v)}`).join('&')}`;
+}
+
+/**
+ * Short label for the in-canvas selection chip. Combines the kind with
+ * the one or two parameters that matter for that kind (bit width, gate
+ * input count) so the user gets a one-glance summary.
+ */
+function chipTextFor(c: VisualComponent): string {
+  const k = c.kind;
+  const params = c.params;
+  if (k.startsWith('composite:')) return 'composite';
+  const w = typeof params['width'] === 'number' ? (params['width'] as number) : null;
+  const inputs = typeof params['inputs'] === 'number' ? (params['inputs'] as number) : null;
+  const parts: string[] = [k.toUpperCase()];
+  if (inputs !== null && inputs !== 2) parts.push(`${inputs}-in`);
+  if (w !== null && w !== 1) parts.push(`${w}b`);
+  return parts.join(' · ');
 }
 
 /** Map a 4-valued multi-bit SignalValue to a wire color. */
