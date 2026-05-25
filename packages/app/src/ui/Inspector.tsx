@@ -1137,15 +1137,17 @@ function readInspectorWidth(): number {
 
 function Frame({ children }: { children: React.ReactNode }): JSX.Element {
   const [width, setWidth] = useState(readInspectorWidth);
+  const splitView = useAppStore((s) => s.splitView);
   return (
     <div
       style={{
         position: 'absolute',
         // Right-edge sidebar — mirrors VSCode's secondary sidebar.
         // Spans the full editor height between the tab strip and the
-        // status bar. Resize handle lives on the inside (left) edge.
+        // status bar. When the split-view pane is open we slide the
+        // Inspector inside the split rather than overlapping it.
         top: 78,
-        right: 0,
+        right: splitView ? '40%' : 0,
         bottom: 24,
         width,
         padding: 12,

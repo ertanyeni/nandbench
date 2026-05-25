@@ -345,6 +345,11 @@ export function Toolbar(): JSX.Element {
         label={`${paletteOpen ? '▶' : '◀'} ${wide ? t('toolbar.componentsLong') : t('toolbar.components')}`}
         title={t('toolbar.componentsTooltip')}
       />
+      <Btn
+        onClick={() => useAppStore.getState().setSplitView(!useAppStore.getState().splitView)}
+        label={`⊟ ${wide ? t('toolbar.splitLong') : t('toolbar.split')}`}
+        title={t('toolbar.splitTooltip')}
+      />
       <OverflowMenu
         items={[
           { label: t('toolbar.glossary'), onClick: openGlossary },

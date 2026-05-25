@@ -156,6 +156,15 @@ interface AppState {
   /** When true, place/move operations snap world positions to the grid. */
   snapEnabled: boolean;
   /**
+   * Editor split view — when true, a second read-only canvas appears on
+   * the right side of the editor body, showing the same document at an
+   * independent viewport. Lets the user keep a wide overview pinned
+   * while zooming the main canvas into detail.
+   */
+  splitView: boolean;
+  /** Independent viewport (zoom/pan) for the secondary canvas. */
+  secondaryViewport: Viewport;
+  /**
    * Color palette for signal values on wires + chips. `default` uses
    * green/blue/red (the high-contrast standard); `deuteranopia` swaps to
    * a blue/yellow/orange palette that survives red-green color blindness.
@@ -205,6 +214,8 @@ interface AppState {
   setSimComponentStates: (states: ReadonlyMap<ComponentId, unknown>) => void;
   setPaletteOpen: (open: boolean) => void;
   setSnapEnabled: (enabled: boolean) => void;
+  setSplitView: (enabled: boolean) => void;
+  setSecondaryViewport: (v: Viewport) => void;
   setColorMode: (mode: 'default' | 'deuteranopia') => void;
   /* ----- sim controls ----- */
   setSimSnapshot: (snap: SimSnapshot | undefined, diags: readonly Diagnostic[]) => void;
@@ -272,6 +283,8 @@ export const useAppStore = create<AppState>((set, get) => ({
     typeof localStorage !== 'undefined'
       ? localStorage.getItem('gatecraft:snapEnabled') !== 'false'
       : true,
+  splitView: false,
+  secondaryViewport: INITIAL_VIEWPORT,
   colorMode:
     typeof localStorage !== 'undefined' && localStorage.getItem('gatecraft:colorMode') === 'deuteranopia'
       ? 'deuteranopia'
@@ -440,6 +453,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   setSuggestionAnchor: (anchor) => set({ suggestionAnchor: anchor }),
   setSimComponentStates: (states) => set({ simComponentStates: states }),
   setPaletteOpen: (open) => set({ paletteOpen: open }),
+  setSplitView: (enabled) => set({ splitView: enabled }),
+  setSecondaryViewport: (v) => set({ secondaryViewport: v }),
   setSnapEnabled: (enabled) => {
     try {
       localStorage.setItem('gatecraft:snapEnabled', enabled ? 'true' : 'false');
