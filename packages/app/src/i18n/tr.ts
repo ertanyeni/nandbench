@@ -33,6 +33,8 @@ export const TR: Record<EnKey, string> = {
   'split.mirrorActive': 'Aktif sekmeyi yansıtıyor',
   'split.pinned': 'sabitli',
   'split.unpin': 'Sabiti kaldır — aktif sekmeyi yansıt',
+  'split.swap': 'Ana editörle değiştir — bu sekmeyi canlı düzenle',
+  'split.clickToSwap': 'Ana editörde bu sekmeyi düzenlemek için tıkla',
   'split.toggleOrientation': 'Yönü değiştir (sağ ↔ alt)',
   'tabs.menu.splitRight': 'Bölünmüş açın (sağa)',
   'tabs.menu.splitBottom': 'Bölünmüş açın (alta)',

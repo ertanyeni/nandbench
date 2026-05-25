@@ -24,6 +24,20 @@ export function SecondaryCanvas(): JSX.Element | null {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rendererRef = useRef<Canvas2DRenderer | null>(null);
 
+  // Swap the active editor tab with the pinned split tab. The previously
+  // active tab takes over the split slot (now pinned), so the user can
+  // edit the freshly-promoted tab in the main editor and bounce back
+  // with another click. Effectively this is "two-pane editing" without
+  // a full pane-state refactor.
+  const swapMainAndSplit = (): void => {
+    const s = useAppStore.getState();
+    const splitId = s.splitDocumentId;
+    const oldActiveId = s.activeDocumentId;
+    if (!splitId || splitId === oldActiveId) return;
+    s.switchDocument(splitId);
+    s.setSplitDocumentId(oldActiveId);
+  };
+
   // Resolve the document the split should display. Pinned tab takes
   // priority; falling back to the live editor doc when null OR when the
   // pinned id happens to *be* the active tab.
@@ -89,10 +103,22 @@ export function SecondaryCanvas(): JSX.Element | null {
     };
     canvas.addEventListener('wheel', onWheel, { passive: false });
 
-    // Drag-to-pan with primary mouse (no tool here, so left-drag = pan).
+    // Pointerdown behavior depends on what the split is showing:
+    //   - Mirror mode (no pinned tab) → left-drag pans the view.
+    //   - Pinned tab → first click swaps panes (this tab becomes
+    //     editable in the main editor; the old main tab moves into
+    //     the split). Drag-to-pan still works after the swap if the
+    //     user clicks again — by then the split is back in mirror
+    //     mode for whatever ended up pinned.
     let dragStart: { sx: number; sy: number; vp: { panX: number; panY: number; zoom: number } } | null = null;
     const onPointerDown = (ev: PointerEvent): void => {
-      const vp = useAppStore.getState().secondaryViewport;
+      const s = useAppStore.getState();
+      if (s.splitDocumentId && s.splitDocumentId !== s.activeDocumentId) {
+        ev.preventDefault();
+        swapMainAndSplit();
+        return;
+      }
+      const vp = s.secondaryViewport;
       dragStart = { sx: ev.clientX, sy: ev.clientY, vp: { ...vp } };
       try {
         canvas.setPointerCapture(ev.pointerId);
@@ -188,13 +214,22 @@ export function SecondaryCanvas(): JSX.Element | null {
       >
         <span style={{ flex: 1 }}>{headerLabel}</span>
         {pinning ? (
-          <button
-            onClick={() => useAppStore.getState().setSplitDocumentId(null)}
-            title={t('split.unpin')}
-            style={iconBtnStyle}
-          >
-            ↺
-          </button>
+          <>
+            <button
+              onClick={swapMainAndSplit}
+              title={t('split.swap')}
+              style={iconBtnStyle}
+            >
+              ↔
+            </button>
+            <button
+              onClick={() => useAppStore.getState().setSplitDocumentId(null)}
+              title={t('split.unpin')}
+              style={iconBtnStyle}
+            >
+              ↺
+            </button>
+          </>
         ) : null}
         <button
           onClick={() =>
@@ -222,11 +257,12 @@ export function SecondaryCanvas(): JSX.Element | null {
       <canvas
         ref={canvasRef}
         aria-label={t('split.title')}
+        title={pinning ? t('split.clickToSwap') : undefined}
         style={{
           flex: 1,
           width: '100%',
           display: 'block',
-          cursor: 'grab',
+          cursor: pinning ? 'pointer' : 'grab',
           touchAction: 'none',
           userSelect: 'none',
         }}
