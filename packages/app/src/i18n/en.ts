@@ -2,7 +2,10 @@
  * English (default) translations. Keys are dot-paths grouped by surface.
  * Keep entries flat and short — substitution uses `{name}` placeholders.
  */
+import { CURRICULUM_EN } from './curriculum-en.js';
+
 export const EN = {
+  ...CURRICULUM_EN,
   /* Toolbar buttons & tooltips */
   'toolbar.undo': 'Undo (⌘Z)',
   'toolbar.redo': 'Redo (⇧⌘Z)',
@@ -527,6 +530,16 @@ export const EN = {
   'lessons.previous': 'Previous',
   'lessons.close': 'Close',
   'lessons.help.title': 'Help & Lessons',
+  'lessons.completedShort': 'completed',
+  'lessons.tab.sample': 'Sample',
+  'lessons.tab.workspace': 'Workspace',
+  'lessons.sample.hint': 'Read-only preview of the circuit that goes with this lesson.',
+  'lessons.sample.none': 'This lesson has no canvas example — it is concept-only.',
+  'lessons.workspace.hint':
+    'Load the lesson template into your live editor so you can wire it up yourself, then come back here.',
+  'lessons.workspace.openCta': 'Load template into editor',
+  'lessons.workspace.noTemplate': 'This lesson has no template to load — pure concept.',
+  'lessons.workspace.blank': 'Start blank instead',
   'toolbar.lessons': 'lessons',
   'toolbar.lessonsTooltip': 'Open the lesson library',
 
@@ -548,6 +561,8 @@ export const EN = {
     'NAND and NOR are AND/OR with a bubble (negation) on the output. XOR fires when an odd number of inputs are 1 — it is the heart of binary addition.',
   'lesson.gates.step3':
     'Drop an AND from the palette, wire two IN pins to its inputs, an OUT pin to the output, then toggle inputs to see the truth table come alive.',
+  'lesson.gates.step4':
+    'Stretch goal: write down what XOR(A, B, C) should be — does it match "odd parity"? Build the 3-input version and verify.',
 
   'lesson.halfAdder.title': '3. The half-adder',
   'lesson.halfAdder.summary': 'XOR + AND = the simplest one-bit adder.',
@@ -556,6 +571,8 @@ export const EN = {
   'lesson.halfAdder.step2': 'Open the Half-adder template. Note how A and B fan out to both the XOR and the AND gate.',
   'lesson.halfAdder.step3':
     'Toggle A and B through all four combinations. Verify the truth table: 0+0=0c0, 0+1=1c0, 1+0=1c0, 1+1=0c1.',
+  'lesson.halfAdder.step4':
+    'Open the Sample tab on the right to see the canonical half-adder, then jump to Workspace to wire your own copy.',
 
   'lesson.fullAdder.title': '4. The full-adder',
   'lesson.fullAdder.summary': 'Two half-adders + an OR = a column of long addition.',
@@ -565,6 +582,8 @@ export const EN = {
     'Open the Full-adder template. Notice that it is just two half-adders feeding an OR to combine their carries.',
   'lesson.fullAdder.step3':
     'Set A=1, B=1, Cin=1. Sum should be 1 (because 1+1+1 = 11 in binary, low bit is 1). Carry-out is 1.',
+  'lesson.fullAdder.step4':
+    'Now you have the building block for any width — chain N of them and you have an N-bit ripple adder (next unit).',
 
   'lesson.clock.title': '5. Clock & register — adding memory',
   'lesson.clock.summary': 'A clock turns combinational logic into state machines.',
@@ -574,6 +593,8 @@ export const EN = {
     'The Clock primitive flips between 0 and 1 each tick. Hooking it to a register makes a one-bit blinker.',
   'lesson.clock.step3':
     'Open the Clock blinker template, press Play, watch the LED toggle. Slow the Hz slider to see each tick.',
+  'lesson.clock.step4':
+    'A register holding D flip-flops + a clock is the foundation of every synchronous design. Everything from here on uses it.',
 
   'lesson.counter.title': '6. Counter + display',
   'lesson.counter.summary': 'Stacking registers makes a counter; a splitter feeds a display.',
@@ -583,6 +604,8 @@ export const EN = {
     'A splitter peels the bus into individual bits — one LED per bit gives you a binary readout.',
   'lesson.counter.step3':
     'Open the Counter + LEDs template, press Play. The four LEDs count 0→15 in binary. Watch the sim flow dots on the active wires.',
+  'lesson.counter.step4':
+    'Reset the counter mid-run by pressing the Reset button (Toolbar). State resets to 0 instantly — that is a synchronous reset in action.',
 
   /* Glossary */
   'glossary.title': 'Glossary',

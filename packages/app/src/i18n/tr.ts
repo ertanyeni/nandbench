@@ -5,7 +5,10 @@ import type { EnKey } from './en.js';
  * via the `Record<EnKey, string>` constraint). Missing keys would fail
  * typecheck — see test/i18n.test.ts for runtime coverage.
  */
+import { CURRICULUM_TR } from './curriculum-tr.js';
+
 export const TR: Record<EnKey, string> = {
+  ...CURRICULUM_TR,
   /* Toolbar */
   'toolbar.undo': 'Geri al (⌘Z)',
   'toolbar.redo': 'Yinele (⇧⌘Z)',
@@ -529,6 +532,16 @@ export const TR: Record<EnKey, string> = {
   'lessons.previous': 'Önceki',
   'lessons.close': 'Kapat',
   'lessons.help.title': 'Yardım ve dersler',
+  'lessons.completedShort': 'tamamlandı',
+  'lessons.tab.sample': 'Örnek',
+  'lessons.tab.workspace': 'Çalışma',
+  'lessons.sample.hint': 'Bu dersle gelen devrenin salt-okunur önizlemesi.',
+  'lessons.sample.none': 'Bu dersin canvas örneği yok — yalnız kavram.',
+  'lessons.workspace.hint':
+    'Ders şablonunu canlı editöre yükle, kendi başına bağla, sonra buraya geri dön.',
+  'lessons.workspace.openCta': 'Şablonu editöre yükle',
+  'lessons.workspace.noTemplate': 'Bu derste yüklenecek şablon yok — saf kavram.',
+  'lessons.workspace.blank': 'Boş başla',
   'toolbar.lessons': 'dersler',
   'toolbar.lessonsTooltip': 'Ders kütüphanesini aç',
 
@@ -550,6 +563,8 @@ export const TR: Record<EnKey, string> = {
     'NAND ve NOR, VE/VEYA\'nın çıkışında negasyon balonu vardır. XOR tek sayıda giriş 1 ise yanar — ikili toplamanın kalbidir.',
   'lesson.gates.step3':
     'Palette\'ten AND ekle, iki IN pinini girişlerine bağla, çıkışına OUT bağla. Girişleri değiştirip doğruluk tablosunu canlı gör.',
+  'lesson.gates.step4':
+    'Ekstra: XOR(A, B, C) ne olmalı — "tek parite" ile eşleşiyor mu? 3-girişli sürümü kur ve doğrula.',
 
   'lesson.halfAdder.title': '3. Yarım toplayıcı',
   'lesson.halfAdder.summary': 'XOR + VE = en basit bir-bit toplayıcı.',
@@ -559,6 +574,8 @@ export const TR: Record<EnKey, string> = {
     'Yarım toplayıcı şablonunu aç. A ve B\'nin hem XOR\'a hem AND\'e dağıldığını gör.',
   'lesson.halfAdder.step3':
     'A ve B\'yi dört kombinasyonla değiştir. Doğruluk tablosunu doğrula: 0+0=0c0, 0+1=1c0, 1+0=1c0, 1+1=0c1.',
+  'lesson.halfAdder.step4':
+    'Sağdaki Örnek sekmesinde standart yarım toplayıcıyı incele, ardından Çalışma sekmesine geçip kendi kopyanı kur.',
 
   'lesson.fullAdder.title': '4. Tam toplayıcı',
   'lesson.fullAdder.summary': 'İki yarım toplayıcı + VEYA = uzun toplamanın bir sütunu.',
@@ -568,6 +585,8 @@ export const TR: Record<EnKey, string> = {
     'Tam toplayıcı şablonunu aç. Aslında iki yarım toplayıcının elde bitlerini birleştiren bir VEYA olduğunu fark et.',
   'lesson.fullAdder.step3':
     'A=1, B=1, Cin=1 yap. Sum 1 olmalı (1+1+1 = 11 binary, alt bit 1). Carry-out 1.',
+  'lesson.fullAdder.step4':
+    'Artık herhangi bir genişlik için yapı taşın var — N tanesini zincirle, N-bit ripple toplayıcı olur (sonraki ünite).',
 
   'lesson.clock.title': '5. Saat ve yazmaç — belleği eklemek',
   'lesson.clock.summary': 'Saat, kombinasyonel mantığı durum makinesine çevirir.',
@@ -577,6 +596,8 @@ export const TR: Record<EnKey, string> = {
     'Saat ilkelesi her tick\'te 0/1 arasında değişir. Yazmaca takınca bir-bit yanıp sönen yapı oluşur.',
   'lesson.clock.step3':
     'Saat yanıp sönmesi şablonunu aç, Play\'e bas, LED\'in her tick\'te değiştiğini izle. Hz kaydırıcısını yavaşlat.',
+  'lesson.clock.step4':
+    'D flip-flop\'lu yazmaç + saat, her senkron tasarımın temelidir. Buradan sonra her şey bunun üstüne kurulur.',
 
   'lesson.counter.title': '6. Sayaç + gösterge',
   'lesson.counter.summary': 'Yazmaçları üst üste koy → sayaç; ayırıcı ekranı besler.',
@@ -586,6 +607,8 @@ export const TR: Record<EnKey, string> = {
     'Ayırıcı bus\'u tek tek bitlere böler — her bit için bir LED ile ikili gösterge elde edersin.',
   'lesson.counter.step3':
     'Sayaç + LED\'ler şablonunu aç, Play\'e bas. Dört LED 0→15 sayar. Aktif kablolardaki yeşil noktaları izle.',
+  'lesson.counter.step4':
+    'Çalışırken Reset düğmesine bas (Toolbar). Durum anında 0\'a iner — senkron reset bu kadar.',
 
   /* Glossary */
   'glossary.title': 'Sözlük',
