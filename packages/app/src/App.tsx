@@ -60,6 +60,11 @@ export function App(): JSX.Element {
       } else if ((ev.metaKey || ev.ctrlKey) && (ev.key === 'f' || ev.key === 'F')) {
         ev.preventDefault();
         zoomToFit();
+      } else if ((ev.metaKey || ev.ctrlKey) && ev.key === '\\') {
+        // Mirror VSCode's "split editor" shortcut.
+        ev.preventDefault();
+        const s = useAppStore.getState();
+        s.setSplitView(!s.splitView);
       }
     };
     window.addEventListener('keydown', onKey);
