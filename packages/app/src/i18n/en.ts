@@ -480,6 +480,8 @@ export const EN = {
   'templates.fullAdder.description': 'Two half-adders stitched together to handle carry-in.',
   'templates.srLatch.name': 'SR latch',
   'templates.srLatch.description': 'Cross-coupled NOR gates — the original 1-bit memory cell.',
+  'templates.jkFlipFlop.name': 'JK flip-flop',
+  'templates.jkFlipFlop.description': 'J + K buttons drive a JK flip-flop. Toggle, set, reset, and hold all visible on Q / Q̄.',
   'templates.mux2to1.name': '2:1 MUX',
   'templates.mux2to1.description': 'Routes one of two data inputs to the output by `sel`.',
   'templates.counterLed.name': 'Counter + LEDs',

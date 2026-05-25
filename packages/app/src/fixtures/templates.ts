@@ -269,6 +269,27 @@ function buildFsmToy(): CircuitDocument {
   return build(comps, wires);
 }
 
+function buildJkFlipFlop(): CircuitDocument {
+  // J + K buttons drive a single JK flip-flop. Q and Q̄ light their own
+  // LEDs so the toggle / set / reset / hold cases stay obvious. The
+  // engine ticks the clock from the toolbar, so there is no Clock
+  // primitive on the canvas.
+  const comps: VisualComponent[] = [
+    c('j', 'button', { x: 60, y: 100 }, { name: 'J' }),
+    c('k', 'button', { x: 60, y: 220 }, { name: 'K' }),
+    c('ff', 'jk-flipflop', { x: 240, y: 110 }, {}),
+    c('q', 'output', { x: 460, y: 110 }, { width: 1, name: 'Q' }),
+    c('qbar', 'output', { x: 460, y: 200 }, { width: 1, name: 'Q̄' }),
+  ];
+  const wires: VisualWire[] = [
+    w(['j', 'out'], ['ff', 'j'], comps),
+    w(['k', 'out'], ['ff', 'k'], comps),
+    w(['ff', 'q'], ['q', 'in'], comps),
+    w(['ff', 'qn'], ['qbar', 'in'], comps),
+  ];
+  return build(comps, wires);
+}
+
 function buildRomToy(): CircuitDocument {
   // 2-bit address picks one of four constants via a mux. The decoder gives
   // a one-hot select but `mux` here uses the raw 2-bit address directly.
@@ -299,6 +320,7 @@ export const TEMPLATES: readonly Template[] = [
   { id: 'half-adder', nameKey: 'templates.halfAdder.name', descriptionKey: 'templates.halfAdder.description', build: buildHalfAdder },
   { id: 'full-adder', nameKey: 'templates.fullAdder.name', descriptionKey: 'templates.fullAdder.description', build: buildFullAdder },
   { id: 'sr-latch', nameKey: 'templates.srLatch.name', descriptionKey: 'templates.srLatch.description', build: buildSrLatch },
+  { id: 'jk-flip-flop', nameKey: 'templates.jkFlipFlop.name', descriptionKey: 'templates.jkFlipFlop.description', build: buildJkFlipFlop },
   { id: 'mux-2to1', nameKey: 'templates.mux2to1.name', descriptionKey: 'templates.mux2to1.description', build: buildMux2to1 },
   { id: 'counter-led', nameKey: 'templates.counterLed.name', descriptionKey: 'templates.counterLed.description', build: buildCounterLed },
   { id: 'clock-blink', nameKey: 'templates.clockBlink.name', descriptionKey: 'templates.clockBlink.description', build: buildClockBlink },

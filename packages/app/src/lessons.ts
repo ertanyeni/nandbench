@@ -228,6 +228,7 @@ export const LESSONS: readonly Lesson[] = [
     titleKey: 'lesson.jkFlipFlop.title',
     summaryKey: 'lesson.jkFlipFlop.summary',
     stepKeys: steps('jkFlipFlop', 4),
+    templateId: 'jk-flip-flop',
   },
   {
     id: 't-flip-flop',

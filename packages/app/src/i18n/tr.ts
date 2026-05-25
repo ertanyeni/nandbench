@@ -482,6 +482,8 @@ export const TR: Record<EnKey, string> = {
   'templates.fullAdder.name': 'Tam toplayıcı',
   'templates.fullAdder.description': 'İki yarım toplayıcı + carry-in.',
   'templates.srLatch.name': 'SR mandalı',
+  'templates.jkFlipFlop.name': 'JK flip-flop',
+  'templates.jkFlipFlop.description': 'J + K düğmeleri JK flip-flop\'u sürer. Toggle, set, reset ve hold Q / Q̄\'da görünür.',
   'templates.srLatch.description': 'Çapraz bağlı NOR — 1-bit bellek hücresi.',
   'templates.mux2to1.name': '2:1 MUX',
   'templates.mux2to1.description': '`sel` ile iki girişten birini çıkışa yönlendirir.',
