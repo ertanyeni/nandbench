@@ -156,12 +156,20 @@ interface AppState {
   /** When true, place/move operations snap world positions to the grid. */
   snapEnabled: boolean;
   /**
-   * Editor split view — when true, a second read-only canvas appears on
-   * the right side of the editor body, showing the same document at an
-   * independent viewport. Lets the user keep a wide overview pinned
-   * while zooming the main canvas into detail.
+   * Editor split view — when true, a second read-only canvas appears
+   * either on the right or at the bottom of the editor body. The
+   * orientation toggles between 'right' (vertical split) and 'bottom'
+   * (horizontal split); the document shown defaults to the active tab
+   * but can be pointed at any other tab via `splitDocumentId`.
    */
   splitView: boolean;
+  splitOrientation: 'right' | 'bottom';
+  /**
+   * Which tab the split pane shows. `null` means "mirror the active
+   * tab"; any DocumentId means "pin this tab's frozen content into the
+   * split, even when the user switches the main canvas elsewhere".
+   */
+  splitDocumentId: DocumentId | null;
   /** Independent viewport (zoom/pan) for the secondary canvas. */
   secondaryViewport: Viewport;
   /**
@@ -215,6 +223,8 @@ interface AppState {
   setPaletteOpen: (open: boolean) => void;
   setSnapEnabled: (enabled: boolean) => void;
   setSplitView: (enabled: boolean) => void;
+  setSplitOrientation: (o: 'right' | 'bottom') => void;
+  setSplitDocumentId: (id: DocumentId | null) => void;
   setSecondaryViewport: (v: Viewport) => void;
   setColorMode: (mode: 'default' | 'deuteranopia') => void;
   /* ----- sim controls ----- */
@@ -284,6 +294,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       ? localStorage.getItem('gatecraft:snapEnabled') !== 'false'
       : true,
   splitView: false,
+  splitOrientation: 'right',
+  splitDocumentId: null,
   secondaryViewport: INITIAL_VIEWPORT,
   colorMode:
     typeof localStorage !== 'undefined' && localStorage.getItem('gatecraft:colorMode') === 'deuteranopia'
@@ -454,6 +466,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   setSimComponentStates: (states) => set({ simComponentStates: states }),
   setPaletteOpen: (open) => set({ paletteOpen: open }),
   setSplitView: (enabled) => set({ splitView: enabled }),
+  setSplitOrientation: (o) => set({ splitOrientation: o }),
+  setSplitDocumentId: (id) => set({ splitDocumentId: id }),
   setSecondaryViewport: (v) => set({ secondaryViewport: v }),
   setSnapEnabled: (enabled) => {
     try {

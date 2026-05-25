@@ -17,8 +17,24 @@ import { SURFACE } from './palette-tokens.js';
  */
 export function SecondaryCanvas(): JSX.Element | null {
   const splitView = useAppStore((s) => s.splitView);
+  const splitOrientation = useAppStore((s) => s.splitOrientation);
+  const splitDocumentId = useAppStore((s) => s.splitDocumentId);
+  const documentsMap = useAppStore((s) => s.documents);
+  const activeDocumentId = useAppStore((s) => s.activeDocumentId);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rendererRef = useRef<Canvas2DRenderer | null>(null);
+
+  // Resolve the document the split should display. Pinned tab takes
+  // priority; falling back to the live editor doc when null OR when the
+  // pinned id happens to *be* the active tab.
+  const resolveTargetDoc = (): { name: string; doc: ReturnType<typeof useAppStore.getState>['document'] } => {
+    const s = useAppStore.getState();
+    if (s.splitDocumentId && s.splitDocumentId !== s.activeDocumentId) {
+      const frozen = s.documents.get(s.splitDocumentId);
+      if (frozen) return { name: frozen.name, doc: frozen.document };
+    }
+    return { name: s.activeDocumentName, doc: s.document };
+  };
 
   useEffect(() => {
     if (!splitView) return;
@@ -33,15 +49,21 @@ export function SecondaryCanvas(): JSX.Element | null {
       const s = useAppStore.getState();
       applyColorMode(s.colorMode);
       renderer.setLibrary(s.library);
-      renderer.setDocument(s.document);
+      const target = resolveTargetDoc();
+      renderer.setDocument(target.doc);
       renderer.setViewport(s.secondaryViewport);
-      renderer.setSelection(s.selection); // mirror selection so user knows what's selected
-      renderer.setTool({ type: 'idle' }); // hide tool ghosts (no placement here)
-      renderer.setNetlist(s.compiled.netlist);
-      renderer.setSimSnapshot(s.simSnapshot);
+      // Selection only makes sense when we're mirroring the active tab —
+      // if we're pinning a different tab, blank the selection so the
+      // user doesn't see a halo around a non-matching component id.
+      const pinningOther = s.splitDocumentId && s.splitDocumentId !== s.activeDocumentId;
+      renderer.setSelection(pinningOther ? { componentIds: new Set() } : s.selection);
+      renderer.setTool({ type: 'idle' });
+      // Sim state only mirrors the active tab — pinned tabs are static.
+      renderer.setNetlist(pinningOther ? undefined : s.compiled.netlist);
+      renderer.setSimSnapshot(pinningOther ? undefined : s.simSnapshot);
       renderer.setRunning(s.running);
       renderer.setSuggestionAnchor(null);
-      renderer.setDiagnostics([...s.compiled.diagnostics, ...s.simDiagnostics]);
+      renderer.setDiagnostics(pinningOther ? [] : [...s.compiled.diagnostics, ...s.simDiagnostics]);
     };
     apply();
     const unsubscribe = useAppStore.subscribe(apply);
@@ -110,20 +132,43 @@ export function SecondaryCanvas(): JSX.Element | null {
 
   if (!splitView) return null;
 
+  // Compute the pane position from orientation. Right = vertical split
+  // (40% wide on the right edge); Bottom = horizontal split (40% tall
+  // on the bottom edge, above the status bar).
+  const paneStyle: React.CSSProperties =
+    splitOrientation === 'right'
+      ? {
+          top: 78,
+          right: 0,
+          bottom: 24,
+          width: '40%',
+          minWidth: 320,
+          borderLeft: `1px solid ${SURFACE.borderColor}`,
+        }
+      : {
+          left: 44,
+          right: 0,
+          bottom: 24,
+          height: '45%',
+          minHeight: 220,
+          borderTop: `1px solid ${SURFACE.borderColor}`,
+        };
+
+  const pinning = splitDocumentId && splitDocumentId !== activeDocumentId;
+  const pinnedTab = pinning ? documentsMap.get(splitDocumentId) : null;
+  const headerLabel = pinnedTab
+    ? `${pinnedTab.name} · ${t('split.pinned')}`
+    : t('split.mirrorActive');
+
   return (
     <div
       style={{
         position: 'absolute',
-        top: 78,
-        right: 0,
-        bottom: 24,
-        width: '40%',
-        minWidth: 320,
         background: SURFACE.editorBg,
-        borderLeft: `1px solid ${SURFACE.borderColor}`,
         display: 'flex',
         flexDirection: 'column',
         zIndex: 8,
+        ...paneStyle,
       }}
     >
       <div
@@ -141,21 +186,35 @@ export function SecondaryCanvas(): JSX.Element | null {
           gap: 8,
         }}
       >
-        <span style={{ flex: 1 }}>{t('split.title')}</span>
+        <span style={{ flex: 1 }}>{headerLabel}</span>
+        {pinning ? (
+          <button
+            onClick={() => useAppStore.getState().setSplitDocumentId(null)}
+            title={t('split.unpin')}
+            style={iconBtnStyle}
+          >
+            ↺
+          </button>
+        ) : null}
         <button
-          onClick={() => useAppStore.getState().setSplitView(false)}
+          onClick={() =>
+            useAppStore
+              .getState()
+              .setSplitOrientation(splitOrientation === 'right' ? 'bottom' : 'right')
+          }
+          title={t('split.toggleOrientation')}
+          style={iconBtnStyle}
+        >
+          {splitOrientation === 'right' ? '⊟' : '⊞'}
+        </button>
+        <button
+          onClick={() => {
+            useAppStore.getState().setSplitView(false);
+            useAppStore.getState().setSplitDocumentId(null);
+          }}
           aria-label={t('split.close')}
           title={t('split.close')}
-          style={{
-            background: 'transparent',
-            border: `1px solid ${SURFACE.borderColor}`,
-            color: SURFACE.itemSubText,
-            borderRadius: 4,
-            padding: '1px 6px',
-            cursor: 'pointer',
-            font: 'inherit',
-            fontSize: 11,
-          }}
+          style={iconBtnStyle}
         >
           ×
         </button>
@@ -175,3 +234,14 @@ export function SecondaryCanvas(): JSX.Element | null {
     </div>
   );
 }
+
+const iconBtnStyle: React.CSSProperties = {
+  background: 'transparent',
+  border: `1px solid ${SURFACE.borderColor}`,
+  color: SURFACE.itemSubText,
+  borderRadius: 4,
+  padding: '1px 6px',
+  cursor: 'pointer',
+  font: 'inherit',
+  fontSize: 11,
+};

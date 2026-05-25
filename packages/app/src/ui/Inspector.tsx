@@ -1138,6 +1138,12 @@ function readInspectorWidth(): number {
 function Frame({ children }: { children: React.ReactNode }): JSX.Element {
   const [width, setWidth] = useState(readInspectorWidth);
   const splitView = useAppStore((s) => s.splitView);
+  const splitOrientation = useAppStore((s) => s.splitOrientation);
+  // Right-side split shrinks the Inspector inward so the two right
+  // panels don't overlap. Bottom-side split lets the Inspector keep
+  // its full height — they don't compete for horizontal space then.
+  const inspectorRight = splitView && splitOrientation === 'right' ? '40%' : 0;
+  const inspectorBottom = splitView && splitOrientation === 'bottom' ? 'calc(45% + 24px)' : 24;
   return (
     <div
       style={{
@@ -1147,8 +1153,8 @@ function Frame({ children }: { children: React.ReactNode }): JSX.Element {
         // status bar. When the split-view pane is open we slide the
         // Inspector inside the split rather than overlapping it.
         top: 78,
-        right: splitView ? '40%' : 0,
-        bottom: 24,
+        right: inspectorRight,
+        bottom: inspectorBottom,
         width,
         padding: 12,
         background: SURFACE.sidebarBg,

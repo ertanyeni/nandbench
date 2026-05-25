@@ -112,6 +112,16 @@ export function TabBar(): JSX.Element {
           // path so the publish action stays in-app and non-modal.
           useAppStore.getState().setPublishedFlash({ id, name: activeName });
         }}
+        onSplit={(id, orientation) => {
+          const s = useAppStore.getState();
+          s.setSplitOrientation(orientation);
+          s.setSplitView(true);
+          // Pinning the tab. If the user dropped the *active* tab into
+          // the split we leave `splitDocumentId` null so it mirrors —
+          // moving the editor focus elsewhere then doesn't change the
+          // split. For inactive tabs we pin the id.
+          s.setSplitDocumentId(id === s.activeDocumentId ? null : id);
+        }}
         onStartEdit={setEditingId}
         onCommitEdit={(id, next) => {
           setEditingId(null);
@@ -186,6 +196,7 @@ function ScrollableTabs({
   onSwitch,
   onClose,
   onPublish,
+  onSplit,
   onStartEdit,
   onCommitEdit,
   onReorder,
@@ -199,6 +210,7 @@ function ScrollableTabs({
   onSwitch: (id: DocumentId) => void;
   onClose: (id: DocumentId, dirty: boolean) => void;
   onPublish: () => void;
+  onSplit: (id: DocumentId, orientation: 'right' | 'bottom') => void;
   onStartEdit: (id: DocumentId) => void;
   onCommitEdit: (id: DocumentId, next: string) => void;
   onReorder: (fromId: DocumentId, toIdx: number) => void;
@@ -287,6 +299,8 @@ function ScrollableTabs({
                 onCommitEdit={(next) => onCommitEdit(id, next)}
                 onClose={() => onClose(id, dirty)}
                 onPublish={isActive ? onPublish : undefined}
+                onSplitRight={() => onSplit(id, 'right')}
+                onSplitBottom={() => onSplit(id, 'bottom')}
                 canClose={ids.length > 1 || !isActive}
                 onDragStart={() => setDraggingId(id)}
                 onDragEnd={() => {
@@ -432,6 +446,8 @@ function Tab({
   onClick,
   onClose,
   onPublish,
+  onSplitRight,
+  onSplitBottom,
   onStartEdit,
   onCommitEdit,
   canClose,
@@ -447,6 +463,8 @@ function Tab({
   editing: boolean;
   onClick: () => void;
   onClose: () => void;
+  onSplitRight: () => void;
+  onSplitBottom: () => void;
   /** When provided, an ↗ button appears on the active tab to publish it
    *  to the saved-circuits library. Only the active tab gets the button —
    *  publishing inactive tabs would require a deeper API. */
@@ -460,6 +478,18 @@ function Tab({
   onDragEnd?: () => void;
 }): JSX.Element {
   const [draft, setDraft] = useState(name);
+  // Inline tab context menu — opens on right-click.
+  const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
+  useEffect(() => {
+    if (!menu) return;
+    const close = (): void => setMenu(null);
+    window.addEventListener('mousedown', close);
+    window.addEventListener('blur', close);
+    return () => {
+      window.removeEventListener('mousedown', close);
+      window.removeEventListener('blur', close);
+    };
+  }, [menu]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
     if (editing) {
@@ -482,6 +512,10 @@ function Tab({
       onDragEnd={() => onDragEnd?.()}
       onClick={editing ? undefined : onClick}
       onDoubleClick={onStartEdit}
+      onContextMenu={(ev) => {
+        ev.preventDefault();
+        setMenu({ x: ev.clientX, y: ev.clientY });
+      }}
       style={{
         // Two/three-column grid: [name 1fr] [publish? auto] [close? 18px].
         // Publish has its own label so it gets an auto column; close is
@@ -619,6 +653,95 @@ function Tab({
           ×
         </button>
       ) : null}
+      {menu ? (
+        <div
+          className="gc-fade-in"
+          role="menu"
+          onMouseDown={(e) => e.stopPropagation()}
+          style={{
+            position: 'fixed',
+            top: menu.y,
+            left: menu.x,
+            minWidth: 180,
+            background: '#0f1115',
+            border: '1px solid #2a3548',
+            borderRadius: 6,
+            padding: 4,
+            zIndex: 90,
+            display: 'flex',
+            flexDirection: 'column',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+          }}
+        >
+          <TabMenuItem
+            label={`▢ ${t('tabs.menu.splitRight')}`}
+            onClick={() => {
+              setMenu(null);
+              onSplitRight();
+            }}
+          />
+          <TabMenuItem
+            label={`▤ ${t('tabs.menu.splitBottom')}`}
+            onClick={() => {
+              setMenu(null);
+              onSplitBottom();
+            }}
+          />
+          <div style={{ height: 1, background: '#1c2230', margin: '4px 2px' }} />
+          {onPublish ? (
+            <TabMenuItem
+              label={`↗ ${t('tabs.publishLabel')}`}
+              onClick={() => {
+                setMenu(null);
+                onPublish();
+              }}
+            />
+          ) : null}
+          {canClose ? (
+            <TabMenuItem
+              label={`× ${t('tabs.closeTooltip')}`}
+              onClick={() => {
+                setMenu(null);
+                onClose();
+              }}
+              danger
+            />
+          ) : null}
+        </div>
+      ) : null}
     </div>
+  );
+}
+
+function TabMenuItem({
+  label,
+  onClick,
+  danger,
+}: {
+  label: string;
+  onClick: () => void;
+  danger?: boolean;
+}): JSX.Element {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        background: 'transparent',
+        color: danger ? '#fca5a5' : '#eef1f6',
+        border: 'none',
+        textAlign: 'left',
+        padding: '6px 12px',
+        cursor: 'pointer',
+        font: 'inherit',
+        fontSize: 12,
+        borderRadius: 4,
+      }}
+      onMouseEnter={(e) =>
+        (e.currentTarget.style.background = danger ? '#3a1d1d' : '#1c2230')
+      }
+      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+    >
+      {label}
+    </button>
   );
 }
