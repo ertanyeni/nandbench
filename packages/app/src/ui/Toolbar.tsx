@@ -20,9 +20,17 @@ export function Toolbar(): JSX.Element {
   const redo = useAppStore((s) => s.redo);
   const historyLen = useAppStore((s) => s.history.length);
   const redoLen = useAppStore((s) => s.redoStack.length);
-  const running = useAppStore((s) => s.running);
+  // Play button reflects the currently focused pane — clicking it
+  // toggles that pane's sim worker, not always the main one.
+  const focusedPane = useAppStore((s) => s.focusedPane);
+  const running = useAppStore((s) => (s.focusedPane === 'split' ? s.splitRunning : s.running));
   const tickRate = useAppStore((s) => s.tickRate);
-  const setRunning = useAppStore((s) => s.setRunning);
+  const setMainRunning = useAppStore((s) => s.setRunning);
+  const setSplitRunning = useAppStore((s) => s.setSplitRunning);
+  const setRunning = (v: boolean): void => {
+    if (focusedPane === 'split') setSplitRunning(v);
+    else setMainRunning(v);
+  };
   const setTickRate = useAppStore((s) => s.setTickRate);
   const locale = useAppStore((s) => s.locale);
   // Diagnostic count drives the small red dot on the assistant button —

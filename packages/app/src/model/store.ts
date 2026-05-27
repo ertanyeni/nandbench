@@ -173,6 +173,24 @@ interface AppState {
   /** Independent viewport (zoom/pan) for the secondary canvas. */
   secondaryViewport: Viewport;
   /**
+   * Split-pane edit state — each slice mirrors the matching top-level
+   * (main pane) slice so the second canvas can host its own
+   * placement/wire/selection/history/sim. When `splitView` is off they
+   * are inert; we keep them around so the pane state persists across
+   * toggle off/on within a session.
+   */
+  splitTool: Tool;
+  splitSelection: Selection;
+  splitHistory: readonly Command[];
+  splitRedoStack: readonly Command[];
+  splitCompiled: CompiledState;
+  splitSimSnapshot: SimSnapshot | undefined;
+  splitSimDiagnostics: readonly Diagnostic[];
+  splitSimComponentStates: ReadonlyMap<ComponentId, unknown>;
+  splitRunning: boolean;
+  /** Last-clicked canvas — drives Inspector, Cmd+Z, Play target. */
+  focusedPane: 'main' | 'split';
+  /**
    * Color palette for signal values on wires + chips. `default` uses
    * green/blue/red (the high-contrast standard); `deuteranopia` swaps to
    * a blue/yellow/orange palette that survives red-green color blindness.
@@ -226,6 +244,19 @@ interface AppState {
   setSplitOrientation: (o: 'right' | 'bottom') => void;
   setSplitDocumentId: (id: DocumentId | null) => void;
   setSecondaryViewport: (v: Viewport) => void;
+  setSplitTool: (t: Tool) => void;
+  setSplitSelection: (ids: Iterable<ComponentId>) => void;
+  setSplitSimSnapshot: (snap: SimSnapshot | undefined, diags: readonly Diagnostic[]) => void;
+  setSplitSimComponentStates: (states: ReadonlyMap<ComponentId, unknown>) => void;
+  setSplitRunning: (running: boolean) => void;
+  setFocusedPane: (p: 'main' | 'split') => void;
+  /** Run a command against the split pane's pinned document. */
+  splitDispatch: (cmd: Command, opts?: { selectionAfter?: Iterable<ComponentId> }) => void;
+  splitUndo: () => void;
+  splitRedo: () => void;
+  /** Swap all per-pane state between main and split — used when the user
+   *  hits the ↔ swap button or clicks the legacy swap path. */
+  swapPanes: () => void;
   setColorMode: (mode: 'default' | 'deuteranopia') => void;
   /* ----- sim controls ----- */
   setSimSnapshot: (snap: SimSnapshot | undefined, diags: readonly Diagnostic[]) => void;
@@ -297,6 +328,16 @@ export const useAppStore = create<AppState>((set, get) => ({
   splitOrientation: 'right',
   splitDocumentId: null,
   secondaryViewport: INITIAL_VIEWPORT,
+  splitTool: IDLE_TOOL,
+  splitSelection: { componentIds: new Set() },
+  splitHistory: [],
+  splitRedoStack: [],
+  splitCompiled: compileDocument(emptyDocument),
+  splitSimSnapshot: undefined,
+  splitSimDiagnostics: [],
+  splitSimComponentStates: new Map(),
+  splitRunning: false,
+  focusedPane: 'main',
   colorMode:
     typeof localStorage !== 'undefined' && localStorage.getItem('gatecraft:colorMode') === 'deuteranopia'
       ? 'deuteranopia'
@@ -465,10 +506,234 @@ export const useAppStore = create<AppState>((set, get) => ({
   setSuggestionAnchor: (anchor) => set({ suggestionAnchor: anchor }),
   setSimComponentStates: (states) => set({ simComponentStates: states }),
   setPaletteOpen: (open) => set({ paletteOpen: open }),
-  setSplitView: (enabled) => set({ splitView: enabled }),
+  setSplitView: (enabled) => {
+    if (!enabled) {
+      // Closing the split also clears its derived state so a stale
+      // sim snapshot doesn't flash on reopen.
+      set({
+        splitView: false,
+        splitDocumentId: null,
+        splitTool: IDLE_TOOL,
+        splitSelection: { componentIds: new Set() },
+        splitHistory: [],
+        splitRedoStack: [],
+        splitCompiled: compileDocument(emptyDocument, get().library),
+        splitSimSnapshot: undefined,
+        splitSimDiagnostics: [],
+        splitSimComponentStates: new Map(),
+        splitRunning: false,
+        focusedPane: 'main',
+      });
+      return;
+    }
+    set({ splitView: true });
+    // If we're opening and there's a pinned tab, prime the split's
+    // compiled state from that tab's frozen document.
+    const s = get();
+    if (s.splitDocumentId) {
+      const frozen = s.documents.get(s.splitDocumentId);
+      if (frozen) {
+        set({ splitCompiled: compileDocument(frozen.document, s.library) });
+      }
+    }
+  },
   setSplitOrientation: (o) => set({ splitOrientation: o }),
-  setSplitDocumentId: (id) => set({ splitDocumentId: id }),
+  setSplitDocumentId: (id) => {
+    set({ splitDocumentId: id });
+    // Recompile so the split sim worker sees the pinned tab's netlist.
+    if (id) {
+      const s = get();
+      const frozen = s.documents.get(id);
+      if (frozen) {
+        set({
+          splitCompiled: compileDocument(frozen.document, s.library),
+          splitHistory: frozen.history,
+          splitRedoStack: frozen.redoStack,
+          // Reset selection + tool when switching pinned tab.
+          splitSelection: { componentIds: new Set() },
+          splitTool: IDLE_TOOL,
+        });
+      }
+    }
+  },
   setSecondaryViewport: (v) => set({ secondaryViewport: v }),
+  setSplitTool: (t) => set({ splitTool: t }),
+  setSplitSelection: (ids) =>
+    set({ splitSelection: { componentIds: new Set(ids) } }),
+  setSplitSimSnapshot: (snap, diags) =>
+    set({ splitSimSnapshot: snap, splitSimDiagnostics: diags }),
+  setSplitSimComponentStates: (states) => set({ splitSimComponentStates: states }),
+  setSplitRunning: (running) => set({ splitRunning: running }),
+  setFocusedPane: (p) => set({ focusedPane: p }),
+
+  splitDispatch: (cmd, opts) => {
+    const state = get();
+    const splitId = state.splitDocumentId;
+    if (!splitId) return; // mirror mode — split dispatch is a no-op
+    const frozen = state.documents.get(splitId);
+    if (!frozen) return;
+    const nextDoc = cmd.apply(frozen.document);
+    const nextHistory = appendBounded(state.splitHistory, cmd);
+    // Library auto-sync — same rule as the main dispatch: a pinned tab
+    // backed by a library entry stays in sync as the user edits.
+    let nextLibrary = state.library;
+    if (frozen.origin?.kind === 'library') {
+      nextLibrary = state.library.map((sc) =>
+        sc.id === frozen.origin!.refId
+          ? snapshotAsSavedCircuit(frozen.origin!.refId, sc.name, nextDoc)
+          : sc,
+      );
+    }
+    const nextDocs = new Map(state.documents);
+    nextDocs.set(splitId, {
+      ...frozen,
+      document: nextDoc,
+      history: nextHistory,
+      redoStack: [],
+      dirty: true,
+    });
+    set({
+      documents: nextDocs,
+      library: nextLibrary,
+      splitCompiled: compileDocument(nextDoc, nextLibrary),
+      splitHistory: nextHistory,
+      splitRedoStack: [],
+      ...(opts?.selectionAfter
+        ? { splitSelection: { componentIds: new Set(opts.selectionAfter) } }
+        : {}),
+    });
+  },
+
+  splitUndo: () => {
+    const state = get();
+    if (state.splitHistory.length === 0) return;
+    const splitId = state.splitDocumentId;
+    if (!splitId) return;
+    const frozen = state.documents.get(splitId);
+    if (!frozen) return;
+    const cmd = state.splitHistory[state.splitHistory.length - 1]!;
+    const nextDoc = cmd.revert(frozen.document);
+    const nextDocs = new Map(state.documents);
+    const newHistory = state.splitHistory.slice(0, -1);
+    nextDocs.set(splitId, {
+      ...frozen,
+      document: nextDoc,
+      history: newHistory,
+      redoStack: [...frozen.redoStack, cmd],
+    });
+    set({
+      documents: nextDocs,
+      splitCompiled: compileDocument(nextDoc, state.library),
+      splitHistory: newHistory,
+      splitRedoStack: [...state.splitRedoStack, cmd],
+      splitSelection: { componentIds: new Set() },
+      splitTool: IDLE_TOOL,
+    });
+  },
+
+  splitRedo: () => {
+    const state = get();
+    if (state.splitRedoStack.length === 0) return;
+    const splitId = state.splitDocumentId;
+    if (!splitId) return;
+    const frozen = state.documents.get(splitId);
+    if (!frozen) return;
+    const cmd = state.splitRedoStack[state.splitRedoStack.length - 1]!;
+    const nextDoc = cmd.apply(frozen.document);
+    const nextDocs = new Map(state.documents);
+    const newHistory = [...state.splitHistory, cmd];
+    nextDocs.set(splitId, {
+      ...frozen,
+      document: nextDoc,
+      history: newHistory,
+      redoStack: frozen.redoStack.slice(0, -1),
+    });
+    set({
+      documents: nextDocs,
+      splitCompiled: compileDocument(nextDoc, state.library),
+      splitHistory: newHistory,
+      splitRedoStack: state.splitRedoStack.slice(0, -1),
+      splitSelection: { componentIds: new Set() },
+      splitTool: IDLE_TOOL,
+    });
+  },
+
+  swapPanes: () => {
+    const s = get();
+    const splitId = s.splitDocumentId;
+    const oldActive = s.activeDocumentId;
+    if (!splitId || splitId === oldActive) return;
+    const frozenSplit = s.documents.get(splitId);
+    if (!frozenSplit) return;
+    // Build the new active state from the pinned tab + the matching
+    // split-pane state. The old active state moves into the documents
+    // Map as a FrozenDoc.
+    const newActiveDoc = frozenSplit.document;
+    const newActiveLibrary = s.library;
+    const newActiveCompiled = s.splitCompiled;
+    const newActiveHistory = s.splitHistory;
+    const newActiveRedo = s.splitRedoStack;
+    const newActiveViewport = s.secondaryViewport;
+    const newActiveSelection = s.splitSelection;
+    const newActiveTool = s.splitTool;
+    const newActiveSimSnap = s.splitSimSnapshot;
+    const newActiveSimDiag = s.splitSimDiagnostics;
+    const newActiveSimStates = s.splitSimComponentStates;
+    const newActiveRunning = s.splitRunning;
+    // Old active goes into FrozenDoc.
+    const oldFrozen: FrozenDoc = {
+      id: oldActive,
+      name: s.activeDocumentName,
+      document: s.document,
+      history: s.history,
+      redoStack: s.redoStack,
+      viewport: s.viewport,
+      selection: s.selection,
+      simSnapshot: s.simSnapshot,
+      simDiagnostics: s.simDiagnostics,
+      simComponentStates: s.simComponentStates,
+      running: s.running,
+      tickRate: s.tickRate,
+      dirty: s.activeDocumentDirty,
+      origin: s.activeDocumentOrigin,
+    };
+    const nextDocs = new Map(s.documents);
+    nextDocs.delete(splitId);
+    nextDocs.set(oldActive, oldFrozen);
+    set({
+      // New active
+      activeDocumentId: splitId,
+      activeDocumentName: frozenSplit.name,
+      activeDocumentOrigin: frozenSplit.origin,
+      activeDocumentDirty: frozenSplit.dirty,
+      document: newActiveDoc,
+      compiled: newActiveCompiled,
+      history: newActiveHistory,
+      redoStack: newActiveRedo,
+      viewport: newActiveViewport,
+      selection: newActiveSelection,
+      tool: newActiveTool,
+      simSnapshot: newActiveSimSnap,
+      simDiagnostics: newActiveSimDiag,
+      simComponentStates: newActiveSimStates,
+      running: newActiveRunning,
+      library: newActiveLibrary,
+      // New split state (old active fields move here)
+      splitDocumentId: oldActive,
+      secondaryViewport: s.viewport,
+      splitTool: s.tool,
+      splitSelection: s.selection,
+      splitHistory: s.history,
+      splitRedoStack: s.redoStack,
+      splitCompiled: s.compiled,
+      splitSimSnapshot: s.simSnapshot,
+      splitSimDiagnostics: s.simDiagnostics,
+      splitSimComponentStates: s.simComponentStates,
+      splitRunning: s.running,
+      documents: nextDocs,
+      focusedPane: 'main',
+    });
+  },
   setSnapEnabled: (enabled) => {
     try {
       localStorage.setItem('gatecraft:snapEnabled', enabled ? 'true' : 'false');

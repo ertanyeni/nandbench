@@ -32,6 +32,7 @@ export const EN = {
   'split.unpin': 'Unpin — mirror the active tab instead',
   'split.swap': 'Swap with main editor — edit this tab live',
   'split.clickToSwap': 'Click to edit this tab in the main editor',
+  'split.editingPrefix': 'Editing · ',
   'split.toggleOrientation': 'Toggle split orientation (right ↔ bottom)',
   'tabs.menu.splitRight': 'Open in split (right)',
   'tabs.menu.splitBottom': 'Open in split (bottom)',

@@ -1,13 +1,15 @@
 /**
- * Sim bridge — invisible component that wires the worker to the Zustand
- * store. Mount it once at the root and forget about it.
+ * Sim bridge — invisible component that wires the simulation worker(s)
+ * to the Zustand store. Mount once at the root and forget.
  *
  * Responsibilities:
- *   - Create the worker on mount, terminate on unmount.
- *   - Push every compiled-netlist change to the worker (`load`).
- *   - Pipe snapshots/diagnostics from the worker back into the store.
- *   - When `running` is true, drive a setInterval that posts tickClock at
- *     the user-selected rate; tear it down when stopped.
+ *   - Create the **main** sim worker on mount, terminate on unmount.
+ *   - Create / dispose a **split** sim worker on demand when the editor's
+ *     `splitView` toggle flips, so two unrelated tabs can simulate in
+ *     parallel.
+ *   - Push every compiled-netlist change (per pane) to its worker.
+ *   - Pipe snapshots/diagnostics back into the matching store slice.
+ *   - Drive a per-pane setInterval at the user-selected tick rate.
  */
 
 import { useEffect, useRef } from 'react';
@@ -15,52 +17,96 @@ import { useAppStore } from '../model/store.js';
 import { createSimClient, type SimClient } from './sim-client.js';
 
 export function SimBridge(): null {
-  const clientRef = useRef<SimClient | null>(null);
+  /* -------- Main pane sim worker -------- */
+  const mainRef = useRef<SimClient | null>(null);
 
-  // Boot the worker once, terminate on teardown.
   useEffect(() => {
     const client = createSimClient();
-    clientRef.current = client;
-    // Expose so the toolbar (Step / Reset) can post one-shot messages
-    // without needing a React context. Kept narrow on purpose.
+    mainRef.current = client;
     (window as unknown as { __sim: SimClient }).__sim = client;
     const unsubscribeSnapshot = client.onSnapshot((snap, diags, states) => {
       const s = useAppStore.getState();
       s.setSimSnapshot(snap, diags);
       s.setSimComponentStates(states);
     });
-    // Push the initial compiled netlist (covers the case where a fixture is
-    // pre-loaded at mount time).
     client.load(useAppStore.getState().compiled.netlist);
     return () => {
       unsubscribeSnapshot();
       client.dispose();
-      clientRef.current = null;
+      mainRef.current = null;
     };
   }, []);
 
-  // Reload the worker whenever the compiled netlist changes.
   useEffect(() => {
     const unsubscribe = useAppStore.subscribe((state, prev) => {
       if (state.compiled.netlist !== prev.compiled.netlist) {
-        clientRef.current?.load(state.compiled.netlist);
+        mainRef.current?.load(state.compiled.netlist);
       }
     });
     return unsubscribe;
   }, []);
 
-  // Run loop — setInterval keyed on (running, tickRate). Cleanup re-keys
-  // when either changes.
   const running = useAppStore((s) => s.running);
   const tickRate = useAppStore((s) => s.tickRate);
   useEffect(() => {
     if (!running) return;
     const periodMs = Math.max(16, 1000 / tickRate);
     const id = window.setInterval(() => {
-      clientRef.current?.tickClock();
+      mainRef.current?.tickClock();
     }, periodMs);
     return () => window.clearInterval(id);
   }, [running, tickRate]);
+
+  /* -------- Split pane sim worker (lazy) -------- */
+  // Lifecycle: spawn the worker the first time `splitView` flips to true,
+  // dispose when it flips back to false. Subsequent re-opens spin up a
+  // fresh worker. The split netlist (`splitCompiled`) feeds it directly.
+  const splitRef = useRef<SimClient | null>(null);
+  const splitView = useAppStore((s) => s.splitView);
+
+  useEffect(() => {
+    if (!splitView) return;
+    const client = createSimClient();
+    splitRef.current = client;
+    (window as unknown as { __splitSim?: SimClient }).__splitSim = client;
+    const unsubscribeSnapshot = client.onSnapshot((snap, diags, states) => {
+      const s = useAppStore.getState();
+      s.setSplitSimSnapshot(snap, diags);
+      s.setSplitSimComponentStates(states);
+    });
+    // Prime with whatever the split pane is currently pointing at.
+    client.load(useAppStore.getState().splitCompiled.netlist);
+    return () => {
+      unsubscribeSnapshot();
+      client.dispose();
+      splitRef.current = null;
+      delete (window as unknown as { __splitSim?: SimClient }).__splitSim;
+    };
+  }, [splitView]);
+
+  // Reload split worker whenever its compiled netlist changes (pin
+  // changed, split-edit dispatched, undo, redo).
+  useEffect(() => {
+    if (!splitView) return;
+    const unsubscribe = useAppStore.subscribe((state, prev) => {
+      if (state.splitCompiled.netlist !== prev.splitCompiled.netlist) {
+        splitRef.current?.load(state.splitCompiled.netlist);
+      }
+    });
+    return unsubscribe;
+  }, [splitView]);
+
+  // Independent tick loop for the split pane. Shares the global tickRate
+  // for simplicity — per-pane rate would multiply UI surface area.
+  const splitRunning = useAppStore((s) => s.splitRunning);
+  useEffect(() => {
+    if (!splitView || !splitRunning) return;
+    const periodMs = Math.max(16, 1000 / tickRate);
+    const id = window.setInterval(() => {
+      splitRef.current?.tickClock();
+    }, periodMs);
+    return () => window.clearInterval(id);
+  }, [splitView, splitRunning, tickRate]);
 
   return null;
 }

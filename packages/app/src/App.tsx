@@ -169,7 +169,14 @@ function restoreProject(
  */
 function zoomToFit(): void {
   const state = useAppStore.getState();
-  const components = state.document.components;
+  // Fit-view target is the focused pane's document + viewport setter.
+  const isSplit = state.focusedPane === 'split';
+  const components = isSplit
+    ? (state.splitDocumentId && state.splitDocumentId !== state.activeDocumentId
+        ? state.documents.get(state.splitDocumentId)?.document.components ?? state.document.components
+        : state.document.components)
+    : state.document.components;
+  const setViewport = isSplit ? state.setSecondaryViewport : state.setViewport;
   if (components.length === 0) return;
   let minX = Infinity;
   let minY = Infinity;
@@ -199,5 +206,5 @@ function zoomToFit(): void {
   const zoom = Math.max(0.2, Math.min(2, Math.min(screenW / w, screenH / h)));
   const panX = minX - margin - (screenW / zoom - w) / 2;
   const panY = minY - margin - (screenH / zoom - h) / 2;
-  state.setViewport({ panX, panY, zoom });
+  setViewport({ panX, panY, zoom });
 }

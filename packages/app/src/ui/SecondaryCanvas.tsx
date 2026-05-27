@@ -1,19 +1,18 @@
 import { useEffect, useRef } from 'react';
+import { attachCanvasController } from '../interaction/canvas-controller.js';
 import { useAppStore } from '../model/store.js';
+import { suggestionsFor } from '../model/suggestions.js';
 import { applyColorMode, Canvas2DRenderer } from '../render/canvas2d.js';
 import { t } from '../i18n/index.js';
 import { SURFACE } from './palette-tokens.js';
 
 /**
- * Secondary read-only canvas pane — appears on the right side of the
- * editor when split view is on. Renders the same document as the main
- * canvas but with an independent viewport (its own zoom/pan) so the
- * user can pin a wide overview while zooming the main canvas in.
+ * Secondary editor pane — a fully-live canvas with its own controller,
+ * tool, selection, history, and simulation. Appears on the right or
+ * bottom edge of the editor body whenever `splitView` is true.
  *
- * The pane has its own renderer instance and its own pointer handlers
- * for wheel-zoom + middle/right-drag pan. It does NOT install the full
- * canvas controller (no placement, no wire drawing, no selection
- * mutation) — interactions stay on the main canvas.
+ * Reads/writes the `split*` store slices; routes pointer + keyboard
+ * events through `attachCanvasController(canvas, renderer, 'split')`.
  */
 export function SecondaryCanvas(): JSX.Element | null {
   const splitView = useAppStore((s) => s.splitView);
@@ -21,34 +20,9 @@ export function SecondaryCanvas(): JSX.Element | null {
   const splitDocumentId = useAppStore((s) => s.splitDocumentId);
   const documentsMap = useAppStore((s) => s.documents);
   const activeDocumentId = useAppStore((s) => s.activeDocumentId);
+  const focusedPane = useAppStore((s) => s.focusedPane);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rendererRef = useRef<Canvas2DRenderer | null>(null);
-
-  // Swap the active editor tab with the pinned split tab. The previously
-  // active tab takes over the split slot (now pinned), so the user can
-  // edit the freshly-promoted tab in the main editor and bounce back
-  // with another click. Effectively this is "two-pane editing" without
-  // a full pane-state refactor.
-  const swapMainAndSplit = (): void => {
-    const s = useAppStore.getState();
-    const splitId = s.splitDocumentId;
-    const oldActiveId = s.activeDocumentId;
-    if (!splitId || splitId === oldActiveId) return;
-    s.switchDocument(splitId);
-    s.setSplitDocumentId(oldActiveId);
-  };
-
-  // Resolve the document the split should display. Pinned tab takes
-  // priority; falling back to the live editor doc when null OR when the
-  // pinned id happens to *be* the active tab.
-  const resolveTargetDoc = (): { name: string; doc: ReturnType<typeof useAppStore.getState>['document'] } => {
-    const s = useAppStore.getState();
-    if (s.splitDocumentId && s.splitDocumentId !== s.activeDocumentId) {
-      const frozen = s.documents.get(s.splitDocumentId);
-      if (frozen) return { name: frozen.name, doc: frozen.document };
-    }
-    return { name: s.activeDocumentName, doc: s.document };
-  };
 
   useEffect(() => {
     if (!splitView) return;
@@ -56,100 +30,38 @@ export function SecondaryCanvas(): JSX.Element | null {
     if (!canvas) return;
     const renderer = new Canvas2DRenderer(canvas);
     rendererRef.current = renderer;
+    const detachController = attachCanvasController(canvas, renderer, 'split');
 
-    // Mirror the document + sim state, but read viewport / selection
-    // from the *secondary* slice so the two panes diverge cleanly.
+    // The renderer subscribes to the split slice so its document /
+    // tool / selection / viewport / netlist / sim all come from the
+    // split-pane state owned by the store.
     const apply = (): void => {
       const s = useAppStore.getState();
       applyColorMode(s.colorMode);
       renderer.setLibrary(s.library);
-      const target = resolveTargetDoc();
-      renderer.setDocument(target.doc);
+      // Resolve which document this pane shows:
+      //   - pinned + different from active → frozen tab's doc
+      //   - otherwise → live editor doc (mirror mode)
+      const target =
+        s.splitDocumentId && s.splitDocumentId !== s.activeDocumentId
+          ? s.documents.get(s.splitDocumentId)?.document ?? s.document
+          : s.document;
+      renderer.setDocument(target);
       renderer.setViewport(s.secondaryViewport);
-      // Selection only makes sense when we're mirroring the active tab —
-      // if we're pinning a different tab, blank the selection so the
-      // user doesn't see a halo around a non-matching component id.
-      const pinningOther = s.splitDocumentId && s.splitDocumentId !== s.activeDocumentId;
-      renderer.setSelection(pinningOther ? { componentIds: new Set() } : s.selection);
-      renderer.setTool({ type: 'idle' });
-      // Sim state only mirrors the active tab — pinned tabs are static.
-      renderer.setNetlist(pinningOther ? undefined : s.compiled.netlist);
-      renderer.setSimSnapshot(pinningOther ? undefined : s.simSnapshot);
-      renderer.setRunning(s.running);
-      renderer.setSuggestionAnchor(null);
-      renderer.setDiagnostics(pinningOther ? [] : [...s.compiled.diagnostics, ...s.simDiagnostics]);
+      renderer.setSelection(s.splitSelection);
+      renderer.setTool(s.splitTool);
+      renderer.setNetlist(s.splitCompiled.netlist);
+      renderer.setSimSnapshot(s.splitSimSnapshot);
+      renderer.setRunning(s.splitRunning);
+      renderer.setSuggestionAnchor(null); // suggestions stay on the main pane for now
+      renderer.setDiagnostics([...s.splitCompiled.diagnostics, ...s.splitSimDiagnostics]);
     };
     apply();
     const unsubscribe = useAppStore.subscribe(apply);
-
-    // Independent wheel-zoom (centered on cursor).
-    const onWheel = (ev: WheelEvent): void => {
-      ev.preventDefault();
-      const rect = canvas.getBoundingClientRect();
-      const sx = ev.clientX - rect.left;
-      const sy = ev.clientY - rect.top;
-      const vp = useAppStore.getState().secondaryViewport;
-      const worldX = vp.panX + sx / vp.zoom;
-      const worldY = vp.panY + sy / vp.zoom;
-      const step = ev.deltaY > 0 ? 0.9 : 1.1;
-      const nextZoom = Math.max(0.2, Math.min(4, vp.zoom * step));
-      const nextPanX = worldX - sx / nextZoom;
-      const nextPanY = worldY - sy / nextZoom;
-      useAppStore.getState().setSecondaryViewport({
-        zoom: nextZoom,
-        panX: nextPanX,
-        panY: nextPanY,
-      });
-    };
-    canvas.addEventListener('wheel', onWheel, { passive: false });
-
-    // Pointerdown behavior depends on what the split is showing:
-    //   - Mirror mode (no pinned tab) → left-drag pans the view.
-    //   - Pinned tab → first click swaps panes (this tab becomes
-    //     editable in the main editor; the old main tab moves into
-    //     the split). Drag-to-pan still works after the swap if the
-    //     user clicks again — by then the split is back in mirror
-    //     mode for whatever ended up pinned.
-    let dragStart: { sx: number; sy: number; vp: { panX: number; panY: number; zoom: number } } | null = null;
-    const onPointerDown = (ev: PointerEvent): void => {
-      const s = useAppStore.getState();
-      if (s.splitDocumentId && s.splitDocumentId !== s.activeDocumentId) {
-        ev.preventDefault();
-        swapMainAndSplit();
-        return;
-      }
-      const vp = s.secondaryViewport;
-      dragStart = { sx: ev.clientX, sy: ev.clientY, vp: { ...vp } };
-      try {
-        canvas.setPointerCapture(ev.pointerId);
-      } catch {
-        /* ignore */
-      }
-    };
-    const onPointerMove = (ev: PointerEvent): void => {
-      if (!dragStart) return;
-      const dx = ev.clientX - dragStart.sx;
-      const dy = ev.clientY - dragStart.sy;
-      useAppStore.getState().setSecondaryViewport({
-        zoom: dragStart.vp.zoom,
-        panX: dragStart.vp.panX - dx / dragStart.vp.zoom,
-        panY: dragStart.vp.panY - dy / dragStart.vp.zoom,
-      });
-    };
-    const onPointerUp = (): void => {
-      dragStart = null;
-    };
-    canvas.addEventListener('pointerdown', onPointerDown);
-    canvas.addEventListener('pointermove', onPointerMove);
-    canvas.addEventListener('pointerup', onPointerUp);
-    canvas.addEventListener('pointercancel', onPointerUp);
+    void suggestionsFor; // kept for symmetry with CircuitCanvas; suggestions are main-only V1
 
     return () => {
-      canvas.removeEventListener('wheel', onWheel);
-      canvas.removeEventListener('pointerdown', onPointerDown);
-      canvas.removeEventListener('pointermove', onPointerMove);
-      canvas.removeEventListener('pointerup', onPointerUp);
-      canvas.removeEventListener('pointercancel', onPointerUp);
+      detachController();
       unsubscribe();
       renderer.dispose();
       rendererRef.current = null;
@@ -158,9 +70,7 @@ export function SecondaryCanvas(): JSX.Element | null {
 
   if (!splitView) return null;
 
-  // Compute the pane position from orientation. Right = vertical split
-  // (40% wide on the right edge); Bottom = horizontal split (40% tall
-  // on the bottom edge, above the status bar).
+  // Pane geometry — right (vertical split) vs bottom (horizontal split).
   const paneStyle: React.CSSProperties =
     splitOrientation === 'right'
       ? {
@@ -183,8 +93,10 @@ export function SecondaryCanvas(): JSX.Element | null {
   const pinning = splitDocumentId && splitDocumentId !== activeDocumentId;
   const pinnedTab = pinning ? documentsMap.get(splitDocumentId) : null;
   const headerLabel = pinnedTab
-    ? `${pinnedTab.name} · ${t('split.pinned')}`
+    ? `${t('split.editingPrefix')}${pinnedTab.name}`
     : t('split.mirrorActive');
+
+  const isFocused = focusedPane === 'split';
 
   return (
     <div
@@ -194,6 +106,9 @@ export function SecondaryCanvas(): JSX.Element | null {
         display: 'flex',
         flexDirection: 'column',
         zIndex: 8,
+        // VSCode-style focus ring on the active pane.
+        boxShadow: isFocused ? 'inset 0 0 0 2px #60a5fa' : 'none',
+        transition: 'box-shadow 120ms',
         ...paneStyle,
       }}
     >
@@ -214,22 +129,22 @@ export function SecondaryCanvas(): JSX.Element | null {
       >
         <span style={{ flex: 1 }}>{headerLabel}</span>
         {pinning ? (
-          <>
-            <button
-              onClick={swapMainAndSplit}
-              title={t('split.swap')}
-              style={iconBtnStyle}
-            >
-              ↔
-            </button>
-            <button
-              onClick={() => useAppStore.getState().setSplitDocumentId(null)}
-              title={t('split.unpin')}
-              style={iconBtnStyle}
-            >
-              ↺
-            </button>
-          </>
+          <button
+            onClick={() => useAppStore.getState().swapPanes()}
+            title={t('split.swap')}
+            style={iconBtnStyle}
+          >
+            ↔
+          </button>
+        ) : null}
+        {pinning ? (
+          <button
+            onClick={() => useAppStore.getState().setSplitDocumentId(null)}
+            title={t('split.unpin')}
+            style={iconBtnStyle}
+          >
+            ↺
+          </button>
         ) : null}
         <button
           onClick={() =>
@@ -245,7 +160,6 @@ export function SecondaryCanvas(): JSX.Element | null {
         <button
           onClick={() => {
             useAppStore.getState().setSplitView(false);
-            useAppStore.getState().setSplitDocumentId(null);
           }}
           aria-label={t('split.close')}
           title={t('split.close')}
@@ -257,12 +171,11 @@ export function SecondaryCanvas(): JSX.Element | null {
       <canvas
         ref={canvasRef}
         aria-label={t('split.title')}
-        title={pinning ? t('split.clickToSwap') : undefined}
         style={{
           flex: 1,
           width: '100%',
           display: 'block',
-          cursor: pinning ? 'pointer' : 'grab',
+          cursor: 'crosshair',
           touchAction: 'none',
           userSelect: 'none',
         }}

@@ -29,11 +29,25 @@ function getRegistry(): ComponentRegistry {
 }
 
 export function Inspector(): JSX.Element | null {
-  const document = useAppStore((s) => s.document);
-  const selection = useAppStore((s) => s.selection);
-  const dispatch = useAppStore((s) => s.dispatch);
-  const compiled = useAppStore((s) => s.compiled);
-  const simDiagnostics = useAppStore((s) => s.simDiagnostics);
+  // Inspector follows the focused pane — when the user clicks into the
+  // split canvas, this panel switches to that pane's document /
+  // selection / diagnostics. Dispatch goes through the pane's own
+  // dispatch action so param edits target the right document.
+  const focused = useAppStore((s) => s.focusedPane);
+  const document = useAppStore((s) => {
+    if (focused === 'split' && s.splitDocumentId && s.splitDocumentId !== s.activeDocumentId) {
+      return s.documents.get(s.splitDocumentId)?.document ?? s.document;
+    }
+    return s.document;
+  });
+  const selection = useAppStore((s) =>
+    focused === 'split' ? s.splitSelection : s.selection,
+  );
+  const dispatch = useAppStore((s) => (focused === 'split' ? s.splitDispatch : s.dispatch));
+  const compiled = useAppStore((s) => (focused === 'split' ? s.splitCompiled : s.compiled));
+  const simDiagnostics = useAppStore((s) =>
+    focused === 'split' ? s.splitSimDiagnostics : s.simDiagnostics,
+  );
 
   const locale = useAppStore((s) => s.locale);
   void locale; // ensure re-render on locale flip
