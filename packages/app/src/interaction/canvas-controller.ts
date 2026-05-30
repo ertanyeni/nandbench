@@ -31,106 +31,6 @@ function snapToGrid(p: RoutingPoint): RoutingPoint {
 }
 import { screenToWorld, useAppStore } from '../model/store.js';
 import type { Renderer } from '../render/renderer.js';
-
-export type ControllerTarget = 'main' | 'split';
-
-/**
- * Returns the slice of store state + actions that the controller should
- * read/write for the given target pane. Reading `document/tool/selection
- * /viewport/compiled` routes to the matching pane's slice; dispatch and
- * undo/redo are delegated to the pane's own action.
- *
- * Note: this returns plain values (not subscriptions) — callers must
- * call it again to see fresh state.
- */
-function paneState(pane: ControllerTarget) {
-  const s = useAppStore.getState();
-  if (pane === 'main') {
-    return {
-      document: s.document,
-      compiled: s.compiled,
-      tool: s.tool,
-      selection: s.selection,
-      viewport: s.viewport,
-      snapEnabled: s.snapEnabled,
-      library: s.library,
-      lastPlacedKind: s.lastPlacedKind,
-      suggestionAnchor: s.suggestionAnchor,
-      paletteOpen: s.paletteOpen,
-      clipboard: s.clipboard,
-      dispatch: s.dispatch,
-      undo: s.undo,
-      redo: s.redo,
-      setTool: s.setTool,
-      setSelection: s.setSelection,
-      setWireSelection: s.setWireSelection,
-      clearSelection: s.clearSelection,
-      setViewport: s.setViewport,
-      panBy: s.panBy,
-      zoomAt: s.zoomAt,
-      setLastPlacedKind: s.setLastPlacedKind,
-      setSuggestionAnchor: s.setSuggestionAnchor,
-      setClipboard: s.setClipboard,
-      running: s.running,
-      setRunning: s.setRunning,
-      focus: () => s.setFocusedPane('main'),
-    };
-  }
-  // split — fall back to the live main doc when no tab is pinned (mirror mode)
-  const splitDocId = s.splitDocumentId;
-  const splitDoc = splitDocId
-    ? s.documents.get(splitDocId)?.document ?? s.document
-    : s.document;
-  return {
-    document: splitDoc,
-    compiled: s.splitCompiled,
-    tool: s.splitTool,
-    selection: s.splitSelection,
-    viewport: s.secondaryViewport,
-    snapEnabled: s.snapEnabled,
-    library: s.library,
-    lastPlacedKind: s.lastPlacedKind,
-    suggestionAnchor: s.suggestionAnchor,
-    paletteOpen: s.paletteOpen,
-    clipboard: s.clipboard,
-    dispatch: s.splitDispatch,
-    undo: s.splitUndo,
-    redo: s.splitRedo,
-    setTool: s.setSplitTool,
-    setSelection: s.setSplitSelection,
-    setWireSelection: (_ids: Iterable<unknown>): void => {
-      // Wire selection on the split pane is V2 — keep a stub so callers
-      // don't have to branch.
-    },
-    clearSelection: (): void => s.setSplitSelection([]),
-    setViewport: s.setSecondaryViewport,
-    panBy: (dxScreen: number, dyScreen: number): void => {
-      const vp = useAppStore.getState().secondaryViewport;
-      useAppStore.getState().setSecondaryViewport({
-        zoom: vp.zoom,
-        panX: vp.panX - dxScreen / vp.zoom,
-        panY: vp.panY - dyScreen / vp.zoom,
-      });
-    },
-    zoomAt: (sx: number, sy: number, factor: number): void => {
-      const vp = useAppStore.getState().secondaryViewport;
-      const worldX = vp.panX + sx / vp.zoom;
-      const worldY = vp.panY + sy / vp.zoom;
-      const nextZoom = Math.max(0.2, Math.min(4, vp.zoom * factor));
-      useAppStore.getState().setSecondaryViewport({
-        zoom: nextZoom,
-        panX: worldX - sx / nextZoom,
-        panY: worldY - sy / nextZoom,
-      });
-    },
-    setLastPlacedKind: s.setLastPlacedKind,
-    setSuggestionAnchor: s.setSuggestionAnchor,
-    setClipboard: s.setClipboard,
-    running: s.splitRunning,
-    setRunning: s.setSplitRunning,
-    focus: () => s.setFocusedPane('split'),
-  };
-}
 import {
   copySelection,
   deleteSelected,
@@ -156,7 +56,6 @@ interface PointerSession {
 export function attachCanvasController(
   canvas: HTMLCanvasElement,
   renderer: Renderer,
-  pane: ControllerTarget = 'main',
 ): () => void {
   const session: PointerSession = {
     active: false,
@@ -173,14 +72,11 @@ export function attachCanvasController(
   };
 
   const onPointerDown = (ev: PointerEvent): void => {
-    // Any meaningful pointer activity makes this pane the focused one
-    // for Inspector / Cmd+Z / Play target.
-    paneState(pane).focus();
     if (ev.button === 2) {
       // Right click: cancel any in-progress tool.
-      const tool = paneState(pane).tool;
+      const tool = useAppStore.getState().tool;
       if (tool.type === 'wire' || tool.type === 'place') {
-        paneState(pane).setTool({ type: 'idle' });
+        useAppStore.getState().setTool({ type: 'idle' });
         renderer.setHoverPin(null);
       }
       return;
@@ -188,7 +84,7 @@ export function attachCanvasController(
     if (ev.button !== 0 && ev.button !== 1) return;
 
     const screen = localPoint(ev.clientX, ev.clientY);
-    const store = paneState(pane);
+    const store = useAppStore.getState();
     const world = screenToWorld(store.viewport, screen.x, screen.y);
     const tool = store.tool;
 
@@ -339,7 +235,7 @@ export function attachCanvasController(
       // on the session so the pointerup doesn't also fire a select/clear.
       const inst = store.document.components.find((c) => c.id === compHit);
       if (inst && (inst.kind === 'input' || inst.kind === 'button')) {
-        toggleInputOrButton(store.compiled.netlist.portToNet, inst.id, pane);
+        toggleInputOrButton(store.compiled.netlist.portToNet, inst.id);
       }
     }
     ev.preventDefault();
@@ -347,7 +243,7 @@ export function attachCanvasController(
 
   const onPointerMove = (ev: PointerEvent): void => {
     const screen = localPoint(ev.clientX, ev.clientY);
-    let store = paneState(pane);
+    let store = useAppStore.getState();
     const world = screenToWorld(store.viewport, screen.x, screen.y);
 
     // Hover effects (cheap, do every move).
@@ -408,7 +304,7 @@ export function attachCanvasController(
           });
           session.mode = 'move-components';
           // Re-fetch state since we just mutated it.
-          store = paneState(pane);
+          store = useAppStore.getState();
         } else {
           session.mode = 'pan';
         }
@@ -421,7 +317,7 @@ export function attachCanvasController(
       if (session.mode === 'pan') {
         if (dxScreen !== 0 || dyScreen !== 0) store.panBy(dxScreen, dyScreen);
       } else if (session.mode === 'move-components') {
-        const live = paneState(pane);
+        const live = useAppStore.getState();
         const t = live.tool;
         if (t.type === 'move') {
           const delta = snapToGrid({
@@ -442,7 +338,7 @@ export function attachCanvasController(
       canvas.releasePointerCapture(ev.pointerId);
     }
     const screen = localPoint(ev.clientX, ev.clientY);
-    const store = paneState(pane);
+    const store = useAppStore.getState();
     const world = screenToWorld(store.viewport, screen.x, screen.y);
     const wasActive = session.active;
     const wasMoved = session.movedPastThreshold;
@@ -516,9 +412,9 @@ export function attachCanvasController(
       canvas.releasePointerCapture(ev.pointerId);
     }
     session.active = false;
-    const tool = paneState(pane).tool;
+    const tool = useAppStore.getState().tool;
     if (tool.type === 'move') {
-      paneState(pane).setTool({ type: 'idle' });
+      useAppStore.getState().setTool({ type: 'idle' });
     }
   };
 
@@ -527,22 +423,21 @@ export function attachCanvasController(
     const { x, y } = localPoint(ev.clientX, ev.clientY);
     const notches = -ev.deltaY / 100;
     const factor = Math.pow(ZOOM_PER_WHEEL_NOTCH, notches);
-    paneState(pane).zoomAt(x, y, factor);
+    useAppStore.getState().zoomAt(x, y, factor);
   };
 
   const onContextMenu = (ev: MouseEvent): void => {
     ev.preventDefault();
-    paneState(pane).focus();
-    const world = screenToWorld(paneState(pane).viewport, ev.offsetX, ev.offsetY);
+    const world = screenToWorld(useAppStore.getState().viewport, ev.offsetX, ev.offsetY);
     const compHit = renderer.hitTestComponent(world.x, world.y);
     const wireHit = !compHit ? renderer.hitTestWire(world.x, world.y) : null;
     if (!compHit && !wireHit) return;
     // If a wire was hit, pre-select it so the context menu acts on it.
-    if (wireHit && !paneState(pane).selection.wireIds?.has(wireHit)) {
-      paneState(pane).setWireSelection([wireHit]);
+    if (wireHit && !useAppStore.getState().selection.wireIds?.has(wireHit)) {
+      useAppStore.getState().setWireSelection([wireHit]);
     }
-    if (compHit && !paneState(pane).selection.componentIds.has(compHit)) {
-      paneState(pane).setSelection([compHit]);
+    if (compHit && !useAppStore.getState().selection.componentIds.has(compHit)) {
+      useAppStore.getState().setSelection([compHit]);
     }
     // Forward to React via a window event with the cursor position; the
     // ContextMenu component listens and renders the popup.
@@ -559,11 +454,7 @@ export function attachCanvasController(
     if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT')) {
       return;
     }
-    // Keyboard always targets the user's currently focused pane.
-    // Reading store.focusedPane here means Cmd+Z, R, Delete etc. behave
-    // intuitively when the user switches focus between panes.
-    const focused = useAppStore.getState().focusedPane;
-    const store = paneState(focused);
+    const store = useAppStore.getState();
     const meta = ev.metaKey || ev.ctrlKey;
     const k = ev.key.toLowerCase();
 
@@ -657,18 +548,17 @@ export function attachCanvasController(
   };
 
   const onDoubleClick = (ev: MouseEvent): void => {
-    const ps = paneState(pane);
-    const world = screenToWorld(ps.viewport, ev.offsetX, ev.offsetY);
+    const live = useAppStore.getState();
+    const world = screenToWorld(live.viewport, ev.offsetX, ev.offsetY);
     const compHit = renderer.hitTestComponent(world.x, world.y);
     if (!compHit) return;
-    const comp = ps.document.components.find((c) => c.id === compHit);
+    const comp = live.document.components.find((c) => c.id === compHit);
     if (!comp || !comp.kind.startsWith('composite:')) return;
     const refId = String(comp.params['refId'] ?? '');
-    const saved = ps.library.find((sc) => sc.id === refId);
+    const saved = live.library.find((sc) => sc.id === refId);
     if (!saved) return;
-    // Drill-in always opens a new tab in the main editor, regardless of
-    // which pane was double-clicked — there's only one tab strip.
-    const live = useAppStore.getState();
+    // Open the saved circuit in a new tab. Origin marks it as a library
+    // edit so close-tab can sync the change back.
     live.newDocument({ name: saved.name, document: saved.doc });
     useAppStore.setState({
       activeDocumentOrigin: { kind: 'library', refId: saved.id },
@@ -761,18 +651,12 @@ function finalizeWirePath(path: readonly Point[], endPin: Point): Point[] {
 function toggleInputOrButton(
   portToNet: CompiledNetlist['portToNet'],
   componentId: ComponentId,
-  pane: ControllerTarget,
 ): void {
-  // Route to the matching pane's sim worker — clicking an input on the
-  // split canvas drives the split worker, not the main one.
-  const w = window as unknown as {
+  const sim = (window as unknown as {
     __sim?: { setInput: (p: PortRef, v: SignalValue) => void };
-    __splitSim?: { setInput: (p: PortRef, v: SignalValue) => void };
-  };
-  const sim = pane === 'main' ? w.__sim : w.__splitSim;
+  }).__sim;
   if (!sim) return;
-  const state = useAppStore.getState();
-  const snap = pane === 'main' ? state.simSnapshot : state.splitSimSnapshot;
+  const snap = useAppStore.getState().simSnapshot;
   const netId = portToNet.get(portKey(componentId, 'out'));
   if (!netId) return;
   const v = snap?.nets.get(netId);

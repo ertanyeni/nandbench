@@ -29,25 +29,11 @@ function getRegistry(): ComponentRegistry {
 }
 
 export function Inspector(): JSX.Element | null {
-  // Inspector follows the focused pane — when the user clicks into the
-  // split canvas, this panel switches to that pane's document /
-  // selection / diagnostics. Dispatch goes through the pane's own
-  // dispatch action so param edits target the right document.
-  const focused = useAppStore((s) => s.focusedPane);
-  const document = useAppStore((s) => {
-    if (focused === 'split' && s.splitDocumentId && s.splitDocumentId !== s.activeDocumentId) {
-      return s.documents.get(s.splitDocumentId)?.document ?? s.document;
-    }
-    return s.document;
-  });
-  const selection = useAppStore((s) =>
-    focused === 'split' ? s.splitSelection : s.selection,
-  );
-  const dispatch = useAppStore((s) => (focused === 'split' ? s.splitDispatch : s.dispatch));
-  const compiled = useAppStore((s) => (focused === 'split' ? s.splitCompiled : s.compiled));
-  const simDiagnostics = useAppStore((s) =>
-    focused === 'split' ? s.splitSimDiagnostics : s.simDiagnostics,
-  );
+  const document = useAppStore((s) => s.document);
+  const selection = useAppStore((s) => s.selection);
+  const dispatch = useAppStore((s) => s.dispatch);
+  const compiled = useAppStore((s) => s.compiled);
+  const simDiagnostics = useAppStore((s) => s.simDiagnostics);
 
   const locale = useAppStore((s) => s.locale);
   void locale; // ensure re-render on locale flip
@@ -1151,24 +1137,16 @@ function readInspectorWidth(): number {
 
 function Frame({ children }: { children: React.ReactNode }): JSX.Element {
   const [width, setWidth] = useState(readInspectorWidth);
-  const splitView = useAppStore((s) => s.splitView);
-  const splitOrientation = useAppStore((s) => s.splitOrientation);
-  // Right-side split shrinks the Inspector inward so the two right
-  // panels don't overlap. Bottom-side split lets the Inspector keep
-  // its full height — they don't compete for horizontal space then.
-  const inspectorRight = splitView && splitOrientation === 'right' ? '40%' : 0;
-  const inspectorBottom = splitView && splitOrientation === 'bottom' ? 'calc(45% + 24px)' : 24;
   return (
     <div
       style={{
         position: 'absolute',
         // Right-edge sidebar — mirrors VSCode's secondary sidebar.
         // Spans the full editor height between the tab strip and the
-        // status bar. When the split-view pane is open we slide the
-        // Inspector inside the split rather than overlapping it.
+        // status bar.
         top: 78,
-        right: inspectorRight,
-        bottom: inspectorBottom,
+        right: 0,
+        bottom: 24,
         width,
         padding: 12,
         background: SURFACE.sidebarBg,

@@ -112,16 +112,6 @@ export function TabBar(): JSX.Element {
           // path so the publish action stays in-app and non-modal.
           useAppStore.getState().setPublishedFlash({ id, name: activeName });
         }}
-        onSplit={(id, orientation) => {
-          const s = useAppStore.getState();
-          s.setSplitOrientation(orientation);
-          s.setSplitView(true);
-          // Pinning the tab. If the user dropped the *active* tab into
-          // the split we leave `splitDocumentId` null so it mirrors —
-          // moving the editor focus elsewhere then doesn't change the
-          // split. For inactive tabs we pin the id.
-          s.setSplitDocumentId(id === s.activeDocumentId ? null : id);
-        }}
         onStartEdit={setEditingId}
         onCommitEdit={(id, next) => {
           setEditingId(null);
@@ -196,7 +186,6 @@ function ScrollableTabs({
   onSwitch,
   onClose,
   onPublish,
-  onSplit,
   onStartEdit,
   onCommitEdit,
   onReorder,
@@ -210,7 +199,6 @@ function ScrollableTabs({
   onSwitch: (id: DocumentId) => void;
   onClose: (id: DocumentId, dirty: boolean) => void;
   onPublish: () => void;
-  onSplit: (id: DocumentId, orientation: 'right' | 'bottom') => void;
   onStartEdit: (id: DocumentId) => void;
   onCommitEdit: (id: DocumentId, next: string) => void;
   onReorder: (fromId: DocumentId, toIdx: number) => void;
@@ -299,8 +287,6 @@ function ScrollableTabs({
                 onCommitEdit={(next) => onCommitEdit(id, next)}
                 onClose={() => onClose(id, dirty)}
                 onPublish={isActive ? onPublish : undefined}
-                onSplitRight={() => onSplit(id, 'right')}
-                onSplitBottom={() => onSplit(id, 'bottom')}
                 canClose={ids.length > 1 || !isActive}
                 onDragStart={() => setDraggingId(id)}
                 onDragEnd={() => {
@@ -446,8 +432,6 @@ function Tab({
   onClick,
   onClose,
   onPublish,
-  onSplitRight,
-  onSplitBottom,
   onStartEdit,
   onCommitEdit,
   canClose,
@@ -463,8 +447,6 @@ function Tab({
   editing: boolean;
   onClick: () => void;
   onClose: () => void;
-  onSplitRight: () => void;
-  onSplitBottom: () => void;
   /** When provided, an ↗ button appears on the active tab to publish it
    *  to the saved-circuits library. Only the active tab gets the button —
    *  publishing inactive tabs would require a deeper API. */
@@ -673,21 +655,6 @@ function Tab({
             boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
           }}
         >
-          <TabMenuItem
-            label={`▢ ${t('tabs.menu.splitRight')}`}
-            onClick={() => {
-              setMenu(null);
-              onSplitRight();
-            }}
-          />
-          <TabMenuItem
-            label={`▤ ${t('tabs.menu.splitBottom')}`}
-            onClick={() => {
-              setMenu(null);
-              onSplitBottom();
-            }}
-          />
-          <div style={{ height: 1, background: '#1c2230', margin: '4px 2px' }} />
           {onPublish ? (
             <TabMenuItem
               label={`↗ ${t('tabs.publishLabel')}`}

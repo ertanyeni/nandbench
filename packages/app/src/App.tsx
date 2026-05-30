@@ -14,7 +14,6 @@ import { LessonsPanel } from './ui/LessonsPanel.js';
 import { Palette } from './ui/Palette.js';
 import { PersistenceBridge } from './ui/PersistenceBridge.js';
 import { QuickopenModal } from './ui/QuickopenModal.js';
-import { SecondaryCanvas } from './ui/SecondaryCanvas.js';
 import { SuggestionBridge } from './ui/SuggestionBridge.js';
 import { SuggestionTooltip } from './ui/SuggestionTooltip.js';
 import { StatusBar } from './ui/StatusBar.js';
@@ -60,11 +59,6 @@ export function App(): JSX.Element {
       } else if ((ev.metaKey || ev.ctrlKey) && (ev.key === 'f' || ev.key === 'F')) {
         ev.preventDefault();
         zoomToFit();
-      } else if ((ev.metaKey || ev.ctrlKey) && ev.key === '\\') {
-        // Mirror VSCode's "split editor" shortcut.
-        ev.preventDefault();
-        const s = useAppStore.getState();
-        s.setSplitView(!s.splitView);
       }
     };
     window.addEventListener('keydown', onKey);
@@ -77,7 +71,6 @@ export function App(): JSX.Element {
       <SimBridge />
       <SuggestionBridge />
       <CircuitCanvas />
-      <SecondaryCanvas />
       <ActivityBar />
       <Toolbar />
       <TabBar />
@@ -169,14 +162,8 @@ function restoreProject(
  */
 function zoomToFit(): void {
   const state = useAppStore.getState();
-  // Fit-view target is the focused pane's document + viewport setter.
-  const isSplit = state.focusedPane === 'split';
-  const components = isSplit
-    ? (state.splitDocumentId && state.splitDocumentId !== state.activeDocumentId
-        ? state.documents.get(state.splitDocumentId)?.document.components ?? state.document.components
-        : state.document.components)
-    : state.document.components;
-  const setViewport = isSplit ? state.setSecondaryViewport : state.setViewport;
+  const components = state.document.components;
+  const setViewport = state.setViewport;
   if (components.length === 0) return;
   let minX = Infinity;
   let minY = Infinity;

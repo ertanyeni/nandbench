@@ -15,20 +15,10 @@ export function StatusBar(): JSX.Element {
     return () => window.removeEventListener('gatecraft:saved-toast', handler);
   }, []);
   const viewport = useAppStore((s) => s.viewport);
-  // StatusBar follows the focused pane so selection counts + suggestion
-  // hints reflect whichever canvas the user is interacting with.
-  const focused = useAppStore((s) => s.focusedPane);
-  const selection = useAppStore((s) => (focused === 'split' ? s.splitSelection : s.selection));
-  const document = useAppStore((s) => {
-    if (focused === 'split' && s.splitDocumentId && s.splitDocumentId !== s.activeDocumentId) {
-      return s.documents.get(s.splitDocumentId)?.document ?? s.document;
-    }
-    return s.document;
-  });
+  const selection = useAppStore((s) => s.selection);
+  const document = useAppStore((s) => s.document);
   const tool = useAppStore((s) => s.tool);
-  const diagnostics = useAppStore((s) =>
-    focused === 'split' ? s.splitCompiled.diagnostics : s.compiled.diagnostics,
-  );
+  const diagnostics = useAppStore((s) => s.compiled.diagnostics);
   const lastPlacedKind = useAppStore((s) => s.lastPlacedKind);
   const publishedFlash = useAppStore((s) => s.publishedFlash);
   const setPublishedFlash = useAppStore((s) => s.setPublishedFlash);

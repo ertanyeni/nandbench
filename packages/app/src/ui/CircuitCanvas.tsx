@@ -9,11 +9,6 @@ const suggestionKindsFor = (kind: string): readonly string[] => suggestionsFor(k
 export function CircuitCanvas(): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rendererRef = useRef<Canvas2DRenderer | null>(null);
-  const focusedPane = useAppStore((s) => s.focusedPane);
-  const splitView = useAppStore((s) => s.splitView);
-  // Show the focus ring only when there's actually a second pane to
-  // ambiguate against — a solo canvas doesn't need it.
-  const showRing = splitView && focusedPane === 'main';
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -85,10 +80,6 @@ export function CircuitCanvas(): JSX.Element {
         cursor: 'crosshair',
         touchAction: 'none',
         userSelect: 'none',
-        // Inset focus ring when the user is editing the main pane and a
-        // split is visible — matches SecondaryCanvas's pattern.
-        boxShadow: showRing ? 'inset 0 0 0 2px #60a5fa' : 'none',
-        transition: 'box-shadow 120ms',
       }}
     />
   );
