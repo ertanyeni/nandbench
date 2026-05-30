@@ -11,6 +11,13 @@ export interface ChallengeCase {
   readonly in: readonly number[];
   /** Expected output values in the order of `outputs`. */
   readonly out: readonly number[];
+  /**
+   * Number of clock-edge pulses to fire between `setInput` and reading
+   * the outputs. Combinational circuits leave this 0 (default);
+   * sequential ones (flip-flop, register, counter) use 1+ to advance
+   * the state machine before checking.
+   */
+  readonly ticks?: number;
 }
 
 export interface Challenge {
@@ -54,6 +61,20 @@ export const CHALLENGES: Readonly<Record<string, Challenge>> = {
       { in: [1, 0, 1], out: [0, 1] },
       { in: [1, 1, 0], out: [0, 1] },
       { in: [1, 1, 1], out: [1, 1] },
+    ],
+  },
+  // Sequential — uses the `ticks` field to pulse the clock once between
+  // setInput and snapshot. Walks hold → set → hold → reset → toggle.
+  'jk-flip-flop': {
+    inputs: ['J', 'K'],
+    outputs: ['Q'],
+    cases: [
+      { in: [0, 0], out: [0], ticks: 1 },
+      { in: [1, 0], out: [1], ticks: 1 },
+      { in: [0, 0], out: [1], ticks: 1 },
+      { in: [0, 1], out: [0], ticks: 1 },
+      { in: [1, 1], out: [1], ticks: 1 },
+      { in: [1, 1], out: [0], ticks: 1 },
     ],
   },
 };

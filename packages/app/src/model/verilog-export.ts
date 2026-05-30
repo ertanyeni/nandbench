@@ -110,6 +110,9 @@ export function exportVerilog(
   library: readonly SavedCircuit[] = [],
   moduleName = 'gatecraft_top',
 ): string {
+  // Verilog identifiers can only contain [a-zA-Z0-9_$], so scrub the
+  // user-supplied module name before stamping it into the source.
+  const moduleId = sanitize(moduleName);
   const { netlist } = compileDocument(doc, library);
 
   // Assign each net a sanitized name.
@@ -177,7 +180,7 @@ export function exportVerilog(
   return [
     PREAMBLE,
     '',
-    `module ${moduleName} (\n    ${portList}\n);`,
+    `module ${moduleId} (\n    ${portList}\n);`,
     ...wireLines,
     ...portAssigns,
     '',

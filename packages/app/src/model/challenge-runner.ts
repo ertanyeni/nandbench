@@ -90,6 +90,14 @@ export function runChallenge(
         const pin = inputPins[i]!;
         sim.setInput(pin.ref, lit(pin.width, BigInt(v)));
       });
+      // For sequential circuits (D / JK / T flip-flop, register, counter,
+      // shift register, FSM) the case can request N clock-edge pulses
+      // between setInput and the snapshot read. Default 0 keeps existing
+      // combinational challenges fast.
+      const ticks = c.ticks ?? 0;
+      for (let i = 0; i < ticks; i++) {
+        sim.tickClock();
+      }
       sim.settle();
       const snap = sim.snapshot();
       const got: (number | string)[] = outputPins.map((op) => {
