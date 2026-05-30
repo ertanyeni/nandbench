@@ -251,3 +251,135 @@ export function pushOrthogonalWaypoint(path: readonly Point[], next: Point): Poi
     dx >= dy ? { x: next.x, y: last.y } : { x: last.x, y: next.y };
   return [...path, bend, next];
 }
+
+/* ---------------------- A* grid router ---------------------- */
+
+/**
+ * Grid-based A* path finder for orthogonal wires. Runs on a coarse grid
+ * (one cell = `GRID` world units) and refuses to enter cells covered by
+ * any obstacle box. Output is a list of waypoints with collinear runs
+ * collapsed (no redundant points along a straight segment).
+ *
+ * Cost model:
+ *   - moving one cell horizontally or vertically: cost 1
+ *   - turning: extra cost of `TURN_COST` (encourages straight runs)
+ *
+ * The router falls back to the deterministic L-route when:
+ *   - no obstacles supplied (no benefit from search)
+ *   - search exceeds the node budget (large/tangled layouts)
+ *   - start or end cell is itself blocked
+ *
+ * This is intentionally a "good enough" router: it produces clean
+ * routes for the typical 10-50 component circuit. A production-grade
+ * router would use Steiner trees + bus channels — out of scope for V2.
+ */
+export function routeAStar(
+  start: Point,
+  end: Point,
+  obstacles: readonly Box[] = [],
+  opts: { maxNodes?: number; pad?: number } = {},
+): Point[] {
+  const maxNodes = opts.maxNodes ?? 4000;
+  const pad = opts.pad ?? 4;
+  if (obstacles.length === 0) return lRoute(start, end);
+
+  const startCell = { x: Math.round(start.x / GRID), y: Math.round(start.y / GRID) };
+  const endCell = { x: Math.round(end.x / GRID), y: Math.round(end.y / GRID) };
+
+  // Inflate obstacles once.
+  const inflated = obstacles.map((b) => inflate(b, pad));
+  const blocked = (cx: number, cy: number): boolean => {
+    const wx = cx * GRID;
+    const wy = cy * GRID;
+    for (const b of inflated) {
+      if (wx > b.x && wx < b.x + b.w && wy > b.y && wy < b.y + b.h) return true;
+    }
+    return false;
+  };
+
+  // If start or end is blocked, the search can't succeed; fall back.
+  if (blocked(startCell.x, startCell.y) || blocked(endCell.x, endCell.y)) {
+    return lRoute(start, end);
+  }
+
+  const TURN_COST = 2;
+  type Node = {
+    readonly cx: number;
+    readonly cy: number;
+    readonly dir: 'h' | 'v' | null; // incoming direction
+    readonly g: number;
+    readonly f: number;
+    readonly parent: Node | null;
+  };
+  const key = (cx: number, cy: number, dir: 'h' | 'v' | null): string =>
+    `${cx},${cy},${dir ?? '-'}`;
+  const heuristic = (cx: number, cy: number): number =>
+    Math.abs(cx - endCell.x) + Math.abs(cy - endCell.y);
+
+  const open: Node[] = [
+    {
+      cx: startCell.x,
+      cy: startCell.y,
+      dir: null,
+      g: 0,
+      f: heuristic(startCell.x, startCell.y),
+      parent: null,
+    },
+  ];
+  const closed = new Set<string>();
+  let visited = 0;
+
+  while (open.length > 0 && visited < maxNodes) {
+    // Pick the lowest-f node — small open set so linear scan is fine.
+    let bestIdx = 0;
+    for (let i = 1; i < open.length; i++) {
+      if (open[i]!.f < open[bestIdx]!.f) bestIdx = i;
+    }
+    const cur = open.splice(bestIdx, 1)[0]!;
+    visited++;
+    if (cur.cx === endCell.x && cur.cy === endCell.y) {
+      // Reconstruct + grid-to-world.
+      const cells: { cx: number; cy: number }[] = [];
+      let n: Node | null = cur;
+      while (n) {
+        cells.push({ cx: n.cx, cy: n.cy });
+        n = n.parent;
+      }
+      cells.reverse();
+      const path: Point[] = cells.map((c) => ({ x: c.cx * GRID, y: c.cy * GRID }));
+      // Replace start + end with exact pin coords so the visual matches
+      // the bbox, not the snapped cell.
+      path[0] = start;
+      path[path.length - 1] = end;
+      return dedupePath(path);
+    }
+    closed.add(key(cur.cx, cur.cy, cur.dir));
+    const neighbors: { dx: number; dy: number; dir: 'h' | 'v' }[] = [
+      { dx: 1, dy: 0, dir: 'h' },
+      { dx: -1, dy: 0, dir: 'h' },
+      { dx: 0, dy: 1, dir: 'v' },
+      { dx: 0, dy: -1, dir: 'v' },
+    ];
+    for (const nb of neighbors) {
+      const ncx = cur.cx + nb.dx;
+      const ncy = cur.cy + nb.dy;
+      if (blocked(ncx, ncy)) continue;
+      const k = key(ncx, ncy, nb.dir);
+      if (closed.has(k)) continue;
+      const turnPenalty = cur.dir && cur.dir !== nb.dir ? TURN_COST : 0;
+      const g = cur.g + 1 + turnPenalty;
+      const f = g + heuristic(ncx, ncy);
+      const existing = open.find(
+        (o) => o.cx === ncx && o.cy === ncy && o.dir === nb.dir,
+      );
+      if (existing && existing.g <= g) continue;
+      if (existing) {
+        // Replace by removing old + pushing new (simpler than mutating)
+        open.splice(open.indexOf(existing), 1);
+      }
+      open.push({ cx: ncx, cy: ncy, dir: nb.dir, g, f, parent: cur });
+    }
+  }
+  // Budget blown or no path: fall back to L-route (still better than nothing).
+  return lRoute(start, end);
+}

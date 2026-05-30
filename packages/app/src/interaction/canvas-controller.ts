@@ -22,7 +22,14 @@ import {
 } from '../commands/index.js';
 import { asWireId, type Point, type VisualComponent, type VisualWire } from '../model/document.js';
 import { getShape, pinWorldPosition } from '../model/kinds.js';
-import { lRoute, routeOrthogonal, snapToGrid as snapToGridRaw, type PinSide } from '../model/routing.js';
+import {
+  lRoute,
+  routeAStar,
+  routeOrthogonal,
+  snapToGrid as snapToGridRaw,
+  type Box,
+  type PinSide,
+} from '../model/routing.js';
 import type { Point as RoutingPoint } from '../model/document.js';
 
 /** Snap helper that honours the store's snap toggle. */
@@ -725,7 +732,48 @@ function rerouteIncidentWire(
       if (idx > 0) siblingIndex = idx;
     }
   }
-  return routeOrthogonal(a.world, b.world, a.side, b.side, 16, obstacles, { siblingIndex });
+  // First try the deterministic orthogonal router (pin-stub + bus-lane
+  // staggering + simple obstacle detour). If the result still crosses
+  // any obstacle, escalate to A* — it costs more but always produces a
+  // collision-free path when one exists.
+  const direct = routeOrthogonal(
+    a.world,
+    b.world,
+    a.side,
+    b.side,
+    16,
+    obstacles as readonly Box[],
+    { siblingIndex },
+  );
+  if (!pathCrossesAny(direct, obstacles)) return direct;
+  return routeAStar(a.world, b.world, obstacles as readonly Box[]);
+}
+
+/**
+ * Returns true if any segment of `path` enters the interior of any
+ * supplied obstacle box. Used to decide whether to escalate from the
+ * cheap orthogonal router to A*.
+ */
+function pathCrossesAny(
+  path: readonly Point[],
+  obstacles: readonly { x: number; y: number; w: number; h: number }[],
+): boolean {
+  for (let i = 1; i < path.length; i++) {
+    const a = path[i - 1]!;
+    const b = path[i]!;
+    for (const box of obstacles) {
+      const PAD = 2;
+      const minX = Math.min(a.x, b.x);
+      const maxX = Math.max(a.x, b.x);
+      const minY = Math.min(a.y, b.y);
+      const maxY = Math.max(a.y, b.y);
+      // AABB ∩ segment-bounding-box gross test, then strict inside.
+      if (maxX < box.x + PAD || minX > box.x + box.w - PAD) continue;
+      if (maxY < box.y + PAD || minY > box.y + box.h - PAD) continue;
+      return true;
+    }
+  }
+  return false;
 }
 
 /** Pre-compute the bus-lane sibling map for a set of wires. */

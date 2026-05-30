@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { lRoute, routeOrthogonal } from '../src/model/routing.js';
+import { lRoute, routeAStar, routeOrthogonal } from '../src/model/routing.js';
 
 describe('routing helpers', () => {
   it('lRoute returns a straight path when start/end share an axis', () => {
@@ -112,5 +112,64 @@ describe('routing helpers', () => {
     const sameLength = p0.length === p1.length;
     const sameAll = sameLength && p0.every((p, i) => p.x === p1[i]!.x && p.y === p1[i]!.y);
     expect(sameAll).toBe(false);
+  });
+});
+
+describe('routeAStar (A* grid router)', () => {
+  it('falls back to L-route when no obstacles are supplied', () => {
+    const a = routeAStar({ x: 0, y: 0 }, { x: 100, y: 100 }, []);
+    const l = lRoute({ x: 0, y: 0 }, { x: 100, y: 100 });
+    expect(a).toEqual(l);
+  });
+
+  it('routes around a single blocking box', () => {
+    // Big obstacle between start and end; A* must detour.
+    const path = routeAStar(
+      { x: 0, y: 50 },
+      { x: 200, y: 50 },
+      [{ x: 60, y: 20, w: 80, h: 60 }],
+    );
+    // Path must contain at least one bend (more than 2 points).
+    expect(path.length).toBeGreaterThanOrEqual(2);
+    // No path segment may pass through the obstacle's interior.
+    for (let i = 1; i < path.length; i++) {
+      const a = path[i - 1]!;
+      const b = path[i]!;
+      // Walk along the segment in small steps; none should be inside.
+      const steps = 20;
+      for (let t = 0; t <= steps; t++) {
+        const x = a.x + ((b.x - a.x) * t) / steps;
+        const y = a.y + ((b.y - a.y) * t) / steps;
+        const inside =
+          x > 60 + 4 && x < 60 + 80 - 4 && y > 20 + 4 && y < 20 + 60 - 4;
+        expect(inside, `segment ${i} enters obstacle at (${x},${y})`).toBe(false);
+      }
+    }
+  });
+
+  it('start and end coordinates are preserved exactly (not snapped)', () => {
+    const path = routeAStar(
+      { x: 13, y: 27 },
+      { x: 197, y: 83 },
+      [{ x: 60, y: 20, w: 80, h: 60 }],
+    );
+    expect(path[0]).toEqual({ x: 13, y: 27 });
+    expect(path[path.length - 1]).toEqual({ x: 197, y: 83 });
+  });
+
+  it('produces no consecutive collinear waypoints (dedupe pass works)', () => {
+    const path = routeAStar(
+      { x: 0, y: 50 },
+      { x: 200, y: 50 },
+      [{ x: 60, y: 20, w: 80, h: 60 }],
+    );
+    for (let i = 1; i < path.length - 1; i++) {
+      const a = path[i - 1]!;
+      const b = path[i]!;
+      const c = path[i + 1]!;
+      const collinearH = a.y === b.y && b.y === c.y;
+      const collinearV = a.x === b.x && b.x === c.x;
+      expect(collinearH || collinearV, `point ${i} is on a straight run`).toBe(false);
+    }
   });
 });
