@@ -205,6 +205,13 @@ export function Toolbar(): JSX.Element {
         ? { id, name: f.name, document: f.document }
         : { id, name: 'untitled', document: { components: [], wires: [] } };
     });
+    // Safari / Firefox don't ship showDirectoryPicker — fall through to
+    // the regular single-file JSON download in that case so the menu
+    // entry stays functional everywhere.
+    if (!isFolderApiAvailable()) {
+      exportFile();
+      return;
+    }
     try {
       const { folderName } = await saveProjectToFolder({
         name: 'Untitled',
@@ -343,6 +350,10 @@ export function Toolbar(): JSX.Element {
       <OverflowMenu
         items={[
           { label: t('toolbar.glossary'), onClick: openGlossary },
+          {
+            label: t('toolbar.welcome'),
+            onClick: () => window.dispatchEvent(new Event('gatecraft:open-welcome')),
+          },
           { label: t('toolbar.publishTab'), onClick: publishTab },
           { label: t('toolbar.saveLabel'), onClick: saveAsComposite },
           { label: t('toolbar.export'), onClick: exportFile },
@@ -379,11 +390,12 @@ export function Toolbar(): JSX.Element {
               useAppStore.getState().setSnapEnabled(!cur);
             },
           },
+          // Folder save is always exposed; if the FileSystem Access API
+          // isn't available it transparently falls back to a JSON download
+          // so Safari/Firefox users still get a working menu entry.
+          { label: t('toolbar.folderSave'), onClick: () => void saveToFolder() },
           ...(isFolderApiAvailable()
-            ? [
-                { label: t('toolbar.folderSave'), onClick: () => void saveToFolder() },
-                { label: t('toolbar.folderOpen'), onClick: () => void openFromFolder() },
-              ]
+            ? [{ label: t('toolbar.folderOpen'), onClick: () => void openFromFolder() }]
             : []),
         ]}
       />

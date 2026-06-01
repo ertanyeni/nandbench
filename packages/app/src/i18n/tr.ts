@@ -654,6 +654,7 @@ export const TR: Record<EnKey, string> = {
   'glossary.search': 'Ara…',
   'glossary.empty': 'Eşleşen terim yok.',
   'toolbar.glossary': 'sözlük',
+  'toolbar.welcome': 'karşılama ekranını göster',
   'toolbar.glossaryTooltip': 'Sözlüğü aç',
   'glossary.term.bit.name': 'Bit',
   'glossary.term.bit.desc':

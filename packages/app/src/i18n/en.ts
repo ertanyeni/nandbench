@@ -651,6 +651,7 @@ export const EN = {
   'glossary.search': 'Search…',
   'glossary.empty': 'No terms match.',
   'toolbar.glossary': 'glossary',
+  'toolbar.welcome': 'show welcome screen',
   'toolbar.glossaryTooltip': 'Open the glossary',
   'glossary.term.bit.name': 'Bit',
   'glossary.term.bit.desc':
