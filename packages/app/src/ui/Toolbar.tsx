@@ -8,7 +8,6 @@ import {
 } from '../model/folder-persistence.js';
 import { compileDocument } from '../model/netlist-sync.js';
 import { FORMAT_VERSION, fromJSON, toJSON } from '../model/persistence.js';
-import { exportVerilog } from '../model/verilog-export.js';
 import { asDocumentId, INITIAL_VIEWPORT, useAppStore, type FrozenDoc, type DocumentId } from '../model/store.js';
 import { SURFACE } from './palette-tokens.js';
 
@@ -186,17 +185,13 @@ export function Toolbar(): JSX.Element {
   };
 
   const exportAsVerilog = (): void => {
-    const s = useAppStore.getState();
-    const v = exportVerilog(s.document, s.library, sanitize(s.activeDocumentName || 'top'));
-    const blob = new Blob([v], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${sanitize(s.activeDocumentName || 'top')}.v`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // Modal asks for module name + optional testbench from a lesson
+    // challenge spec — replaces the old one-tap direct download.
+    window.dispatchEvent(new Event('gatecraft:open-verilog-export'));
+  };
+
+  const openCloud = (): void => {
+    window.dispatchEvent(new Event('gatecraft:open-cloud'));
   };
 
   const saveToFolder = async (): Promise<void> => {
@@ -353,6 +348,7 @@ export function Toolbar(): JSX.Element {
           { label: t('toolbar.export'), onClick: exportFile },
           { label: t('toolbar.import'), onClick: importFile },
           { label: t('toolbar.exportVerilog'), onClick: exportAsVerilog },
+          { label: t('toolbar.cloud'), onClick: openCloud },
           {
             label: t('toolbar.waveform'),
             onClick: () => window.dispatchEvent(new Event('gatecraft:open-waveform')),
@@ -395,10 +391,6 @@ export function Toolbar(): JSX.Element {
       <LocaleToggle locale={locale} setLocale={setLocale} />
     </div>
   );
-}
-
-function sanitize(s: string): string {
-  return s.replace(/[^a-zA-Z0-9_]/g, '_').replace(/^(\d)/, '_$1') || 'top';
 }
 
 function OverflowMenu({

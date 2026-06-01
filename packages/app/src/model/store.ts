@@ -233,6 +233,16 @@ interface AppState {
   renameDocument: (id: DocumentId, name: string) => void;
   /** Reorder tabs. Skipped if the new order doesn't reference the same set. */
   setDocumentOrder: (order: readonly DocumentId[]) => void;
+  /* ----- cloud sync ----- */
+  /** Cloud id of the current project (if it's been saved). */
+  cloudCircuitId: string | null;
+  /** Email of the signed-in user, or null if anonymous. */
+  cloudEmail: string | null;
+  /** Last time the cloud sync succeeded. Drives the "saved" badge. */
+  cloudLastSyncAt: number | null;
+  /** Set the cloud binding (after save/load) — also clears cloud-dirty marker. */
+  setCloudBinding: (binding: { id: string | null; lastSyncAt?: number | null }) => void;
+  setCloudEmail: (email: string | null) => void;
 }
 
 export const INITIAL_VIEWPORT: Viewport = { panX: -40, panY: -40, zoom: 1 };
@@ -265,6 +275,15 @@ export const useAppStore = create<AppState>((set, get) => ({
   locale: 'en',
   lastPlacedKind: null,
   publishedFlash: null,
+  cloudCircuitId: null,
+  cloudEmail: null,
+  cloudLastSyncAt: null,
+  setCloudBinding: ({ id, lastSyncAt }) =>
+    set({
+      cloudCircuitId: id,
+      cloudLastSyncAt: lastSyncAt === undefined ? Date.now() : lastSyncAt,
+    }),
+  setCloudEmail: (email) => set({ cloudEmail: email }),
   suggestionAnchor: null,
   simComponentStates: new Map(),
   paletteOpen: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,

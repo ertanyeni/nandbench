@@ -14,6 +14,9 @@ import { LessonsPanel } from './ui/LessonsPanel.js';
 import { Palette } from './ui/Palette.js';
 import { PersistenceBridge } from './ui/PersistenceBridge.js';
 import { QuickopenModal } from './ui/QuickopenModal.js';
+import { VerilogExportModal } from './ui/VerilogExportModal.js';
+import { CloudModal } from './ui/CloudModal.js';
+import { CloudSyncBridge } from './ui/CloudSyncBridge.js';
 import { SuggestionBridge } from './ui/SuggestionBridge.js';
 import { SuggestionTooltip } from './ui/SuggestionTooltip.js';
 import { StatusBar } from './ui/StatusBar.js';
@@ -68,6 +71,7 @@ export function App(): JSX.Element {
   return (
     <div style={{ position: 'relative', height: '100vh', width: '100vw' }}>
       <PersistenceBridge />
+      <CloudSyncBridge />
       <SimBridge />
       <SuggestionBridge />
       <CircuitCanvas />
@@ -85,6 +89,8 @@ export function App(): JSX.Element {
       <WaveformPanel />
       <ContextMenu />
       <QuickopenModal />
+      <VerilogExportModal />
+      <CloudModal />
       <SuggestionTooltip />
       <HistoryPanel />
       <LlmSettingsModal />
@@ -100,7 +106,7 @@ export function App(): JSX.Element {
  * state (sim, history, viewport) is reset — only the document content
  * survives a session restart.
  */
-function restoreProject(
+export function restoreProject(
   library: ReturnType<typeof useAppStore.getState>['library'],
   locale: ReturnType<typeof useAppStore.getState>['locale'],
   project: NonNullable<ReturnType<typeof loadFromStorage>>['project'],
