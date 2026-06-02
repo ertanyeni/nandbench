@@ -122,6 +122,31 @@ export function Inspector(): JSX.Element | null {
   return (
     <Frame>
       <Header sub={subhead}>{headerText}</Header>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 10px 6px' }}>
+        <button
+          onClick={() =>
+            window.dispatchEvent(
+              new CustomEvent('gatecraft:explain', {
+                detail: { componentId: component.id },
+              }),
+            )
+          }
+          title={t('explain.tooltip')}
+          style={{
+            background: 'transparent',
+            border: `1px solid ${SURFACE.borderColor}`,
+            color: '#a78bfa',
+            borderRadius: 5,
+            padding: '3px 9px',
+            cursor: 'pointer',
+            font: 'inherit',
+            fontSize: 11,
+            fontWeight: 700,
+          }}
+        >
+          ✦ {t('explain.button')}
+        </button>
+      </div>
       {help ? <HelpBlock description={help.description} cheats={help.cheats} /> : null}
       <InspectorTabs
         tabs={[

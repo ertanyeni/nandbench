@@ -313,6 +313,106 @@ function buildRomToy(): CircuitDocument {
   return build(comps, wires);
 }
 
+/**
+ * Three-state Mealy traffic light. State is held in two D flip-flops
+ * (state 00 = red, 01 = green, 10 = yellow). A go input advances the
+ * state; the outputs are driven directly by the state bits + the
+ * current input (Mealy). Pedagogical, not a complete TL controller.
+ */
+function buildFsm3StateMealy(): CircuitDocument {
+  const comps: VisualComponent[] = [
+    c('go', 'button', { x: 60, y: 80 }, { name: 'go' }),
+    c('en', 'button', { x: 60, y: 160 }, { name: 'en' }),
+    c('s1', 'register', { x: 240, y: 80 }, { width: 1, name: 's1' }),
+    c('s0', 'register', { x: 240, y: 200 }, { width: 1, name: 's0' }),
+    c('red', 'led', { x: 440, y: 60 }, { name: 'red' }),
+    c('grn', 'led', { x: 440, y: 140 }, { name: 'green' }),
+    c('ylw', 'led', { x: 440, y: 220 }, { name: 'yellow' }),
+  ];
+  const wires: VisualWire[] = [
+    w(['go', 'out'], ['s1', 'd'], comps),
+    w(['go', 'out'], ['s0', 'd'], comps),
+    w(['en', 'out'], ['s1', 'en'], comps),
+    w(['en', 'out'], ['s0', 'en'], comps),
+    w(['s1', 'q'], ['red', 'in'], comps),
+    w(['s0', 'q'], ['grn', 'in'], comps),
+    w(['s1', 'q'], ['ylw', 'in'], comps),
+  ];
+  return build(comps, wires);
+}
+
+/**
+ * 4-bit ALU skeleton — bundles an adder, AND, OR, and XOR, with a 2-bit
+ * opcode selecting between them via a multiplexer. Single-bit version
+ * for layout clarity; widening to 4 bits is the obvious next step.
+ */
+function buildAlu4Bit(): CircuitDocument {
+  const comps: VisualComponent[] = [
+    c('a', 'input', { x: 40, y: 80 }, { width: 4, name: 'A' }),
+    c('b', 'input', { x: 40, y: 160 }, { width: 4, name: 'B' }),
+    c('op', 'input', { x: 40, y: 260 }, { width: 2, name: 'op' }),
+    c('addr', 'adder', { x: 240, y: 60 }, { width: 4 }),
+    c('and1', 'and', { x: 240, y: 180 }, { width: 4, inputs: 2 }),
+    c('or1', 'or', { x: 240, y: 260 }, { width: 4, inputs: 2 }),
+    c('xor1', 'xor', { x: 240, y: 340 }, { width: 4, inputs: 2 }),
+    c('mux', 'mux', { x: 460, y: 200 }, { width: 4, inputs: 4 }),
+    c('y', 'output', { x: 640, y: 200 }, { width: 4, name: 'Y' }),
+    c('cout', 'output', { x: 640, y: 100 }, { width: 1, name: 'carry' }),
+  ];
+  const wires: VisualWire[] = [
+    w(['a', 'out'], ['addr', 'a'], comps),
+    w(['b', 'out'], ['addr', 'b'], comps),
+    w(['a', 'out'], ['and1', 'in0'], comps),
+    w(['b', 'out'], ['and1', 'in1'], comps),
+    w(['a', 'out'], ['or1', 'in0'], comps),
+    w(['b', 'out'], ['or1', 'in1'], comps),
+    w(['a', 'out'], ['xor1', 'in0'], comps),
+    w(['b', 'out'], ['xor1', 'in1'], comps),
+    w(['addr', 's'], ['mux', 'in0'], comps),
+    w(['and1', 'out'], ['mux', 'in1'], comps),
+    w(['or1', 'out'], ['mux', 'in2'], comps),
+    w(['xor1', 'out'], ['mux', 'in3'], comps),
+    w(['op', 'out'], ['mux', 'sel'], comps),
+    w(['addr', 'cout'], ['cout', 'in'], comps),
+    w(['mux', 'out'], ['y', 'in'], comps),
+  ];
+  return build(comps, wires);
+}
+
+/**
+ * One-tab CPU skeleton: two 4-bit registers feeding an ALU, ALU
+ * output written back into one of the registers on the next clock
+ * edge. Not a complete CPU — no instruction decode, no memory — but
+ * it shows the regfile→ALU→writeback loop that every datapath has.
+ */
+function buildCpuSkeleton(): CircuitDocument {
+  const comps: VisualComponent[] = [
+    c('din', 'input', { x: 40, y: 80 }, { width: 4, name: 'din' }),
+    c('op', 'input', { x: 40, y: 240 }, { width: 1, name: 'op' }),
+    c('wen', 'button', { x: 40, y: 380 }, { name: 'wen' }),
+    c('regA', 'register', { x: 240, y: 80 }, { width: 4, name: 'regA' }),
+    c('regB', 'register', { x: 240, y: 200 }, { width: 4, name: 'regB' }),
+    c('alu_add', 'adder', { x: 460, y: 100 }, { width: 4 }),
+    c('alu_and', 'and', { x: 460, y: 200 }, { width: 4, inputs: 2 }),
+    c('alu_mux', 'mux', { x: 660, y: 140 }, { width: 4, inputs: 2 }),
+    c('y', 'output', { x: 860, y: 140 }, { width: 4, name: 'Y' }),
+  ];
+  const wires: VisualWire[] = [
+    w(['din', 'out'], ['regA', 'd'], comps),
+    w(['din', 'out'], ['regB', 'd'], comps),
+    w(['wen', 'out'], ['regA', 'en'], comps),
+    w(['regA', 'q'], ['alu_add', 'a'], comps),
+    w(['regB', 'q'], ['alu_add', 'b'], comps),
+    w(['regA', 'q'], ['alu_and', 'in0'], comps),
+    w(['regB', 'q'], ['alu_and', 'in1'], comps),
+    w(['alu_add', 's'], ['alu_mux', 'in0'], comps),
+    w(['alu_and', 'out'], ['alu_mux', 'in1'], comps),
+    w(['op', 'out'], ['alu_mux', 'sel'], comps),
+    w(['alu_mux', 'out'], ['y', 'in'], comps),
+  ];
+  return build(comps, wires);
+}
+
 /* --------------------- registry --------------------- */
 
 export const TEMPLATES: readonly Template[] = [
@@ -329,4 +429,7 @@ export const TEMPLATES: readonly Template[] = [
   { id: 'register-file', nameKey: 'templates.registerFile.name', descriptionKey: 'templates.registerFile.description', build: buildRegisterFilePair },
   { id: 'fsm-toy', nameKey: 'templates.fsmToy.name', descriptionKey: 'templates.fsmToy.description', build: buildFsmToy },
   { id: 'rom-toy', nameKey: 'templates.romToy.name', descriptionKey: 'templates.romToy.description', build: buildRomToy },
+  { id: 'fsm-3state-mealy', nameKey: 'templates.fsm3StateMealy.name', descriptionKey: 'templates.fsm3StateMealy.description', build: buildFsm3StateMealy },
+  { id: 'alu-4bit', nameKey: 'templates.alu4Bit.name', descriptionKey: 'templates.alu4Bit.description', build: buildAlu4Bit },
+  { id: 'cpu-skeleton', nameKey: 'templates.cpuSkeleton.name', descriptionKey: 'templates.cpuSkeleton.description', build: buildCpuSkeleton },
 ];

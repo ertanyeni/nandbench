@@ -43,6 +43,9 @@ const ExportModal = lazy(() =>
 const ShortcutsModal = lazy(() =>
   import('./ui/ShortcutsModal.js').then((m) => ({ default: m.ShortcutsModal })),
 );
+const ExplainModal = lazy(() =>
+  import('./ui/ExplainModal.js').then((m) => ({ default: m.ExplainModal })),
+);
 const CloudModal = lazy(() =>
   import('./ui/CloudModal.js').then((m) => ({ default: m.CloudModal })),
 );
@@ -127,6 +130,7 @@ export function App(): JSX.Element {
         <ExportModal />
         <CloudModal />
         <ShortcutsModal />
+        <ExplainModal />
         <HistoryPanel />
         <LlmSettingsModal />
         <TourOverlay />

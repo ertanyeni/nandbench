@@ -142,6 +142,14 @@ export const EN = {
     'The selected lesson must have a challenge spec. The testbench drives every truth-table case and reports pass/fail counts.',
   'verilog.cancel': 'Cancel',
   'verilog.download': 'Download',
+  /* Explain (AI) */
+  'explain.button': 'Explain',
+  'explain.tooltip': 'Get an AI/rule-based explanation of this component',
+  'explain.title': 'Explain',
+  'explain.thinking': 'Thinking…',
+  'explain.viaLlm': 'via your configured LLM',
+  'explain.viaRule': 'rule-based — no LLM configured',
+  'explain.configureLlm': 'Configure an LLM for richer explanations…',
   /* Shortcuts cheatsheet */
   'toolbar.shortcuts': 'keyboard shortcuts',
   'shortcuts.title': 'Keyboard shortcuts',
@@ -594,6 +602,15 @@ export const EN = {
     'Two cross-coupled NOR latches — flip between states using buttons.',
   'templates.romToy.name': 'ROM toy',
   'templates.romToy.description': '2-bit address decoded to one of four constant outputs.',
+  'templates.fsm3StateMealy.name': '3-state FSM (Mealy)',
+  'templates.fsm3StateMealy.description':
+    'Two D flip-flops hold the state (red / green / yellow). The "go" button advances the FSM on every clock edge.',
+  'templates.alu4Bit.name': '4-bit ALU',
+  'templates.alu4Bit.description':
+    'Two 4-bit operands + a 2-bit opcode select add / and / or / xor. Drives a 4-bit result and a carry-out.',
+  'templates.cpuSkeleton.name': 'CPU skeleton',
+  'templates.cpuSkeleton.description':
+    'Two 4-bit registers feed an ALU; the opcode picks add or and, and writeback can target either register. The minimum useful datapath loop.',
 
   /* Welcome / first-run */
   'welcome.title': 'Welcome to nandbench',

@@ -145,6 +145,14 @@ export const TR: Record<EnKey, string> = {
     'Seçilen dersin challenge spec\'i olmalı. Testbench her doğruluk-tablosu vakasını çalıştırır ve pass/fail sayar.',
   'verilog.cancel': 'İptal',
   'verilog.download': 'İndir',
+  /* Açıkla (YZ) */
+  'explain.button': 'Açıkla',
+  'explain.tooltip': 'Bu bileşen için YZ/kural-tabanlı açıklama al',
+  'explain.title': 'Açıkla',
+  'explain.thinking': 'Düşünüyor…',
+  'explain.viaLlm': 'yapılandırılmış LLM ile',
+  'explain.viaRule': 'kural tabanlı — LLM yapılandırılmadı',
+  'explain.configureLlm': 'Daha zengin açıklama için bir LLM yapılandır…',
   /* Kısayol kartı */
   'toolbar.shortcuts': 'klavye kısayolları',
   'shortcuts.title': 'Klavye kısayolları',
@@ -596,6 +604,15 @@ export const TR: Record<EnKey, string> = {
     'Çapraz bağlı NOR mandallarıyla iki durum arasında butonla geç.',
   'templates.romToy.name': 'ROM oyuncağı',
   'templates.romToy.description': '2-bit adres dört sabit çıkıştan birini açar.',
+  'templates.fsm3StateMealy.name': '3 durumlu FSM (Mealy)',
+  'templates.fsm3StateMealy.description':
+    'İki D flip-flop durumu tutar (kırmızı / yeşil / sarı). "go" butonu her saat kenarında FSM\'i ilerletir.',
+  'templates.alu4Bit.name': '4-bit ALU',
+  'templates.alu4Bit.description':
+    'İki 4-bit operand + 2-bit opcode add / and / or / xor seçer. 4-bit sonuç ve bir carry-out üretir.',
+  'templates.cpuSkeleton.name': 'CPU iskeleti',
+  'templates.cpuSkeleton.description':
+    'İki 4-bit yazmaç ALU\'yu besler; opcode add ya da and seçer, writeback iki yazmacın birine yazar. En küçük anlamlı datapath döngüsü.',
 
   /* Welcome / first-run */
   'welcome.title': 'nandbench\'e hoş geldin',
