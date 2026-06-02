@@ -21,11 +21,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('react-dom') || id.includes('/react/')) return 'vendor-react';
-            if (id.includes('zustand')) return 'vendor-state';
-            return 'vendor';
-          }
+          // Every node_modules dependency ships in a single chunk.
+          // Splitting React out is tempting but fragile: any other
+          // vendor (zustand etc.) that transitively imports React can
+          // load before vendor-react and hit "useState is undefined".
+          // Keep app-level chunks (lessons, templates, engine) the
+          // ones that matter — they're the heavy parts.
+          if (id.includes('node_modules')) return 'vendor';
           if (id.includes('packages/engine/')) return 'engine';
           if (
             id.includes('/src/lessons.ts') ||
