@@ -1,0 +1,27 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/deploy/gatecraft
+            git fetch origin main
+            git reset --hard origin/main
+            cd infra
+            docker compose build
+            docker compose up -d --force-recreate
+            # gatecraft-build exits after copying assets; that's expected.
+            # Wait for it to actually finish so the dist swap is atomic
+            # before this job completes.
+            docker wait gatecraft-build || true
+            docker image prune -f
