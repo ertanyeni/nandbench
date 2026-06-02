@@ -2,6 +2,7 @@ import type { ComponentId, SignalValue } from '@gatecraft/engine';
 import { useEffect, useRef, useState } from 'react';
 import { t } from '../i18n/index.js';
 import { useAppStore } from '../model/store.js';
+import { exportVCD, type VcdTrace } from '../model/vcd-export.js';
 import type { SimClient } from '../workers/sim-client.js';
 import { SURFACE } from './palette-tokens.js';
 
@@ -55,9 +56,31 @@ export function WaveformPanel(): JSX.Element | null {
       if (open && ev.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', onKey);
+    // Export modal asks us to dump the recorded traces as VCD.
+    const onVcdExport = (ev: Event): void => {
+      const detail = (ev as CustomEvent<{ filename?: string }>).detail ?? {};
+      const filename = detail.filename ?? 'waveform.vcd';
+      const tracesOut: VcdTrace[] = [...traces.current.values()].map((tr) => ({
+        label: tr.label,
+        width: tr.samples[0]?.width ?? 1,
+        samples: tr.samples.map((s) => ({ t: s.t, bits: s.bits, x: s.x, z: s.z })),
+      }));
+      const vcd = exportVCD({ traces: tracesOut });
+      const blob = new Blob([vcd], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+    window.addEventListener('gatecraft:waveform-export-vcd', onVcdExport);
     return () => {
       window.removeEventListener('gatecraft:open-waveform', onOpen);
       window.removeEventListener('keydown', onKey);
+      window.removeEventListener('gatecraft:waveform-export-vcd', onVcdExport);
     };
   }, [open]);
 

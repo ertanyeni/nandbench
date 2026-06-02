@@ -373,6 +373,7 @@ export function Toolbar(): JSX.Element {
           { label: t('toolbar.saveLabel'), onClick: saveAsComposite },
           { label: t('toolbar.export'), onClick: exportFile },
           { label: t('toolbar.import'), onClick: importFile },
+          { label: t('toolbar.export.long'), onClick: () => window.dispatchEvent(new Event('gatecraft:open-export')) },
           { label: t('toolbar.exportVerilog'), onClick: exportAsVerilog },
           { label: t('toolbar.cloud'), onClick: openCloud },
           {

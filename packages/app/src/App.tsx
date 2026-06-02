@@ -37,8 +37,8 @@ const WaveformPanel = lazy(() =>
 const LlmSettingsModal = lazy(() =>
   import('./ui/LlmSettingsModal.js').then((m) => ({ default: m.LlmSettingsModal })),
 );
-const VerilogExportModal = lazy(() =>
-  import('./ui/VerilogExportModal.js').then((m) => ({ default: m.VerilogExportModal })),
+const ExportModal = lazy(() =>
+  import('./ui/ExportModal.js').then((m) => ({ default: m.ExportModal })),
 );
 const CloudModal = lazy(() =>
   import('./ui/CloudModal.js').then((m) => ({ default: m.CloudModal })),
@@ -121,7 +121,7 @@ export function App(): JSX.Element {
         <GlossaryPanel />
         <AssistantPanel />
         <WaveformPanel />
-        <VerilogExportModal />
+        <ExportModal />
         <CloudModal />
         <HistoryPanel />
         <LlmSettingsModal />
