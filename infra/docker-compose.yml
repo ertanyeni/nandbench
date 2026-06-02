@@ -1,0 +1,51 @@
+# Production stack for nandbench.ertanyeni.com + api.nandbench.ertanyeni.com.
+#
+# Services:
+#   - gatecraft-build: builds the React app and writes /dist into the
+#     shared `gatecraft_dist` named volume on every start, then exits.
+#     The shared Caddy container reads from that volume.
+#   - gatecraft-api: long-running Hono server. Reads DATABASE_URL +
+#     PUBLIC_FRONTEND_URL + PUBLIC_API_URL + CORS_ORIGINS from
+#     .env.production (loaded via env_file). Attached to both the
+#     shared `proxy` network (so Caddy can reach it) and `database`
+#     (so it can reach the shared Postgres container).
+#
+# Caddy is NOT redeployed from here — its config lives in
+# /home/deploy/infrastructure/Caddyfile and gets two new entries
+# pointed at this volume + this container.
+
+services:
+  gatecraft-build:
+    build:
+      context: ..
+      dockerfile: packages/app/Dockerfile
+      args:
+        VITE_GATECRAFT_API: ${PUBLIC_API_URL:-https://api.nandbench.ertanyeni.com}
+    container_name: gatecraft-build
+    volumes:
+      - gatecraft_dist:/dist
+    restart: 'no'
+
+  gatecraft-api:
+    build:
+      context: ..
+      dockerfile: packages/api/Dockerfile
+    container_name: gatecraft-api
+    env_file:
+      - .env.production
+    networks:
+      - proxy
+      - database
+    restart: unless-stopped
+
+volumes:
+  gatecraft_dist:
+    name: gatecraft_dist
+
+networks:
+  proxy:
+    external: true
+    name: proxy
+  database:
+    external: true
+    name: database
