@@ -553,7 +553,7 @@ export const EN = {
   'welcome.shortcut.tour': 'Restart tour',
   'welcome.shortcut.rotate': 'Rotate selection',
   'welcome.cta.learn': 'Start learning',
-  'welcome.cta.learnSub': 'Step through 6 short lessons that build up from a single bit to a working counter.',
+  'welcome.cta.learnSub': '47 lessons + a 90-term glossary, from a single bit up to a small CPU datapath. Pick where to start.',
   'welcome.cta.templates': 'Open a template',
   'welcome.cta.templatesSub': 'Browse ready-made circuits — half-adder, SR latch, 4-bit counter, …',
   'welcome.cta.empty': 'Start blank',
@@ -1031,7 +1031,7 @@ export const EN = {
   'tour.step4.title': 'Run the simulation',
   'tour.step4.body': 'Press Play in the toolbar. Inputs you click toggle 0↔1, and downstream wires light up.',
   'tour.step5.title': 'Need help?',
-  'tour.step5.body': 'The "? dersler" button opens 6 short lessons + a glossary. You can re-open the tour from there.',
+  'tour.step5.body': 'The Lessons button on the left edge opens 47 lessons and a 90-term glossary. You can re-open this tour from the toolbar overflow menu any time.',
   'welcome.cta.tour': 'Take the tour',
   'welcome.cta.tourSub': 'A 5-step walkthrough of the canvas, the palette, and how to run a simulation.',
 

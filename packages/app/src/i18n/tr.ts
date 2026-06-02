@@ -555,7 +555,7 @@ export const TR: Record<EnKey, string> = {
   'welcome.shortcut.tour': 'Tur tekrar başlat',
   'welcome.shortcut.rotate': 'Seçili\'yi döndür',
   'welcome.cta.learn': 'Öğrenmeye başla',
-  'welcome.cta.learnSub': 'Tek bir bit\'ten çalışan bir sayaca uzanan 6 kısa derste adım adım ilerle.',
+  'welcome.cta.learnSub': '47 ders + 90 terimlik sözlük; tek bitten küçük bir CPU datapath\'e kadar. Nereden başlayacağını seç.',
   'welcome.cta.templates': 'Şablon aç',
   'welcome.cta.templatesSub': 'Hazır devrelere göz at — yarım toplayıcı, SR mandalı, 4-bit sayaç, …',
   'welcome.cta.empty': 'Boş başla',
@@ -1038,7 +1038,7 @@ export const TR: Record<EnKey, string> = {
     'Toolbar\'da Play\'e bas. Tıkladığın girişler 0↔1 arasında geçiş yapar, alt akış kabloları yanar.',
   'tour.step5.title': 'Yardım?',
   'tour.step5.body':
-    '"? dersler" butonu 6 kısa ders + bir sözlük açar. Turu oradan tekrar başlatabilirsin.',
+    'Sol kenardaki Dersler butonu 47 ders ve 90 terimlik sözlüğü açar. Turu istediğin zaman toolbar overflow menüsünden tekrar başlatabilirsin.',
   'welcome.cta.tour': 'Turu başlat',
   'welcome.cta.tourSub':
     'Canvas, palette ve simülasyonu nasıl koşturursun — 5 adımlık rehber.',

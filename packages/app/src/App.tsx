@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { fullAdderDocument } from './fixtures/full-adder.js';
 import { setActiveLocale } from './i18n/index.js';
 import { loadFromStorage } from './model/persistence.js';
@@ -8,30 +8,56 @@ import { getShape } from './model/kinds.js';
 import { INITIAL_VIEWPORT } from './model/store.js';
 import { CircuitCanvas } from './ui/CircuitCanvas.js';
 import { DiagnosticsPanel } from './ui/DiagnosticsPanel.js';
-import { GlossaryPanel } from './ui/GlossaryPanel.js';
 import { Inspector } from './ui/Inspector.js';
-import { LessonsPanel } from './ui/LessonsPanel.js';
 import { Palette } from './ui/Palette.js';
 import { PersistenceBridge } from './ui/PersistenceBridge.js';
 import { QuickopenModal } from './ui/QuickopenModal.js';
-import { VerilogExportModal } from './ui/VerilogExportModal.js';
-import { CloudModal } from './ui/CloudModal.js';
 import { CloudSyncBridge } from './ui/CloudSyncBridge.js';
 import { SuggestionBridge } from './ui/SuggestionBridge.js';
 import { SuggestionTooltip } from './ui/SuggestionTooltip.js';
 import { StatusBar } from './ui/StatusBar.js';
 import { ActivityBar } from './ui/ActivityBar.js';
-import { AssistantPanel } from './ui/AssistantPanel.js';
 import { ContextMenu } from './ui/ContextMenu.js';
-import { HistoryPanel } from './ui/HistoryPanel.js';
-import { LlmSettingsModal } from './ui/LlmSettingsModal.js';
 import { TabBar } from './ui/TabBar.js';
-import { WaveformPanel } from './ui/WaveformPanel.js';
-import { TemplatePicker } from './ui/TemplatePicker.js';
 import { Toolbar } from './ui/Toolbar.js';
-import { TourOverlay } from './ui/TourOverlay.js';
-import { WelcomeModal } from './ui/WelcomeModal.js';
 import { SimBridge } from './workers/SimBridge.js';
+
+// Lazy-loaded surfaces — every panel below is event-driven (opens via
+// a window event) so it can ship in its own chunk and only download
+// on first use. Initial bundle stays focused on the editor shell.
+const LessonsPanel = lazy(() =>
+  import('./ui/LessonsPanel.js').then((m) => ({ default: m.LessonsPanel })),
+);
+const GlossaryPanel = lazy(() =>
+  import('./ui/GlossaryPanel.js').then((m) => ({ default: m.GlossaryPanel })),
+);
+const WaveformPanel = lazy(() =>
+  import('./ui/WaveformPanel.js').then((m) => ({ default: m.WaveformPanel })),
+);
+const LlmSettingsModal = lazy(() =>
+  import('./ui/LlmSettingsModal.js').then((m) => ({ default: m.LlmSettingsModal })),
+);
+const VerilogExportModal = lazy(() =>
+  import('./ui/VerilogExportModal.js').then((m) => ({ default: m.VerilogExportModal })),
+);
+const CloudModal = lazy(() =>
+  import('./ui/CloudModal.js').then((m) => ({ default: m.CloudModal })),
+);
+const TemplatePicker = lazy(() =>
+  import('./ui/TemplatePicker.js').then((m) => ({ default: m.TemplatePicker })),
+);
+const HistoryPanel = lazy(() =>
+  import('./ui/HistoryPanel.js').then((m) => ({ default: m.HistoryPanel })),
+);
+const TourOverlay = lazy(() =>
+  import('./ui/TourOverlay.js').then((m) => ({ default: m.TourOverlay })),
+);
+const WelcomeModal = lazy(() =>
+  import('./ui/WelcomeModal.js').then((m) => ({ default: m.WelcomeModal })),
+);
+const AssistantPanel = lazy(() =>
+  import('./ui/AssistantPanel.js').then((m) => ({ default: m.AssistantPanel })),
+);
 
 export function App(): JSX.Element {
   const loadDocument = useAppStore((s) => s.loadDocument);
@@ -82,20 +108,26 @@ export function App(): JSX.Element {
       <Inspector />
       <DiagnosticsPanel />
       <StatusBar />
-      <TemplatePicker />
-      <LessonsPanel />
-      <GlossaryPanel />
-      <AssistantPanel />
-      <WaveformPanel />
       <ContextMenu />
       <QuickopenModal />
-      <VerilogExportModal />
-      <CloudModal />
       <SuggestionTooltip />
-      <HistoryPanel />
-      <LlmSettingsModal />
-      <TourOverlay />
-      <WelcomeModal />
+      {/* Lazy-loaded surfaces — each rides its own chunk, fetched on
+          first open of the corresponding panel/modal. Suspense fallback
+          is `null` because the panels are event-driven and invisible
+          when closed; a spinner would flash on first open. */}
+      <Suspense fallback={null}>
+        <TemplatePicker />
+        <LessonsPanel />
+        <GlossaryPanel />
+        <AssistantPanel />
+        <WaveformPanel />
+        <VerilogExportModal />
+        <CloudModal />
+        <HistoryPanel />
+        <LlmSettingsModal />
+        <TourOverlay />
+        <WelcomeModal />
+      </Suspense>
     </div>
   );
 }

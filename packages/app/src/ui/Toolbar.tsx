@@ -9,6 +9,7 @@ import {
 import { compileDocument } from '../model/netlist-sync.js';
 import { FORMAT_VERSION, fromJSON, toJSON } from '../model/persistence.js';
 import { asDocumentId, INITIAL_VIEWPORT, useAppStore, type FrozenDoc, type DocumentId } from '../model/store.js';
+import { BrandMark } from './BrandLogo.js';
 import { SURFACE } from './palette-tokens.js';
 
 export function Toolbar(): JSX.Element {
@@ -288,7 +289,7 @@ export function Toolbar(): JSX.Element {
   return (
     <div
       role="toolbar"
-      aria-label="gatecraft toolbar"
+      aria-label="nandbench toolbar"
       style={{
         position: 'absolute',
         top: 0,
@@ -304,6 +305,20 @@ export function Toolbar(): JSX.Element {
         alignItems: 'center',
       }}
     >
+      <a
+        href="/"
+        aria-label="nandbench home"
+        title="nandbench"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          marginRight: 6,
+          textDecoration: 'none',
+        }}
+      >
+        <BrandMark logoSize={20} fontSize={14} />
+      </a>
+      <Divider />
       <Btn onClick={undo} label="↶" title={t('toolbar.undo')} disabled={historyLen === 0} />
       <Btn onClick={redo} label="↷" title={t('toolbar.redo')} disabled={redoLen === 0} />
       <Divider />

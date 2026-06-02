@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { t } from '../i18n/index.js';
 import { useAppStore } from '../model/store.js';
+import { BrandLogo } from './BrandLogo.js';
 import { ModalCloseButton } from './ModalCloseButton.js';
 
 /**
@@ -97,12 +98,45 @@ export function WelcomeModal(): JSX.Element | null {
         }}
       >
         <ModalCloseButton onClick={dismiss} />
-        <div>
-          <div style={{ fontSize: 20, fontWeight: 700, color: '#e6e6e6' }}>
-            {t('welcome.title')}
-          </div>
-          <div style={{ fontSize: 13, color: '#9aa4b2', marginTop: 6, lineHeight: 1.55 }}>
-            {t('welcome.subtitle')}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+          <BrandLogo size={84} style={{ flex: '0 0 auto' }} />
+          <div style={{ minWidth: 0 }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'baseline',
+                gap: 10,
+                flexWrap: 'wrap',
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 22,
+                  fontWeight: 800,
+                  letterSpacing: '-0.01em',
+                  lineHeight: 1.1,
+                }}
+              >
+                <span style={{ color: '#60a5fa' }}>nand</span>
+                <span style={{ color: '#eef1f6' }}>bench</span>
+              </span>
+              <span
+                style={{
+                  fontSize: 11,
+                  color: '#7c8696',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.12em',
+                }}
+              >
+                live logic simulator
+              </span>
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: '#e6e6e6', marginTop: 10 }}>
+              {t('welcome.title')}
+            </div>
+            <div style={{ fontSize: 13, color: '#9aa4b2', marginTop: 6, lineHeight: 1.55 }}>
+              {t('welcome.subtitle')}
+            </div>
           </div>
         </div>
         <LayoutGuide />
