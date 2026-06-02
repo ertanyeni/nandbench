@@ -11,9 +11,11 @@
  * Token lifetime: 15 minutes. Session lifetime: 60 days.
  */
 
-import { Hono } from 'hono';
+import { Hono, type Context } from 'hono';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { query } from '../db.js';
+import { sendMagicLink } from '../mailer.js';
+import { clientIp, rateLimit } from '../rate-limit.js';
 import { SESSION_COOKIE, randomToken } from '../session.js';
 
 export const auth = new Hono();
@@ -22,9 +24,38 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const TOKEN_TTL_MIN = 15;
 const SESSION_TTL_DAYS = 60;
 
-auth.post('/request', async (c) => {
-  const body = (await c.req.json().catch(() => null)) as { email?: string } | null;
-  const email = body?.email?.trim().toLowerCase();
+// Two stacked limiters: 5 requests / minute / IP and 3 requests / hour
+// / email. The IP limit blunts spray attacks; the email limit blunts
+// targeted mailbomb. Email is parsed once and cached on the context.
+const ipLimit = rateLimit({
+  keyFor: (c) => `auth:ip:${clientIp(c)}`,
+  max: 5,
+  windowMs: 60_000,
+});
+const emailLimit = rateLimit({
+  keyFor: async (c) => {
+    const email = await peekEmail(c);
+    return email ? `auth:email:${email}` : null;
+  },
+  max: 3,
+  windowMs: 60 * 60 * 1000,
+});
+
+// Hono caches the parsed body on the request, so calling `c.req.json()`
+// from both the limiter and the handler reads it once. We still wrap
+// in try/catch because malformed bodies should not throw out of
+// middleware.
+async function peekEmail(c: Context): Promise<string | null> {
+  try {
+    const body = (await c.req.json()) as { email?: string };
+    return body?.email?.trim().toLowerCase() ?? null;
+  } catch {
+    return null;
+  }
+}
+
+auth.post('/request', ipLimit, emailLimit, async (c) => {
+  const email = await peekEmail(c);
   if (!email || !EMAIL_RE.test(email)) return c.json({ error: 'invalid email' }, 400);
 
   // Upsert user.
@@ -43,10 +74,16 @@ auth.post('/request', async (c) => {
 
   const apiBase = process.env.PUBLIC_API_URL ?? `http://localhost:${process.env.PORT ?? 4555}`;
   const link = `${apiBase}/auth/verify?token=${token}`;
-  // In production, this is where we'd send the email. For dev we log it
-  // so the developer can click it from the terminal.
-  // eslint-disable-next-line no-console
-  console.log(`[gatecraft-api] magic link for ${email}: ${link}`);
+  try {
+    await sendMagicLink({ to: email, link });
+  } catch (err) {
+    // Mail delivery failed — surface a 503 so the client can show a
+    // helpful message rather than silently pretending the link was
+    // sent.
+    // eslint-disable-next-line no-console
+    console.error('[gatecraft-api] sendMagicLink failed', err);
+    return c.json({ error: 'mail-failed' }, 503);
+  }
   return c.json({ ok: true });
 });
 

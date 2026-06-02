@@ -7,6 +7,7 @@
 
 import { Hono } from 'hono';
 import { query } from '../db.js';
+import { clientIp, rateLimit } from '../rate-limit.js';
 import { currentEmail, randomToken } from '../session.js';
 
 interface CircuitRow {
@@ -22,8 +23,21 @@ interface CircuitRow {
 
 export const circuits = new Hono();
 
+// Anonymous spam happens at create time; once a row exists, auto-sync
+// hits PATCH frequently — so patch has a higher ceiling.
+const createLimit = rateLimit({
+  keyFor: (c) => `circuits:create:ip:${clientIp(c)}`,
+  max: 20,
+  windowMs: 60_000,
+});
+const patchLimit = rateLimit({
+  keyFor: (c) => `circuits:patch:ip:${clientIp(c)}`,
+  max: 60,
+  windowMs: 60_000,
+});
+
 // ----- POST /circuits — create -----
-circuits.post('/', async (c) => {
+circuits.post('/', createLimit, async (c) => {
   const body = (await c.req.json().catch(() => null)) as
     | { name?: string; doc?: unknown; public?: boolean }
     | null;
@@ -69,7 +83,7 @@ circuits.get('/:id', async (c) => {
 });
 
 // ----- PATCH /circuits/:id — update -----
-circuits.patch('/:id', async (c) => {
+circuits.patch('/:id', patchLimit, async (c) => {
   const id = c.req.param('id');
   const body = (await c.req.json().catch(() => null)) as
     | { name?: string; doc?: unknown; public?: boolean }
