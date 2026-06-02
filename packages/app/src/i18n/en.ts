@@ -569,6 +569,7 @@ export const EN = {
   'lessons.close': 'Close',
   'lessons.help.title': 'Help & Lessons',
   'lessons.completedShort': 'completed',
+  'lessons.backToEditor': 'Back to editor',
   'lessons.markDone': 'Mark as done',
   'lessons.markedDone': 'Done',
   'lessons.markDoneHint': 'Tick this when you\'ve read the lesson; challenges auto-tick on pass.',

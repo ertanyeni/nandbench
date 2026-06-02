@@ -571,6 +571,7 @@ export const TR: Record<EnKey, string> = {
   'lessons.close': 'Kapat',
   'lessons.help.title': 'Yardım ve dersler',
   'lessons.completedShort': 'tamamlandı',
+  'lessons.backToEditor': 'Editöre dön',
   'lessons.markDone': 'Tamamlandı olarak işaretle',
   'lessons.markedDone': 'Tamamlandı',
   'lessons.markDoneHint': 'Dersi okuduğunda işaretle; challenge geçildiğinde otomatik işaretlenir.',

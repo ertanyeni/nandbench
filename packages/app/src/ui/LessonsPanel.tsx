@@ -9,6 +9,7 @@ import { TEMPLATES } from '../fixtures/templates.js';
 import { t } from '../i18n/index.js';
 import { LESSONS, UNIT_ORDER, type Lesson, type LessonUnit } from '../lessons.js';
 import { useAppStore } from '../model/store.js';
+import { BrandMark } from './BrandLogo.js';
 import { ChallengePanel } from './ChallengePanel.js';
 import { LessonFigure } from './LessonFigure.js';
 import { LessonPreview } from './LessonPreview.js';
@@ -127,10 +128,109 @@ export function LessonsPanel(): JSX.Element | null {
         bottom: 24,
         background: SURFACE.editorBg,
         display: 'grid',
-        gridTemplateColumns: '280px 1fr 360px',
+        gridTemplateRows: '44px 1fr',
+        gridTemplateColumns: '1fr',
         zIndex: 90,
       }}
     >
+      {/* ===== Top bar: brand (→ editor) + breadcrumb + close ===== */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+          padding: '0 16px',
+          borderBottom: `1px solid ${SURFACE.borderColor}`,
+          background: SURFACE.chromeBg,
+        }}
+      >
+        <button
+          onClick={() => setOpen(false)}
+          title={t('lessons.backToEditor')}
+          aria-label={t('lessons.backToEditor')}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            background: 'transparent',
+            border: 'none',
+            color: '#e6e6e6',
+            cursor: 'pointer',
+            font: 'inherit',
+            padding: '4px 6px',
+            borderRadius: 6,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#1a1f29';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'transparent';
+          }}
+        >
+          <BrandMark logoSize={20} fontSize={14} />
+        </button>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            color: SURFACE.itemSubText,
+            fontSize: 12,
+          }}
+        >
+          <span style={{ color: '#5b6573' }}>/</span>
+          <span style={{ color: '#dde4ef', fontWeight: 600 }}>{t('lessons.title')}</span>
+        </div>
+        <div style={{ flex: 1 }} />
+        <button
+          onClick={() => setOpen(false)}
+          aria-label={t('lessons.backToEditor')}
+          title={t('lessons.backToEditor')}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            background: 'transparent',
+            border: `1px solid ${SURFACE.borderColor}`,
+            color: '#cbd5e1',
+            borderRadius: 6,
+            padding: '5px 10px',
+            cursor: 'pointer',
+            font: 'inherit',
+            fontSize: 12,
+            fontWeight: 600,
+          }}
+        >
+          ⌂ {t('lessons.backToEditor')}
+        </button>
+        <button
+          onClick={() => setOpen(false)}
+          aria-label={t('lessons.close')}
+          title={`${t('lessons.close')} (Esc)`}
+          style={{
+            background: 'transparent',
+            border: `1px solid ${SURFACE.borderColor}`,
+            color: SURFACE.itemSubText,
+            borderRadius: 5,
+            padding: '3px 9px',
+            cursor: 'pointer',
+            font: 'inherit',
+            fontSize: 13,
+            lineHeight: 1,
+          }}
+        >
+          ×
+        </button>
+      </div>
+
+      {/* ===== Inner: 3-column workspace ===== */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '280px 1fr 360px',
+          overflow: 'hidden',
+        }}
+      >
       {/* ===== Left nav: units + lessons ===== */}
       <div
         ref={navRef}
@@ -186,24 +286,6 @@ export function LessonsPanel(): JSX.Element | null {
               />
             </div>
           </div>
-          <button
-            onClick={() => setOpen(false)}
-            aria-label={t('lessons.close')}
-            title={t('lessons.close')}
-            style={{
-              background: 'transparent',
-              border: `1px solid ${SURFACE.borderColor}`,
-              color: SURFACE.itemSubText,
-              borderRadius: 5,
-              padding: '3px 8px',
-              cursor: 'pointer',
-              font: 'inherit',
-              fontSize: 12,
-              lineHeight: 1,
-            }}
-          >
-            ×
-          </button>
         </div>
         <div style={{ overflowY: 'auto', flex: 1, padding: '4px 0 16px' }}>
           {UNIT_ORDER.map((unit) => {
@@ -444,6 +526,7 @@ export function LessonsPanel(): JSX.Element | null {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );
