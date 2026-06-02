@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import { readCurriculum } from '../curriculum.js';
 import { t } from '../i18n/index.js';
+import { LESSONS } from '../lessons.js';
 import { useAppStore } from '../model/store.js';
 import {
   AssistantIcon,
@@ -30,6 +32,14 @@ export function ActivityBar(): JSX.Element {
   // listen on the existing `open-*` events and the mutual-exclusivity
   // `close-side-panels` event, plus Esc keypress for the catch-all.
   const [active, setActive] = useState<string | null>(null);
+  // Lessons progress count — rerendered on completion-toggle events.
+  const [lessonsDone, setLessonsDone] = useState<number>(() => readCurriculum().completed.length);
+  useEffect(() => {
+    const sync = (): void => setLessonsDone(readCurriculum().completed.length);
+    sync();
+    window.addEventListener('gatecraft:lesson-progress-changed', sync);
+    return () => window.removeEventListener('gatecraft:lesson-progress-changed', sync);
+  }, []);
   useEffect(() => {
     const onOpen = (which: string) => () => setActive(which);
     const onClose = (ev: Event): void => {
@@ -87,8 +97,9 @@ export function ActivityBar(): JSX.Element {
       />
       <ActivityIcon
         icon={<LessonsIcon />}
-        label={t('toolbar.lessonsLong')}
+        label={t('lessons.progressTooltip', { done: String(lessonsDone), total: String(LESSONS.length) })}
         isActive={active === 'lessons'}
+        countLabel={lessonsDone > 0 ? `${lessonsDone}` : undefined}
         onClick={() => window.dispatchEvent(new Event('gatecraft:open-lessons'))}
       />
       <ActivityIcon
@@ -118,6 +129,7 @@ function ActivityIcon({
   label,
   accent,
   badge,
+  countLabel,
   isActive,
   onClick,
 }: {
@@ -125,6 +137,8 @@ function ActivityIcon({
   label: string;
   accent?: string;
   badge?: boolean;
+  /** Optional numeric badge text shown next to the icon (e.g. "12"). */
+  countLabel?: string;
   isActive?: boolean;
   onClick: () => void;
 }): JSX.Element {
@@ -182,6 +196,30 @@ function ActivityIcon({
             boxShadow: `0 0 0 1.5px ${SURFACE.chromeBg}`,
           }}
         />
+      ) : null}
+      {countLabel ? (
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            bottom: 2,
+            right: 2,
+            minWidth: 14,
+            height: 13,
+            padding: '0 3px',
+            borderRadius: 7,
+            background: '#1f3a66',
+            border: `1px solid ${SURFACE.chromeBg}`,
+            color: '#86efac',
+            fontSize: 9,
+            fontWeight: 800,
+            lineHeight: '12px',
+            textAlign: 'center',
+            fontFamily: 'ui-monospace, monospace',
+          }}
+        >
+          {countLabel}
+        </span>
       ) : null}
     </button>
   );

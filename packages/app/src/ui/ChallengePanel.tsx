@@ -36,7 +36,10 @@ export function ChallengePanel({ lessonId }: { lessonId: string }): JSX.Element 
     const s = useAppStore.getState();
     const r = runChallenge(s.document, s.library, challenge);
     setResult(r);
-    if (r.kind === 'pass') markLessonCompleted(lessonId);
+    if (r.kind === 'pass') {
+      markLessonCompleted(lessonId);
+      window.dispatchEvent(new Event('gatecraft:lesson-progress-changed'));
+    }
   };
 
   return (

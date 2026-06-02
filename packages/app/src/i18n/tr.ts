@@ -542,7 +542,7 @@ export const TR: Record<EnKey, string> = {
   'templates.romToy.description': '2-bit adres dört sabit çıkıştan birini açar.',
 
   /* Welcome / first-run */
-  'welcome.title': 'gatecraft\'a hoş geldin',
+  'welcome.title': 'nandbench\'e hoş geldin',
   'welcome.subtitle':
     'Canlı sayısal devre tasarım ortamı. Kapıları canvas\'a sürükle, bağla, sinyallerin yayılışını izle.',
   'welcome.layout.activity': 'Etkinlik çubuğu — asistan, dersler, sözlük, geçmiş, dalga formuna hızlı erişim.',
@@ -571,6 +571,11 @@ export const TR: Record<EnKey, string> = {
   'lessons.close': 'Kapat',
   'lessons.help.title': 'Yardım ve dersler',
   'lessons.completedShort': 'tamamlandı',
+  'lessons.markDone': 'Tamamlandı olarak işaretle',
+  'lessons.markedDone': 'Tamamlandı',
+  'lessons.markDoneHint': 'Dersi okuduğunda işaretle; challenge geçildiğinde otomatik işaretlenir.',
+  'lessons.markedDoneHint': 'İşareti kaldırmak için tekrar tıkla.',
+  'lessons.progressTooltip': '{done} / {total} ders tamamlandı',
   'lessons.tab.sample': 'Örnek',
   'lessons.tab.workspace': 'Çalışma',
   'lessons.sample.hint': 'Bu dersle gelen devrenin salt-okunur önizlemesi.',
@@ -650,75 +655,354 @@ export const TR: Record<EnKey, string> = {
 
   /* Glossary */
   'glossary.title': 'Sözlük',
-  'glossary.subtitle': 'Uygulamada geçen terimlerin kısa tanımları.',
+  'glossary.subtitle': 'Sayısal mantıkta karşılaşacağın her terim — tek bir bitten sonlu durum makinelerine ve zamanlama analizine kadar.',
   'glossary.search': 'Ara…',
   'glossary.empty': 'Eşleşen terim yok.',
   'toolbar.glossary': 'sözlük',
   'toolbar.welcome': 'karşılama ekranını göster',
   'toolbar.glossaryTooltip': 'Sözlüğü aç',
+
+  /* Sözlük kategori başlıkları */
+  'glossary.cat.foundations': 'Temeller',
+  'glossary.cat.gates': 'Kapılar ve Boole cebri',
+  'glossary.cat.combinational': 'Kombinasyonel devreler',
+  'glossary.cat.sequential': 'Ardışıl elemanlar',
+  'glossary.cat.timing': 'Zamanlama',
+  'glossary.cat.memory': 'Yazmaç ve bellek',
+  'glossary.cat.fsm': 'Sonlu durum makineleri',
+  'glossary.cat.tooling': 'gatecraft iç kavramları',
+
+  /* --- Temeller --- */
   'glossary.term.bit.name': 'Bit',
   'glossary.term.bit.desc':
-    'Tek bir ikili sinyal: 0 (düşük) ya da 1 (yüksek). Uygulamadaki her tel bir veya birden çok bit taşır.',
+    'Tek bir ikili sinyal — 0 (düşük) ya da 1 (yüksek). Her sayısal sistemin atomu. gatecraft\'ta 1-bitlik teller ince çizilir; daha geniş buslar genişliğiyle orantılı kalınlıkta görünür.',
   'glossary.term.bus.name': 'Bus',
   'glossary.term.bus.desc':
-    'Aynı anda birden çok bit taşıyan tel. Genişlik bileşene göre ayarlanır (örn. 4-bit, 8-bit).',
-  'glossary.term.gate.name': 'Kapı',
-  'glossary.term.gate.desc':
-    'Boole mantığıyla giriş→çıkış eşleyen ilkel — VE, VEYA, DEĞİL, NAND, NOR, XOR, XNOR, tampon.',
-  'glossary.term.driver.name': 'Sürücü',
-  'glossary.term.driver.desc':
-    'Bir bileşenin çıkış portu net\'e değer iter. Bir net\'in 0, 1 veya birden çok sürücüsü olabilir.',
-  'glossary.term.sink.name': 'Alıcı',
-  'glossary.term.sink.desc':
-    'Bağlı olduğu net\'in değerini okuyan bileşen giriş portu.',
-  'glossary.term.net.name': 'Net',
-  'glossary.term.net.desc':
-    'Kablo ile birbirine bağlı, elektriksel olarak aynı olan port kümesi. Her net\'in bir çözülmüş değeri vardır.',
+    'Aynı anda birden çok bit taşıyan tel. Bileşenler portları için genişlik (örn. 4-bit, 8-bit) bildirir; derleyici sürücü ile alıcının uyumlu olmasını şart koşar.',
+  'glossary.term.width.name': 'Genişlik',
+  'glossary.term.width.desc':
+    'Bir telin veya portun taşıdığı bit sayısı. Genişlik uyumsuzlukları derleme-zamanı tanısı tetikler — 4-bit bir bus Splitter olmadan 1-bitlik bir kapıya bağlanamaz.',
+  'glossary.term.endian.name': 'Endian (sıralama)',
+  'glossary.term.endian.desc':
+    'Hangi bitin "ilk" sayılacağına dair konvansiyon. Little-endian 0. biti düşük adrese koyar; big-endian en anlamlı biti başa alır. gatecraft tamamen little-endian.',
+  'glossary.term.signed.name': 'İşaretli sayı',
+  'glossary.term.signed.desc':
+    'En anlamlı biti büyüklük yerine işareti kodlayan ikili değer. Diğer bitler genelde ikinin tümleyeni kullanır, böylece toplama işareti olmayan sayılardakiyle aynı şekilde çalışır.',
+  'glossary.term.twosComplement.name': 'İkinin tümleyeni',
+  'glossary.term.twosComplement.desc':
+    'İşaretli tamsayıların standart gösterimi: her biti tersle ve 1 ekle. Aynı toplayıcı donanımının hem pozitif hem negatif sayıları işlemesini sağlar.',
+  'glossary.term.bcd.name': 'BCD (ikili kodlanmış ondalık)',
+  'glossary.term.bcd.desc':
+    'Her ondalık basamak (0–9) 4 bit ile kodlanır. Saf ikiliye göre yer harcar ama yedi-segment sürücü mantığını çok basit yapar.',
+  'glossary.term.gray.name': 'Gray kodu',
+  'glossary.term.gray.desc':
+    'Ardışık değerlerin tam olarak bir bitte farklılaştığı ikili kodlama. Döner kodlayıcılarda ve asenkron FIFO\'larda geçici glitch\'leri önler.',
+  'glossary.term.hex.name': 'Onaltılık',
+  'glossary.term.hex.desc':
+    '16 tabanlı gösterim (0–9, A–F). 4 bitlik grupları okumanın en pratik yolu — nibble başına bir hex basamağı. Inspector geniş busları varsayılan olarak hex gösterir.',
+  'glossary.term.binary.name': 'İkili',
+  'glossary.term.binary.desc':
+    'İki tabanlı gösterim. Her tel sonunda bir 0/1 dizisine çözülür; "binary" aynı zamanda altta yatan sayı sisteminin kısa adıdır.',
+  'glossary.term.overflow.name': 'Taşma',
+  'glossary.term.overflow.desc':
+    'Bir işlemin sonucunun bit genişliğine sığmaması — örn. 4-bit işaretsiz toplama 1111+0001. Toplayıcılar bir sonraki katmanın yakalayabilmesi için carry-out sunar.',
   'glossary.term.x.name': 'X (bilinmeyen)',
   'glossary.term.x.desc':
-    'Simülatörün belirleyemediği bit — birden çok sürücü çakışıyor veya tanımsız bir girişle beslenmiş kapı.',
+    'Simülatörün belirleyemediği bit — sürücüler çakışıyor ya da tanımsız bir giriş kapıya beslenmiş. Belirleyici bir kaynak temizleyene kadar mantıkta yayılır.',
   'glossary.term.z.name': 'Z (yüksek empedans)',
   'glossary.term.z.desc':
-    'Hiç sürülmeyen bit. Tri-state buffer\'lar ve sürücüsüz kablolar Z\'de durur.',
-  'glossary.term.fanout.name': 'Fan-out',
-  'glossary.term.fanout.desc':
-    'Tek bir sürücünün beslediği alıcı sayısı. Inspector\'da port satırının yanındaki sayı budur.',
-  'glossary.term.multiDriver.name': 'Çoklu-sürücü çakışması',
-  'glossary.term.multiDriver.desc':
-    'İki veya daha fazla sürücü aynı net\'e zıt değer iter. Simülatör X olarak çözer ve tanı verir.',
-  'glossary.term.oscillation.name': 'Salınım',
-  'glossary.term.oscillation.desc':
-    'Hiç oturmayan kombinasyonel geri besleme. Yazmaç ile döngüyü kır veya mantığı düşün.',
-  'glossary.term.edge.name': 'Saat kenarı',
-  'glossary.term.edge.desc':
-    'Saatin 0\'dan 1\'e geçtiği an (yükselen kenar). Yazmaçlar bu kenarda girişlerini kilitler.',
-  'glossary.term.register.name': 'Yazmaç',
-  'glossary.term.register.desc':
-    '1-bit (veya N-bit) bellek hücresi. Bir sonraki etkin saat kenarına kadar değerini tutar.',
-  'glossary.term.mux.name': 'Çoklayıcı (MUX)',
-  'glossary.term.mux.desc':
-    'Seçim sinyaline göre N girişten birini seçer. Seçilen giriş çıkışa aktarılır.',
-  'glossary.term.splitter.name': 'Ayırıcı',
-  'glossary.term.splitter.desc':
-    'Geniş bus\'u daha dar alt-buslara böler (örn. 8-bit bus\'u 4×2-bit dilimlere).',
-  'glossary.term.tunnel.name': 'Tünel',
-  'glossary.term.tunnel.desc':
-    'Ad ile "sanal tel". Aynı etikete sahip tüm tüneller elektriksel olarak aynı net\'tir.',
-  'glossary.term.composite.name': 'Bileşik (Composite)',
-  'glossary.term.composite.desc':
-    'Tek blok olarak yeniden kullanılan kaydedilmiş devre. Bir kez kur, dilediğin yere bırak; engine derlerken düzleştirir.',
-  'glossary.term.netlist.name': 'Netlist',
-  'glossary.term.netlist.desc':
-    'Devrenin derlenmiş gösterimi — bileşenler, portlar ve net\'ler — simülatörün koştuğu yapı.',
-  'glossary.term.snapshot.name': 'Anlık görüntü (snapshot)',
-  'glossary.term.snapshot.desc':
-    'Simülatörün her settle/tick\'te ürettiği, her net\'in mevcut değerinin salt-okunur görünümü.',
-  'glossary.term.diagnostic.name': 'Tanı',
-  'glossary.term.diagnostic.desc':
-    'Derleyici veya simülatör tarafından üretilen uyarı — genişlik-uyumsuz, çoklu-sürücü, salınım, boşta-giriş.',
+    'Hiç sürülmeyen bit. "Kapalı" durumdaki tri-state buffer\'lar ve boşta kalan çıkışlar Z\'dedir. Pull-up/pull-down direnci Z\'yi 1 veya 0\'a çekebilir.',
+
+  /* --- Kapılar ve Boole cebri --- */
+  'glossary.term.gate.name': 'Kapı',
+  'glossary.term.gate.desc':
+    'Boole mantığıyla giriş→çıkış eşleyen ilkel — VE, VEYA, DEĞİL, NAND, NOR, XOR, XNOR, tampon. Tüm kombinasyonel devreler kapılara ayrışır.',
+  'glossary.term.inverter.name': 'Çevirici (NOT)',
+  'glossary.term.inverter.desc':
+    '1-girişli kapı; çıkışı girişinin mantıksal tümleyeni. Ucunda kabarcık olan üçgen olarak çizilir.',
+  'glossary.term.buffer.name': 'Buffer (tampon)',
+  'glossary.term.buffer.desc':
+    'Mantıksal olarak pas-geç (out = in) ama gerçek dünyada yayılım gecikmesi ve sürüş gücü taşır. gatecraft\'ta çoğunlukla fan-out artırma ya da tri-state kapılama için kullanılır.',
+  'glossary.term.and.name': 'AND (VE)',
+  'glossary.term.and.desc':
+    'Çıkış yalnızca tüm girişler 1 olduğunda 1\'dir. Boole: y = a · b. Seri iki AND, 3-girişli AND eder; gatecraft\'in yerleşik kapısı istenen sayıda girişi destekler.',
+  'glossary.term.or.name': 'OR (VEYA)',
+  'glossary.term.or.desc':
+    'Çıkış en az bir giriş 1 iken 1\'dir. Boole: y = a + b. AND ile birleşince çarpımların toplamı formunu kurar.',
+  'glossary.term.xor.name': 'XOR (özel veya)',
+  'glossary.term.xor.desc':
+    'Çıkış, 1 olan giriş sayısı tek olduğunda 1\'dir. "Kontrollü çevirici" gibi davranır ve yarı-toplayıcının toplam bitidir.',
+  'glossary.term.nand.name': 'NAND',
+  'glossary.term.nand.desc':
+    'AND\'in çevricisi. Evrenseldir: yalnız NAND\'lerle her Boole fonksiyonu inşa edilebilir. CMOS\'ta ucuz ve hızlı; tarihi TTL çiplerin çoğu NAND merkezliydi.',
+  'glossary.term.nor.name': 'NOR',
+  'glossary.term.nor.desc':
+    'OR\'un çevricisi. O da evrenseldir. Çapraz bağlı bir NOR çifti klasik SR-mandallıdır.',
+  'glossary.term.xnor.name': 'XNOR',
+  'glossary.term.xnor.desc':
+    'XOR\'un çevricisi — girişler eşitse 1 verir. 1-bitlik eşitlik karşılaştırıcısı bir XNOR\'dur.',
+  'glossary.term.universalGate.name': 'Evrensel kapı',
+  'glossary.term.universalGate.desc':
+    'Yalnız kendi kopyalarıyla her Boole fonksiyonunu üretebilen kapı. NAND ve NOR evrenseldir; AND, OR, NOT tek başlarına değildir.',
+  'glossary.term.booleanAlgebra.name': 'Boole cebri',
+  'glossary.term.booleanAlgebra.desc':
+    'İki-değerli mantığın cebri. AND (·), OR (+), NOT (¯) işlemleri + yasalar (birleşme, dağılma, De Morgan) ifadeleri silikona inmeden sadeleştirmeni sağlar.',
+  'glossary.term.demorgan.name': 'De Morgan kuralları',
+  'glossary.term.demorgan.desc':
+    'NOT(A·B) = NOT(A)+NOT(B) ve NOT(A+B) = NOT(A)·NOT(B). "Kabarcığı taşı" hilesi: AND-OR yapılarını yalnızca NAND ya da yalnızca NOR olan ağlara çevirir.',
+  'glossary.term.sop.name': 'Çarpımlar toplamı (SOP)',
+  'glossary.term.sop.desc':
+    'Standart form: doğruluk tablosundaki her 1 satırı için bir AND terimini OR\'la. 2-seviyeli AND-OR (ya da eşdeğer NAND-NAND) ağına direkt eşlenir.',
+  'glossary.term.pos.name': 'Toplamlar çarpımı (POS)',
+  'glossary.term.pos.desc':
+    'Standart form: doğruluk tablosundaki her 0 satırı için bir OR terimini AND\'le (girişler terslenmiş hâliyle). SOP\'un duali — 0 satırı az olduğunda daha az kapı çıkar.',
+  'glossary.term.karnaugh.name': 'Karnaugh haritası (K-map)',
+  'glossary.term.karnaugh.desc':
+    'Bitişik hücrelerin tek bit farkıyla dizildiği doğruluk tablosu yerleşimi — minterm gruplarını görsel olarak en kısa örtmeye sarmak için. 4–5 değişkene kadar pratiktir.',
+  'glossary.term.dontCare.name': 'Önemsiz (don\'t-care)',
+  'glossary.term.dontCare.desc':
+    'Çıkışın umursanmadığı doğruluk-tablo hücresi — genelde o girişin asla oluşmayacağı için. K-map küçültmesinde X\'i 0 ya da 1 olarak alıp grupları büyütebilirsin.',
+  'glossary.term.minterm.name': 'Minterm',
+  'glossary.term.minterm.desc':
+    'Yalnız bir doğruluk-tablo satırında 1 olan çarpım terimi. SOP, mintermlerin disjonksiyonudur; her minterm bir satırı "isimlendirir."',
+  'glossary.term.maxterm.name': 'Maxterm',
+  'glossary.term.maxterm.desc':
+    'Yalnız bir doğruluk-tablo satırında 0 olan toplam terimi. POS maxtermlerin konjonksiyonudur — minterm bakışının dualidir.',
+  'glossary.term.literal.name': 'Literal',
+  'glossary.term.literal.desc':
+    'Bir değişken ya da tümleyeni (A veya A̅). İki-seviye küçültmede maliyet ölçütü literal sayımıdır.',
   'glossary.term.truthTable.name': 'Doğruluk tablosu',
   'glossary.term.truthTable.desc':
-    'Bir mantık parçasının tüm giriş kombinasyonları ve beklenen çıkışları listesi. Challenge modu devreni bununla puanlar.',
+    'Bir mantık parçasının tüm giriş kombinasyonları ve beklenen çıkışları listesi. Challenge modu spec\'in tablo satırlarını tek tek koşarak devreni puanlar.',
+
+  /* --- Kombinasyonel devreler --- */
+  'glossary.term.combinational.name': 'Kombinasyonel mantık',
+  'glossary.term.combinational.desc':
+    'Çıkışı yalnızca mevcut girişlere bağlı, hafızası ve saati olmayan devre. Ardışıl mantığın karşıtıdır. Saf kombinasyonel tasarımların derlemesinde tick durumu yoktur.',
+  'glossary.term.halfAdder.name': 'Yarı-toplayıcı',
+  'glossary.term.halfAdder.desc':
+    'İki giriş (a, b) → toplam (XOR) ve elde (AND). Her toplayıcının başlangıç bloğu; carry-in kabul etmez.',
+  'glossary.term.fullAdder.name': 'Tam-toplayıcı',
+  'glossary.term.fullAdder.desc':
+    'Üç giriş (a, b, cin) → toplam ve carry-out. Lineer dizilerek ripple-carry toplayıcı oluşturur veya carry-lookahead ağlarını besler.',
+  'glossary.term.rippleCarry.name': 'Ripple-carry toplayıcı',
+  'glossary.term.rippleCarry.desc':
+    'N tam-toplayıcının zincirlenmesi; her aşamanın carry-out\'u sonraki aşamanın carry-in\'ini sürer. Basit ama yavaş — gecikme genişlikle lineer büyür.',
+  'glossary.term.carryLookahead.name': 'Carry-lookahead toplayıcı',
+  'glossary.term.carryLookahead.desc':
+    '"Generate" ve "propagate" sinyallerini önceden hesaplayıp her aşamanın carry-in\'ini paralel türetir — daha çok kapı karşılığında alt-lineer gecikme.',
+  'glossary.term.subtractor.name': 'Çıkarıcı',
+  'glossary.term.subtractor.desc':
+    'a − b hesaplar. İkinin tümleyeninde, b\'yi tersleyip carry-in\'i 1\'e bağlayan bir toplayıcıdır — aynı donanım iki işi de yapar.',
+  'glossary.term.comparator.name': 'Karşılaştırıcı',
+  'glossary.term.comparator.desc':
+    'İki değeri kıyaslar; eşit / küçük / büyük raporlar. İçinde XOR zinciri (eşitlik için) ve AND merdiveni (sıralama için) vardır.',
+  'glossary.term.mux.name': 'Çoklayıcı (MUX)',
+  'glossary.term.mux.desc':
+    'log₂(N)-bitlik seçim sinyaline göre N veri girişinden birini seçer. Seçilen giriş çıkışa aktarılır; diğerleri yok sayılır.',
+  'glossary.term.demux.name': 'De-çoklayıcı (DEMUX)',
+  'glossary.term.demux.desc':
+    'Tek veri girişi, seçim sinyaline göre N çıkıştan birine dağıtılır. MUX\'un tersi — yapı olarak veri hattıyla AND\'lenmiş bir decoder.',
+  'glossary.term.decoder.name': 'Decoder',
+  'glossary.term.decoder.desc':
+    'n-bitlik ikili sayıyı one-hot\'a çevirir: 2ⁿ çıkıştan yalnız biri 1\'dir. Bellek adres çözümlemesi ve komut dağıtımı için kullanılır.',
+  'glossary.term.encoder.name': 'Encoder',
+  'glossary.term.encoder.desc':
+    'Decoder\'ın tersi: one-hot girişten ikili indeksi üretir. Saf encoder tam olarak bir girişin yüksek olduğunu varsayar.',
+  'glossary.term.priorityEncoder.name': 'Öncelikli encoder',
+  'glossary.term.priorityEncoder.desc':
+    'Birden çok aktif girişi tolere eden encoder; en yüksek öncelikliyi (genelde en yüksek indeksliyi) seçer. En az bir giriş yüksek iken "valid" bayrağı da verir.',
+  'glossary.term.splitter.name': 'Splitter (ayırıcı)',
+  'glossary.term.splitter.desc':
+    'Geniş busu daha dar alt-buslara böler (örn. 8-bit\'i 4×2-bit) ya da tersini yapar. Saf meta-veri; derleyici onu görünmez kılar.',
+  'glossary.term.tunnel.name': 'Tünel',
+  'glossary.term.tunnel.desc':
+    'Ad ile "sanal tel". Aynı etiketli tüm tüneller elektriksel olarak aynı net\'tir — uzak bağlantılarda kanvası temiz tutar.',
+  'glossary.term.triState.name': 'Tri-state buffer',
+  'glossary.term.triState.desc':
+    'Enable hattı olan buffer. Aktifken çıkışı sürer; pasifken Z (yüksek empedans) verir. Birden çok sürücünün bir busu sırayla paylaşmasına izin verir.',
+  'glossary.term.alu.name': 'Aritmetik-mantık birimi (ALU)',
+  'glossary.term.alu.desc':
+    'İki operand + opcode alır; seçilen aritmetik/mantıksal sonucu + bayraklar (carry, zero, negative, overflow) verir. Her CPU\'nun kombinasyonel kalbi.',
+
+  /* --- Ardışıl elemanlar --- */
+  'glossary.term.sequential.name': 'Ardışıl mantık',
+  'glossary.term.sequential.desc':
+    'Çıkışı yalnız mevcut girişlere değil geçmiş girişlere de bağlı; yani hafızası olan devre. Kombinasyonel ağı mandallı/flip-flop\'tan geçirerek elde edilir.',
+  'glossary.term.latch.name': 'Mandallı (latch)',
+  'glossary.term.latch.desc':
+    'Seviye duyarlı 1-bit bellek hücresi: enable yüksek iken çıkış girişi takip eder; enable düşünce son değer tutulur. Flip-flop\'tan ucuz ama enable yüksek iken şeffaftır.',
+  'glossary.term.flipFlop.name': 'Flip-flop',
+  'glossary.term.flipFlop.desc':
+    'Kenar duyarlı 1-bit bellek hücresi: girişini yalnız saat kenarında örnekler, başka anlarda ardışı görmezden gelir. Senkron tasarımın varsayılan yapı taşı.',
+  'glossary.term.dFlipFlop.name': 'D flip-flop',
+  'glossary.term.dFlipFlop.desc':
+    'Her yükselen saat kenarında q := d. En yaygın flip-flop; yazmaçlar aynı saati paylaşan D-FF dizileridir.',
+  'glossary.term.jkFlipFlop.name': 'JK flip-flop',
+  'glossary.term.jkFlipFlop.desc':
+    '"Evrensel" flip-flop. J=K=0 tut, J=1·K=0 set, J=0·K=1 reset, J=K=1 toggle. D-FF\'ler hücre kütüphanelerinde üstün gelmeden önce çok yaygındı.',
+  'glossary.term.tFlipFlop.name': 'T flip-flop',
+  'glossary.term.tFlipFlop.desc':
+    'Toggle flip-flop: T=1 iken q saat kenarında devrilir; T=0 iken tutar. Ripple sayaçlarının yapı taşı — bir kademenin q\'su bir sonrakini saatler.',
+  'glossary.term.srLatch.name': 'SR mandallı',
+  'glossary.term.srLatch.desc':
+    'Çapraz bağlı iki NOR (ya da NAND). S, q\'yu 1\'e set; R, 0\'a reset eder; S=R=1 yasaktır. En basit bellek hücresi.',
+  'glossary.term.edge.name': 'Saat kenarı',
+  'glossary.term.edge.desc':
+    'Saatin değiştiği an — yükselen (0→1) ya da düşen (1→0). Kenar-tetiklemeli flip-flop\'lar girişlerini yalnız kenarda örnekler.',
+  'glossary.term.clock.name': 'Saat (clock)',
+  'glossary.term.clock.desc':
+    'Ardışıl mantığı yöneten periyodik kare-dalga sinyal. Senkron bir tasarımdaki her flip-flop aynı saatin aynı kenarında örnekler.',
+  'glossary.term.enable.name': 'Enable',
+  'glossary.term.enable.desc':
+    'Flip-flop\'un saat kenarında yeni veriyi yüklemesini gateler. Enable=0 eski değeri tutar; enable=1 yeniyi kilitler.',
+  'glossary.term.reset.name': 'Reset',
+  'glossary.term.reset.desc':
+    'Flip-flop\'un çıkışını 0\'a zorlayan kontrol girişi. Senkron reset saat kenarını bekler; asenkron reset anında etki eder.',
+  'glossary.term.preset.name': 'Preset',
+  'glossary.term.preset.desc':
+    'Reset\'in tümleyeni — çıkışı 1\'e zorlar. Reset ile birlikte, açılışta yazmaçları bilinen değere kurmak için kullanılır.',
+
+  /* --- Zamanlama --- */
+  'glossary.term.setupTime.name': 'Kurulum süresi (t_su)',
+  'glossary.term.setupTime.desc':
+    'Veri girişinin, örneklemenin güvenilir olması için saat kenarından ne kadar önce sabit kalması gerektiği. İhlal flip-flop\'u metastabil bırakabilir.',
+  'glossary.term.holdTime.name': 'Tutma süresi (t_h)',
+  'glossary.term.holdTime.desc':
+    'Veri girişinin saat kenarından sonra ne kadar sabit kalması gerektiği. İhlal yine metastabiliteye ya da yanlış değerin saklanmasına yol açar.',
+  'glossary.term.propagationDelay.name': 'Yayılım gecikmesi (t_pd)',
+  'glossary.term.propagationDelay.desc':
+    'Bir giriş geçişi ile karşılığı olan çıkış geçişi arasındaki süre. İki flip-flop arası en uzun kombinasyonel yol, izin verilen maksimum saat frekansını belirler.',
+  'glossary.term.clockSkew.name': 'Saat kayması (clock skew)',
+  'glossary.term.clockSkew.desc':
+    'Aynı saat kenarının iki farklı flip-flop\'a varış zamanı farkı. Pozitif kayma yola süre ekler; negatif kayma kurulum/tutma ihlali yaratabilir.',
+  'glossary.term.metastability.name': 'Metastabilite',
+  'glossary.term.metastability.desc':
+    'Bir flip-flop\'un kurulum/tutma ihlali sonrası 0 ile 1 arasında sınırsız süre takılı kalması. Asenkron girişlere senkronizör zinciri eklenerek tolere edilir.',
+  'glossary.term.glitch.name': 'Glitch',
+  'glossary.term.glitch.desc':
+    'Genelde iki yolun farklı yayılım gecikmesinden doğan kısa süreli, istenmeyen sinyal sıçraması. Senkron tasarım yalnız saat kenarında örnekleyerek glitch\'leri tolere eder.',
+  'glossary.term.hazard.name': 'Hazard',
+  'glossary.term.hazard.desc':
+    'Belirli giriş geçişlerinde glitch üreten koşul. Static-1 hazard kısaca 0\'a düşer; static-0 hazard kısa süreli 1; dinamik hazard birkaç kez salınır.',
+  'glossary.term.oscillation.name': 'Salınım',
+  'glossary.term.oscillation.desc':
+    'Hiç oturmayan kombinasyonel geri besleme — engine\'in settle döngüsü tavanı aşar ve tanı verir. Yazmaç ile döngüyü kır veya mantığı yeniden düşün.',
+
+  /* --- Yazmaç ve bellek --- */
+  'glossary.term.register.name': 'Yazmaç',
+  'glossary.term.register.desc':
+    'Aynı saati paylaşan N flip-flop\'tan oluşan N-bit bellek hücresi. Bir sonraki etkin saat kenarına kadar değerini tutar.',
+  'glossary.term.shiftRegister.name': 'Shift yazmacı',
+  'glossary.term.shiftRegister.desc':
+    'Her aşamanın çıkışı bir sonrakinin girişine bağlı flip-flop dizisi. Seri-paralel dönüşüm, gecikme hatları ve LFSR (sözde-rastgele dizi üreteci) gibi yerlerde kullanılır.',
+  'glossary.term.counter.name': 'Sayaç',
+  'glossary.term.counter.desc':
+    'Her saat kenarında değerini artıran (ya da azaltan) yazmaç — toplayıcıyla beslenmiş bir yazmaç ya da T flip-flop zinciriyle (ripple) inşa edilir.',
+  'glossary.term.ram.name': 'RAM (rastgele erişimli bellek)',
+  'glossary.term.ram.desc':
+    'N-bit adres busuyla erişilen okuma/yazma bellek dizisi. Senkron RAM adres + veri + write-enable\'ı saat kenarında örnekler; asenkron RAM sürekli yanıtlar.',
+  'glossary.term.rom.name': 'ROM (salt-okunur bellek)',
+  'glossary.term.rom.desc':
+    'İçeriği tasarım zamanında sabitlenen bellek dizisi. Adres busunu sür, saklı veriyi oku — bakış tabloları ve microcode için ideal.',
+  'glossary.term.addressDecode.name': 'Adres çözümleme',
+  'glossary.term.addressDecode.desc':
+    'Paylaşılan bir busta hangi bellek ya da çevre biriminin erişildiğini, adresin üst bitlerine bakarak seçen mantık.',
+  'glossary.term.readWriteEnable.name': 'Okuma / yazma enable',
+  'glossary.term.readWriteEnable.desc':
+    'Belleğin kontrol hatları: read-enable veri çıkışını açar, write-enable saat kenarında veri girişini kilitler. Bir çevrim içinde genellikle birbirini dışlar.',
+
+  /* --- Sonlu durum makineleri --- */
+  'glossary.term.fsm.name': 'Sonlu durum makinesi (FSM)',
+  'glossary.term.fsm.desc':
+    'Sınırlı sayıda adlandırılmış durumu, durumlar arası geçiş kurallarını ve duruma (ve çoğu zaman girişe) bağlı çıkışları olan devre. Bir durum yazmacı + kombinasyonel sonraki-durum + çıkış mantığı olarak gerçeklenir.',
+  'glossary.term.moore.name': 'Moore makinesi',
+  'glossary.term.moore.desc':
+    'Çıkışı yalnız mevcut duruma bağlı FSM. Girişe biraz daha geç tepki verir ama saatle hizalı, glitch\'siz çıkış üretir.',
+  'glossary.term.mealy.name': 'Mealy makinesi',
+  'glossary.term.mealy.desc':
+    'Çıkışı hem duruma hem güncel girişe bağlı FSM. Moore\'dan bir saat çevrimi önde tepki verir ama çıkışlar saat kenarları arasında glitch\'leyebilir.',
+  'glossary.term.stateTransition.name': 'Durum geçişi',
+  'glossary.term.stateTransition.desc':
+    'FSM\'i bir durumdan başka bir duruma, saat kenarında ve giriş koşullarıyla kayan kural. Tüm geçiş kümesi FSM\'in sözleşmesidir.',
+  'glossary.term.stateDiagram.name': 'Durum diyagramı',
+  'glossary.term.stateDiagram.desc':
+    'FSM\'in grafiği — düğümler durumlar, kenarlar etiketli geçişlerdir. Ardışıl mantık tasarlarken uygulamadan önce çizilen standart çıktı.',
+
+  /* --- gatecraft iç kavramları --- */
+  'glossary.term.driver.name': 'Sürücü',
+  'glossary.term.driver.desc':
+    'Bir bileşenin çıkış portu net\'e değer iter. Bir net\'in 0, 1 ya da çok sürücüsü olabilir; çoğu uyuşmazsa tanı tetiklenir.',
+  'glossary.term.sink.name': 'Alıcı',
+  'glossary.term.sink.desc':
+    'Bağlı olduğu net\'in değerini okuyan bileşen giriş portu. Bir net istenen sayıda alıcıyı maliyetsiz besleyebilir — fan-out simülatörde bedavadır.',
+  'glossary.term.net.name': 'Net',
+  'glossary.term.net.desc':
+    'Kablo ile birbirine bağlı, elektriksel olarak aynı olan port kümesi. Her simülasyon adımında bir sinyale çözülür.',
+  'glossary.term.netlist.name': 'Netlist',
+  'glossary.term.netlist.desc':
+    'Devrenin derlenmiş gösterimi — bileşenler, portlar ve net\'ler — simülatörün koştuğu yapı. Union-Find derleyici her düzenlemede yeniden kurar.',
+  'glossary.term.snapshot.name': 'Anlık görüntü (snapshot)',
+  'glossary.term.snapshot.desc':
+    'Simülatörün her settle/tick\'te ürettiği, her net\'in mevcut değerinin salt-okunur görünümü. Renderer 60fps\'te en güncel snapshot\'tan çizer.',
+  'glossary.term.diagnostic.name': 'Tanı',
+  'glossary.term.diagnostic.desc':
+    'Derleyici veya simülatörün ürettiği uyarı — genişlik-uyumsuz, çoklu-sürücü, salınım, boşta-giriş. "Canlı debug"u öldürücü özellik kılan şey.',
+  'glossary.term.multiDriver.name': 'Çoklu-sürücü çakışması',
+  'glossary.term.multiDriver.desc':
+    'İki ya da daha çok sürücü aynı net\'e zıt değer iter. Simülatör X olarak çözer ve hemen tanı verir, çakışmayı anında görürsün.',
+  'glossary.term.fanout.name': 'Fan-out',
+  'glossary.term.fanout.desc':
+    'Tek bir sürücünün beslediği alıcı sayısı. Inspector\'da port satırının yanındaki sayı budur. Gerçek silikonda fan-out bütçesi vardır; simülatörde yoktur.',
+  'glossary.term.composite.name': 'Bileşik (Composite)',
+  'glossary.term.composite.desc':
+    'Tek blok olarak yeniden kullanılan kaydedilmiş devre. Bir kez kur, dilediğin yere bırak; engine derlerken düzleştirir, simülatör hiyerarşiyi görmez.',
+
+  /* Ders figür altyazıları */
+  'fig.bits.cap': 'Her sütun bir bit; ağırlığı 2ⁿ. 1 olan sütunları topla.',
+  'fig.numberSystems.cap': 'Aynı değer, üç farklı gösterim: 2, 10, 16.',
+  'fig.twosComplement.cap': 'İşaretleme: bütün bitleri tersle, sonra 1 ekle.',
+  'fig.booleanAlgebra.cap': 'İfadeleri silikona inmeden sadeleştirmeni sağlayan özdeşlikler.',
+  'fig.demorgan.cap': 'Kabarcıklar kapıların içinden "geçer"; AND, OR olur (ve tersi).',
+  'fig.gates.cap': 'Her sayısal fonksiyon nihayetinde 1- ve 2-girişli kapılara ayrışır.',
+  'fig.universalGates.cap': 'Tek başına NAND yeterli — her mantık fonksiyonunu yalnızca NAND ile kurabilirsin.',
+  'fig.truthTable.cap': 'Tüm giriş kombinasyonları ve beklenen çıkışların tam sayımı.',
+  'fig.sopPos.cap': 'SOP 1 satırlarını seçer, POS 0 satırlarını. Aynı devreye iki yol.',
+  'fig.karnaugh.cap': 'Komşu hücreler tek bit farklı — 1\'leri grupla, minimal kapsayışı oku.',
+  'fig.halfAdder.cap': 'Toplam XOR, elde AND — en ucuz 2-girişli toplayıcı.',
+  'fig.fullAdder.cap': 'İki yarı-toplayıcı + carry\'lerde OR — carry-in\'i kabul eder.',
+  'fig.rippleAdder.cap': 'Elde soldan sağa "akar"; gecikme bit sayısıyla lineer büyür.',
+  'fig.subtractor.cap': 'b\'yi tersle, carry-in\'i 1 yap — toplayıcı artık a − b hesaplar.',
+  'fig.comparator.cap': 'XOR\'lar eşitliği bit-bit kontrol eder; AND merdiveni sıralamayı çözer.',
+  'fig.decoder.cap': 'n ikili giriş → 2ⁿ çıkıştan tam olarak biri yüksek.',
+  'fig.encoder.cap': 'One-hot giriş, ikili indeks çıkış — decoder\'ın tersi.',
+  'fig.mux.cap': 'sel veri girişlerinden birini seçer; diğerleri yok sayılır.',
+  'fig.demux.cap': 'Tek giriş, sel\'e göre N çıkıştan birine yönlendirilir.',
+  'fig.triState.cap': 'en=0 iken çıkış kopar (Z). Birden çok sürücünün tek busu paylaşmasını sağlar.',
+  'fig.srLatch.cap': 'Çapraz bağlı NOR\'lar bir biti saklar. S set, R reset, S=R=1 yasak.',
+  'fig.dLatch.cap': 'Enable yüksek iken Q, D\'yi takip eder; enable düşünce son değer tutulur.',
+  'fig.dFlipFlop.cap': 'Her yükselen saat kenarında q := d — başka anlarda d\'yi yoksayar.',
+  'fig.jkFlipFlop.cap': 'J/K kombinasyonu tutma, set, reset ve toggle\'ı tek elemanda kapsar.',
+  'fig.tFlipFlop.cap': 'T=1 devirir, T=0 tutar — ripple sayaçlarının yapı taşı.',
+  'fig.clock.cap': 'Kare dalga ardışıl mantığı yönetir; flip-flop\'lar yükselen kenarda örnekler.',
+  'fig.timing.cap': 'Kenardan önce kurulum, sonra tutma penceresi — ihlal metastabilite riskidir.',
+  'fig.register.cap': 'Aynı saati paylaşan N D flip-flop\'tan oluşan N-bit bellek.',
+  'fig.shiftRegister.cap': 'Her aşama bir sonrakini besler; saat başına bir bit içeri kayar.',
+  'fig.counter.cap': 'Yazmaç + toplayıcı, kendisine geri besler: her saat kenarında artar.',
+  'fig.modNCounter.cap': 'Sayaç N\'e ulaştığında bir karşılaştırıcı resetler — periyodik 0…N−1 sayımı.',
+  'fig.ringCounter.cap': 'Bir one-hot örüntü N flip-flop\'un etrafında her saat kenarında döner.',
+  'fig.rom.cap': 'Adres içeri, sabit veri dışarı — donanıma basılmış bir bakış tablosu.',
+  'fig.ram.cap': 'Rastgele erişimli oku/yaz belleği. WE saat kenarında yazmayı etkinleştirir.',
+  'fig.addressDecode.cap': 'Üst bitler hangi yongayı seçer; alt bitler yonganın içindeki hücreyi.',
+  'fig.fsmIntro.cap': 'Düğümler durumlar, kenarlar saat kenarında alınan geçişler.',
+  'fig.fsmDesign.cap': 'Önce durum grafiğini çiz — durum ve çıkış denklemlerini sonra çıkar.',
+  'fig.alu.cap': 'İki operand + opcode → sonuç ve bayraklar (carry, zero, negative, overflow).',
+  'fig.registerFile.cap': 'İki oku portu + bir yaz portu; adresler hangi yazmacın okunacağını seçer.',
+  'fig.datapath.cap': 'Yazmaçlar → ALU → writeback, hepsi saatli. Kontrol birimi kalan okları doldurur.',
+  'fig.controlUnit.cap': 'Opcode içeri, onlarca küçük kontrol biti dışarı — CPU\'nun beyni.',
+  'fig.hazards.cap': 'Yukarıda kalması gereken sinyalde anlık çukur — klasik static-1 hazard.',
+  'fig.pipeline.cap': 'Beş aşama örtüşür: biri writeback yaparken dört tanesi havadadır.',
+  'fig.tooling.cap': 'gatecraft\'ın kendisi: model + renderer ana thread\'de, engine Web Worker\'da.',
 
   /* Challenge mode */
   'challenge.title': 'Pratik (Challenge)',

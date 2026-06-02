@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { GLOSSARY } from '../glossary.js';
+import {
+  CATEGORY_LABEL_KEYS,
+  GLOSSARY,
+  GLOSSARY_CATEGORIES,
+  type GlossaryCategory,
+  type GlossaryTerm,
+} from '../glossary.js';
 import { t } from '../i18n/index.js';
 import { useAppStore } from '../model/store.js';
 
@@ -38,13 +44,34 @@ export function GlossaryPanel(): JSX.Element | null {
     };
   }, [open]);
 
-  const filtered = useMemo(() => {
-    if (!query.trim()) return GLOSSARY;
-    const q = query.toLowerCase();
-    return GLOSSARY.filter(
-      (term) => t(term.nameKey).toLowerCase().includes(q) || t(term.descKey).toLowerCase().includes(q),
+  /**
+   * Filter + bucket the glossary. Returned as an ordered list of
+   * `[category, terms]` pairs so the panel can render a header per
+   * category without empty sections.
+   */
+  const grouped = useMemo<readonly [GlossaryCategory, readonly GlossaryTerm[]][]>(() => {
+    const q = query.trim().toLowerCase();
+    const filtered = q
+      ? GLOSSARY.filter(
+          (term) =>
+            t(term.nameKey).toLowerCase().includes(q) ||
+            t(term.descKey).toLowerCase().includes(q),
+        )
+      : GLOSSARY;
+    const buckets = new Map<GlossaryCategory, GlossaryTerm[]>();
+    for (const term of filtered) {
+      const arr = buckets.get(term.category);
+      if (arr) arr.push(term);
+      else buckets.set(term.category, [term]);
+    }
+    return GLOSSARY_CATEGORIES.filter((c) => buckets.has(c)).map(
+      (c) => [c, buckets.get(c) as readonly GlossaryTerm[]] as const,
     );
   }, [query, locale]);
+  const totalFiltered = useMemo(
+    () => grouped.reduce((sum, [, ts]) => sum + ts.length, 0),
+    [grouped],
+  );
 
   if (!open) return null;
 
@@ -156,28 +183,54 @@ export function GlossaryPanel(): JSX.Element | null {
           />
         </div>
         <div style={{ overflowY: 'auto', flex: 1, padding: '8px 4px 16px' }}>
-          {filtered.length === 0 ? (
+          {totalFiltered === 0 ? (
             <div style={{ padding: '12px 16px', color: '#7c8696', fontSize: 12 }}>
               {t('glossary.empty')}
             </div>
           ) : (
-            filtered.map((term) => (
-              <div
-                key={term.id}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '10px 14px',
-                  borderBottom: '1px solid #161b25',
-                }}
-              >
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#e6e6e6' }}>
-                  {highlightMatches(t(term.nameKey), query)}
-                </span>
-                <span style={{ fontSize: 12, color: '#cbd5e1', marginTop: 4, lineHeight: 1.55 }}>
-                  {highlightMatches(t(term.descKey), query)}
-                </span>
-              </div>
+            grouped.map(([category, terms]) => (
+              <section key={category}>
+                <div
+                  style={{
+                    padding: '14px 16px 6px',
+                    fontSize: 10,
+                    fontWeight: 800,
+                    color: '#7ea7d7',
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                    borderBottom: '1px solid #161b25',
+                    background: '#0c1018',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                  }}
+                >
+                  {t(CATEGORY_LABEL_KEYS[category])}
+                  <span style={{ marginLeft: 8, color: '#5b6675', fontWeight: 600 }}>
+                    {terms.length}
+                  </span>
+                </div>
+                {terms.map((term) => (
+                  <div
+                    key={term.id}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      padding: '10px 14px',
+                      borderBottom: '1px solid #161b25',
+                    }}
+                  >
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#e6e6e6' }}>
+                      {highlightMatches(t(term.nameKey), query)}
+                    </span>
+                    <span
+                      style={{ fontSize: 12, color: '#cbd5e1', marginTop: 4, lineHeight: 1.55 }}
+                    >
+                      {highlightMatches(t(term.descKey), query)}
+                    </span>
+                  </div>
+                ))}
+              </section>
             ))
           )}
         </div>

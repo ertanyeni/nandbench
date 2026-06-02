@@ -1,10 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { markLessonOpened, readCurriculum } from '../curriculum.js';
+import {
+  markLessonCompleted,
+  markLessonOpened,
+  readCurriculum,
+  unmarkLessonCompleted,
+} from '../curriculum.js';
 import { TEMPLATES } from '../fixtures/templates.js';
 import { t } from '../i18n/index.js';
 import { LESSONS, UNIT_ORDER, type Lesson, type LessonUnit } from '../lessons.js';
 import { useAppStore } from '../model/store.js';
 import { ChallengePanel } from './ChallengePanel.js';
+import { LessonFigure } from './LessonFigure.js';
 import { LessonPreview } from './LessonPreview.js';
 import { SURFACE } from './palette-tokens.js';
 
@@ -54,11 +60,25 @@ export function LessonsPanel(): JSX.Element | null {
     if (open) markLessonOpened(active.id);
   }, [open, active.id]);
 
+  // Bump on toggle so progress UI rerenders.
+  const [progressTick, setProgressTick] = useState(0);
   const completedSet = useMemo<ReadonlySet<string>>(
     () => new Set(readCurriculum().completed),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [open, activeIdx],
+    [open, activeIdx, progressTick],
   );
+  const openedSet = useMemo<ReadonlySet<string>>(
+    () => new Set(readCurriculum().opened),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [open, activeIdx, progressTick],
+  );
+
+  const toggleCompleted = (): void => {
+    if (completedSet.has(active.id)) unmarkLessonCompleted(active.id);
+    else markLessonCompleted(active.id);
+    setProgressTick((n) => n + 1);
+    window.dispatchEvent(new Event('gatecraft:lesson-progress-changed'));
+  };
 
   // Group lessons by unit for the left nav.
   const grouped = useMemo(() => {
@@ -146,6 +166,25 @@ export function LessonsPanel(): JSX.Element | null {
             <div style={{ fontSize: 11, color: SURFACE.itemSubText, marginTop: 4 }}>
               {completedSet.size} / {LESSONS.length} {t('lessons.completedShort')}
             </div>
+            <div
+              style={{
+                marginTop: 6,
+                height: 4,
+                background: '#1f2632',
+                borderRadius: 2,
+                overflow: 'hidden',
+              }}
+              aria-label="progress"
+            >
+              <div
+                style={{
+                  height: '100%',
+                  width: `${(completedSet.size / LESSONS.length) * 100}%`,
+                  background: '#86efac',
+                  transition: 'width 220ms ease-out',
+                }}
+              />
+            </div>
           </div>
           <button
             onClick={() => setOpen(false)}
@@ -196,6 +235,7 @@ export function LessonsPanel(): JSX.Element | null {
                     <LessonRow
                       key={l.id}
                       lesson={l}
+                      opened={openedSet.has(l.id)}
                       active={i === activeIdx}
                       completed={completedSet.has(l.id)}
                       onClick={() => setActiveIdx(i)}
@@ -225,6 +265,7 @@ export function LessonsPanel(): JSX.Element | null {
         <div style={{ fontSize: 13, color: '#9aa4b2', marginTop: 6, lineHeight: 1.5 }}>
           {t(active.summaryKey)}
         </div>
+        <LessonFigure lessonId={active.id} />
         <ol
           style={{
             marginTop: 22,
@@ -243,6 +284,31 @@ export function LessonsPanel(): JSX.Element | null {
         </ol>
         <div style={{ marginTop: 16 }}>
           <ChallengePanel lessonId={active.id} />
+        </div>
+        <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            onClick={toggleCompleted}
+            style={{
+              padding: '8px 14px',
+              background: completedSet.has(active.id) ? '#1b2c20' : '#1f3a66',
+              border: `1px solid ${completedSet.has(active.id) ? '#3a7a52' : '#3b6ec3'}`,
+              color: '#e6e6e6',
+              borderRadius: 6,
+              cursor: 'pointer',
+              font: 'inherit',
+              fontSize: 13,
+              fontWeight: 700,
+            }}
+          >
+            {completedSet.has(active.id)
+              ? `✓ ${t('lessons.markedDone')}`
+              : t('lessons.markDone')}
+          </button>
+          <div style={{ fontSize: 11, color: '#7c8696' }}>
+            {completedSet.has(active.id)
+              ? t('lessons.markedDoneHint')
+              : t('lessons.markDoneHint')}
+          </div>
         </div>
         <div style={{ marginTop: 'auto', display: 'flex', gap: 8, paddingTop: 18 }}>
           <button
@@ -419,11 +485,13 @@ function LessonRow({
   lesson,
   active,
   completed,
+  opened,
   onClick,
 }: {
   lesson: Lesson;
   active: boolean;
   completed: boolean;
+  opened: boolean;
   onClick: () => void;
 }): JSX.Element {
   return (
@@ -466,6 +534,19 @@ function LessonRow({
           <span style={{ color: '#86efac', fontSize: 11 }} aria-label="completed">
             ✓
           </span>
+        ) : opened ? (
+          <span
+            aria-label="opened"
+            title="opened — not marked done yet"
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: 3,
+              background: '#7ea7d7',
+              display: 'inline-block',
+              marginRight: 1,
+            }}
+          />
         ) : null}
         <span style={{ opacity: completed ? 0.7 : 1 }}>{t(lesson.titleKey)}</span>
       </span>

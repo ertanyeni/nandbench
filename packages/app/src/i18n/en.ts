@@ -540,7 +540,7 @@ export const EN = {
   'templates.romToy.description': '2-bit address decoded to one of four constant outputs.',
 
   /* Welcome / first-run */
-  'welcome.title': 'Welcome to gatecraft',
+  'welcome.title': 'Welcome to nandbench',
   'welcome.subtitle':
     'A live digital circuit playground. Drag gates onto the canvas, wire them up, watch signals propagate.',
   'welcome.layout.activity': 'Activity bar — quick access to assistant, lessons, glossary, history, waveform.',
@@ -569,6 +569,11 @@ export const EN = {
   'lessons.close': 'Close',
   'lessons.help.title': 'Help & Lessons',
   'lessons.completedShort': 'completed',
+  'lessons.markDone': 'Mark as done',
+  'lessons.markedDone': 'Done',
+  'lessons.markDoneHint': 'Tick this when you\'ve read the lesson; challenges auto-tick on pass.',
+  'lessons.markedDoneHint': 'Click again to un-tick.',
+  'lessons.progressTooltip': '{done} of {total} lessons completed',
   'lessons.tab.sample': 'Sample',
   'lessons.tab.workspace': 'Workspace',
   'lessons.sample.hint': 'Read-only preview of the circuit that goes with this lesson.',
@@ -647,75 +652,354 @@ export const EN = {
 
   /* Glossary */
   'glossary.title': 'Glossary',
-  'glossary.subtitle': 'Quick definitions for terms used across the app.',
+  'glossary.subtitle': 'Definitions for every term you\'ll meet across digital logic — from a single bit up to finite state machines and timing analysis.',
   'glossary.search': 'Search…',
   'glossary.empty': 'No terms match.',
   'toolbar.glossary': 'glossary',
   'toolbar.welcome': 'show welcome screen',
   'toolbar.glossaryTooltip': 'Open the glossary',
+
+  /* Glossary category headers */
+  'glossary.cat.foundations': 'Foundations',
+  'glossary.cat.gates': 'Gates & Boolean algebra',
+  'glossary.cat.combinational': 'Combinational circuits',
+  'glossary.cat.sequential': 'Sequential elements',
+  'glossary.cat.timing': 'Timing',
+  'glossary.cat.memory': 'Registers & memory',
+  'glossary.cat.fsm': 'Finite state machines',
+  'glossary.cat.tooling': 'gatecraft internals',
+
+  /* --- Foundations --- */
   'glossary.term.bit.name': 'Bit',
   'glossary.term.bit.desc':
-    'A single binary signal: 0 (low) or 1 (high). Every wire in the app carries one or more bits.',
+    'A single binary signal — 0 (low) or 1 (high). The atom of every digital system. In gatecraft a 1-bit wire is drawn thin; wider buses get a stroke proportional to their width.',
   'glossary.term.bus.name': 'Bus',
   'glossary.term.bus.desc':
-    'A wire carrying multiple bits at once. Width is set per component (e.g. 4-bit, 8-bit).',
-  'glossary.term.gate.name': 'Gate',
-  'glossary.term.gate.desc':
-    'A primitive that maps inputs to outputs via Boolean logic — AND, OR, NOT, NAND, NOR, XOR, XNOR, buffer.',
-  'glossary.term.driver.name': 'Driver',
-  'glossary.term.driver.desc':
-    'A component output port that pushes a value onto a net. A net can have zero, one, or many drivers.',
-  'glossary.term.sink.name': 'Sink',
-  'glossary.term.sink.desc':
-    'A component input port that reads the value of the net it is connected to.',
-  'glossary.term.net.name': 'Net',
-  'glossary.term.net.desc':
-    'The set of ports connected by wires that are electrically the same. Each net has one resolved value.',
+    'A wire carrying multiple bits at once. Components declare per-port widths (e.g. 4-bit, 8-bit) and the compiler enforces that drivers and sinks agree.',
+  'glossary.term.width.name': 'Width',
+  'glossary.term.width.desc':
+    'The number of bits a wire or port carries. Width mismatches raise a compile-time diagnostic — a 4-bit bus cannot drop into a 1-bit gate without a Splitter.',
+  'glossary.term.endian.name': 'Endianness',
+  'glossary.term.endian.desc':
+    'The convention for which bit position is "first." Little-endian puts bit 0 at the low address; big-endian puts the most significant bit first. gatecraft is little-endian throughout.',
+  'glossary.term.signed.name': 'Signed number',
+  'glossary.term.signed.desc':
+    'A binary value whose most-significant bit encodes sign rather than magnitude. The other bits typically use two\'s complement so that addition works the same as for unsigned values.',
+  'glossary.term.twosComplement.name': 'Two\'s complement',
+  'glossary.term.twosComplement.desc':
+    'Standard scheme for representing signed integers: negate by flipping every bit and adding 1. Lets the same adder hardware handle both positive and negative numbers.',
+  'glossary.term.bcd.name': 'BCD (binary-coded decimal)',
+  'glossary.term.bcd.desc':
+    'Each decimal digit (0–9) is encoded in 4 bits. Wastes bandwidth versus pure binary but makes seven-segment driver logic trivial.',
+  'glossary.term.gray.name': 'Gray code',
+  'glossary.term.gray.desc':
+    'A binary encoding where successive values differ by exactly one bit. Used in rotary encoders and asynchronous FIFOs to avoid transient mid-transition glitches.',
+  'glossary.term.hex.name': 'Hexadecimal',
+  'glossary.term.hex.desc':
+    'Base-16 notation (0–9, A–F). Compact way to read groups of 4 bits — one hex digit per nibble, two per byte. The Inspector shows wide buses in hex by default.',
+  'glossary.term.binary.name': 'Binary',
+  'glossary.term.binary.desc':
+    'Base-2 notation. Every wire ultimately resolves to a sequence of 0s and 1s; "binary" is also shorthand for the underlying numeric system.',
+  'glossary.term.overflow.name': 'Overflow',
+  'glossary.term.overflow.desc':
+    'When the result of an operation exceeds the representable range of its bit width — e.g. 4-bit unsigned addition of 1111+0001. Adders expose a carry-out so the next stage can catch it.',
   'glossary.term.x.name': 'X (unknown)',
   'glossary.term.x.desc':
-    'A bit whose value the simulator cannot determine — multiple drivers disagree, or an undefined input fed a gate.',
+    'A bit whose value the simulator cannot determine — multiple drivers disagree, or an undefined input was fed into a gate. Propagates through logic until a deterministic source clears it.',
   'glossary.term.z.name': 'Z (high impedance)',
   'glossary.term.z.desc':
-    'A bit that is not being driven by anyone. Tri-state buffers and floating wires sit at Z.',
-  'glossary.term.fanout.name': 'Fan-out',
-  'glossary.term.fanout.desc':
-    'How many sinks a single driver feeds. The number after a port in the Inspector is its fan-out count.',
-  'glossary.term.multiDriver.name': 'Multi-driver conflict',
-  'glossary.term.multiDriver.desc':
-    'Two or more drivers push opposite values onto the same net. The simulator resolves it to X and raises a diagnostic.',
-  'glossary.term.oscillation.name': 'Oscillation',
-  'glossary.term.oscillation.desc':
-    'Combinational feedback that never settles. Break the loop with a register, or rethink the logic.',
-  'glossary.term.edge.name': 'Clock edge',
-  'glossary.term.edge.desc':
-    'The instant a clock transitions from 0 to 1 (rising edge). Registers latch their input on this edge.',
-  'glossary.term.register.name': 'Register',
-  'glossary.term.register.desc':
-    'A 1-bit (or N-bit) memory cell. Holds its value until the next enabled clock edge.',
-  'glossary.term.mux.name': 'Multiplexer (MUX)',
-  'glossary.term.mux.desc':
-    'Picks one of N data inputs based on a select signal. The selected input passes through to the output.',
-  'glossary.term.splitter.name': 'Splitter',
-  'glossary.term.splitter.desc':
-    'Slices a wide bus into narrower sub-buses (e.g. an 8-bit bus into 4×2-bit slices).',
-  'glossary.term.tunnel.name': 'Tunnel',
-  'glossary.term.tunnel.desc':
-    'A "virtual wire" by name. All tunnels sharing the same label are electrically the same net.',
-  'glossary.term.composite.name': 'Composite',
-  'glossary.term.composite.desc':
-    'A saved circuit reused as a single block. Built once, dropped anywhere; the engine flattens it on compile.',
-  'glossary.term.netlist.name': 'Netlist',
-  'glossary.term.netlist.desc':
-    'The compiled representation of a circuit — components, ports, and nets — that the simulator runs.',
-  'glossary.term.snapshot.name': 'Snapshot',
-  'glossary.term.snapshot.desc':
-    'A read-only view of every net\'s current value, produced by the simulator on each settle/tick.',
-  'glossary.term.diagnostic.name': 'Diagnostic',
-  'glossary.term.diagnostic.desc':
-    'A warning produced by the compiler or simulator — width-mismatch, multi-driver, oscillation, floating-input.',
+    'A bit not driven by anyone. Tri-state buffers parked in "off" mode and unconnected output ports sit at Z. A pull-up/pull-down resistor can resolve Z to 1 or 0.',
+
+  /* --- Gates & Boolean algebra --- */
+  'glossary.term.gate.name': 'Gate',
+  'glossary.term.gate.desc':
+    'A primitive that maps inputs to outputs via Boolean logic — AND, OR, NOT, NAND, NOR, XOR, XNOR, buffer. Every combinational circuit decomposes into gates.',
+  'glossary.term.inverter.name': 'Inverter (NOT)',
+  'glossary.term.inverter.desc':
+    'A 1-input gate whose output is the logical complement of its input. Drawn as a triangle with a bubble on the tip.',
+  'glossary.term.buffer.name': 'Buffer',
+  'glossary.term.buffer.desc':
+    'Logically a pass-through (out = in) but with a real-world propagation delay and drive strength. Used in gatecraft mostly for explicit fan-out boosting or tri-state gating.',
+  'glossary.term.and.name': 'AND',
+  'glossary.term.and.desc':
+    'Output is 1 only when every input is 1. Boolean: y = a · b. Two ANDs in series implement a 3-input AND; gatecraft\'s built-in widens to any input count.',
+  'glossary.term.or.name': 'OR',
+  'glossary.term.or.desc':
+    'Output is 1 when at least one input is 1. Boolean: y = a + b. Pairs with AND to form sum-of-products forms.',
+  'glossary.term.xor.name': 'XOR',
+  'glossary.term.xor.desc':
+    'Output is 1 when an odd number of inputs are 1. Acts as a "controlled inverter" and as the sum bit of a half-adder.',
+  'glossary.term.nand.name': 'NAND',
+  'glossary.term.nand.desc':
+    'AND followed by an inverter. Universal: any Boolean function can be built from NANDs alone. Cheap and fast in CMOS, which is why historical TTL chips were NAND-centric.',
+  'glossary.term.nor.name': 'NOR',
+  'glossary.term.nor.desc':
+    'OR followed by an inverter. Also universal. Pair of cross-coupled NORs is the classic SR-latch.',
+  'glossary.term.xnor.name': 'XNOR',
+  'glossary.term.xnor.desc':
+    'XOR followed by an inverter — outputs 1 when the inputs match. A 1-bit equality comparator is just an XNOR.',
+  'glossary.term.universalGate.name': 'Universal gate',
+  'glossary.term.universalGate.desc':
+    'A gate from which any Boolean function can be constructed using only copies of that gate. NAND and NOR each qualify; AND/OR/NOT individually do not.',
+  'glossary.term.booleanAlgebra.name': 'Boolean algebra',
+  'glossary.term.booleanAlgebra.desc':
+    'The algebra of two-valued logic. Operations AND (·), OR (+), NOT (¯) plus laws (associative, distributive, idempotent, De Morgan) let you simplify expressions before they hit silicon.',
+  'glossary.term.demorgan.name': 'De Morgan\'s laws',
+  'glossary.term.demorgan.desc':
+    'NOT(A·B) = NOT(A)+NOT(B) and NOT(A+B) = NOT(A)·NOT(B). Bubble-pushing trick: convert AND-of-OR forms to NAND-only or NOR-only networks.',
+  'glossary.term.sop.name': 'Sum of products (SOP)',
+  'glossary.term.sop.desc':
+    'A canonical form: OR together one AND term per truth-table row that outputs 1. Maps directly to a 2-level AND-OR network or, equivalently, a NAND-NAND network.',
+  'glossary.term.pos.name': 'Product of sums (POS)',
+  'glossary.term.pos.desc':
+    'A canonical form: AND together one OR term per truth-table row that outputs 0 (with inputs inverted). The dual of SOP — best when the 0 rows are fewer.',
+  'glossary.term.karnaugh.name': 'Karnaugh map (K-map)',
+  'glossary.term.karnaugh.desc':
+    'A grid layout of a truth table where adjacent cells differ by one input — handy for visually grouping minterms into the smallest cover. Practical up to 4–5 variables.',
+  'glossary.term.dontCare.name': 'Don\'t-care (X term)',
+  'glossary.term.dontCare.desc':
+    'A truth-table cell whose output the design doesn\'t care about — typically because that input combination cannot occur. K-map minimisation treats X as freely chosen 0 or 1 to enlarge groups.',
+  'glossary.term.minterm.name': 'Minterm',
+  'glossary.term.minterm.desc':
+    'A product term that is 1 for exactly one row of the truth table. SOP is a disjunction of minterms; each minterm "names" its row.',
+  'glossary.term.maxterm.name': 'Maxterm',
+  'glossary.term.maxterm.desc':
+    'A sum term that is 0 for exactly one row. POS is a conjunction of maxterms — the dual perspective to minterms.',
+  'glossary.term.literal.name': 'Literal',
+  'glossary.term.literal.desc':
+    'A variable or its complement (A or A̅). Counting literals in an expression is the standard cost metric for two-level minimisation.',
   'glossary.term.truthTable.name': 'Truth table',
   'glossary.term.truthTable.desc':
-    'An exhaustive list of inputs and the expected outputs for a piece of logic. The Challenge mode uses one to grade your circuit.',
+    'An exhaustive list of inputs and the expected outputs for a piece of logic. Challenge mode grades your circuit by replaying the spec\'s truth table case by case.',
+
+  /* --- Combinational circuits --- */
+  'glossary.term.combinational.name': 'Combinational logic',
+  'glossary.term.combinational.desc':
+    'A circuit whose outputs depend only on the current inputs — no memory, no clock. Contrasts with sequential logic. Compile of pure-combinational designs has no clock-tick state.',
+  'glossary.term.halfAdder.name': 'Half adder',
+  'glossary.term.halfAdder.desc':
+    'Two inputs (a, b) → sum (XOR) and carry (AND). The starting block of every adder; doesn\'t accept a carry-in.',
+  'glossary.term.fullAdder.name': 'Full adder',
+  'glossary.term.fullAdder.desc':
+    'Three inputs (a, b, cin) → sum and carry-out. Stacks linearly into ripple-carry adders or feeds carry-lookahead networks.',
+  'glossary.term.rippleCarry.name': 'Ripple-carry adder',
+  'glossary.term.rippleCarry.desc':
+    'N full adders chained so each stage\'s carry-out drives the next stage\'s carry-in. Simple but slow — delay grows linearly with width.',
+  'glossary.term.carryLookahead.name': 'Carry-lookahead adder',
+  'glossary.term.carryLookahead.desc':
+    'Precomputes "generate" and "propagate" signals so every stage\'s carry-in is derived in parallel — sub-linear delay at the cost of more gates.',
+  'glossary.term.subtractor.name': 'Subtractor',
+  'glossary.term.subtractor.desc':
+    'Computes a − b. In two\'s complement this is just an adder with b inverted and carry-in tied high — the same hardware does both.',
+  'glossary.term.comparator.name': 'Comparator',
+  'glossary.term.comparator.desc':
+    'Compares two values and reports equal / less / greater. Internally a chain of XORs (for equality) and an AND-ladder (for ordering).',
+  'glossary.term.mux.name': 'Multiplexer (MUX)',
+  'glossary.term.mux.desc':
+    'Picks one of N data inputs based on a log₂(N)-bit select signal. The selected input passes to the output; the others are ignored.',
+  'glossary.term.demux.name': 'Demultiplexer (DEMUX)',
+  'glossary.term.demux.desc':
+    'One data input fans out to one of N outputs based on a select signal. Inverse of a MUX — and structurally a decoder with the data line ANDed in.',
+  'glossary.term.decoder.name': 'Decoder',
+  'glossary.term.decoder.desc':
+    'Turns an n-bit binary number into one-hot: exactly one of 2ⁿ outputs is 1, the rest are 0. Used for memory address decoding and instruction dispatch.',
+  'glossary.term.encoder.name': 'Encoder',
+  'glossary.term.encoder.desc':
+    'The inverse of a decoder: takes a one-hot input and emits its binary index. Plain encoders assume exactly one input is high.',
+  'glossary.term.priorityEncoder.name': 'Priority encoder',
+  'glossary.term.priorityEncoder.desc':
+    'Encoder that tolerates multiple simultaneous active inputs by picking the highest-priority one (usually the highest-indexed). Also emits a "valid" flag when at least one input is high.',
+  'glossary.term.splitter.name': 'Splitter',
+  'glossary.term.splitter.desc':
+    'Slices a wide bus into narrower sub-buses (e.g. an 8-bit bus into 4×2-bit slices) — or merges sub-buses back. Pure metadata; the compiler folds it away.',
+  'glossary.term.tunnel.name': 'Tunnel',
+  'glossary.term.tunnel.desc':
+    'A "virtual wire" by name. All tunnels sharing the same label are electrically the same net — useful for keeping the canvas tidy on long-range connections.',
+  'glossary.term.triState.name': 'Tri-state buffer',
+  'glossary.term.triState.desc':
+    'A buffer with an enable line. When enabled it drives the output; when disabled the output is Z (high-impedance). Lets multiple drivers share a bus, one at a time.',
+  'glossary.term.alu.name': 'Arithmetic logic unit (ALU)',
+  'glossary.term.alu.desc':
+    'A combinational block that takes two operands and an opcode and returns the selected arithmetic/logical result plus flag bits (carry, zero, negative, overflow). The combinational heart of every CPU.',
+
+  /* --- Sequential elements --- */
+  'glossary.term.sequential.name': 'Sequential logic',
+  'glossary.term.sequential.desc':
+    'A circuit whose output depends on past inputs as well as the current ones — it has memory. Realised by feeding a combinational network through latches or flip-flops.',
+  'glossary.term.latch.name': 'Latch',
+  'glossary.term.latch.desc':
+    'A 1-bit memory cell that is level-sensitive: while its enable line is high, output tracks input; when enable falls low, the last value is held. Cheaper than a flip-flop but transparent during enable-high.',
+  'glossary.term.flipFlop.name': 'Flip-flop',
+  'glossary.term.flipFlop.desc':
+    'A 1-bit memory cell that is edge-sensitive: it samples its input only at the clock edge, ignoring the value at all other times. The default building block of clocked design.',
+  'glossary.term.dFlipFlop.name': 'D flip-flop',
+  'glossary.term.dFlipFlop.desc':
+    'q := d on each rising clock edge. The most common flip-flop; registers are arrays of D flip-flops sharing a clock.',
+  'glossary.term.jkFlipFlop.name': 'JK flip-flop',
+  'glossary.term.jkFlipFlop.desc':
+    'A "universal" flip-flop. J=K=0 holds, J=1·K=0 sets, J=0·K=1 resets, J=K=1 toggles. Historically popular before D-FFs took over in standard cell libraries.',
+  'glossary.term.tFlipFlop.name': 'T flip-flop',
+  'glossary.term.tFlipFlop.desc':
+    'Toggle flip-flop: when T=1, q flips on the clock edge; when T=0, q holds. Building block of ripple counters — the q of one stage clocks the next.',
+  'glossary.term.srLatch.name': 'SR latch',
+  'glossary.term.srLatch.desc':
+    'Two cross-coupled NOR (or NAND) gates. S sets q to 1, R resets q to 0; S=R=1 is illegal. The simplest possible memory cell.',
+  'glossary.term.edge.name': 'Clock edge',
+  'glossary.term.edge.desc':
+    'The instant a clock transitions — rising (0→1) or falling (1→0). Edge-triggered flip-flops sample input only at the edge, ignoring intermediate values.',
+  'glossary.term.clock.name': 'Clock',
+  'glossary.term.clock.desc':
+    'A periodic square-wave signal that paces sequential logic. Every flip-flop in a synchronous design samples on the same edge of the same clock.',
+  'glossary.term.enable.name': 'Enable',
+  'glossary.term.enable.desc':
+    'A control input that gates whether a flip-flop or register loads new data on the clock edge. Enable=0 holds the old value; enable=1 latches the new one.',
+  'glossary.term.reset.name': 'Reset',
+  'glossary.term.reset.desc':
+    'A control input that forces a flip-flop\'s output to 0. Synchronous reset waits for the clock edge; asynchronous reset acts immediately.',
+  'glossary.term.preset.name': 'Preset',
+  'glossary.term.preset.desc':
+    'The complement of reset — forces a flip-flop\'s output to 1. Combined with reset, lets you initialise a register to a known value at power-on.',
+
+  /* --- Timing --- */
+  'glossary.term.setupTime.name': 'Setup time (t_su)',
+  'glossary.term.setupTime.desc':
+    'How long a flip-flop\'s data input must be stable before the clock edge for the sampled value to be reliable. Violating it can drive the FF metastable.',
+  'glossary.term.holdTime.name': 'Hold time (t_h)',
+  'glossary.term.holdTime.desc':
+    'How long the data input must remain stable after the clock edge. A hold violation also produces metastability or the wrong stored value.',
+  'glossary.term.propagationDelay.name': 'Propagation delay (t_pd)',
+  'glossary.term.propagationDelay.desc':
+    'Time between an input transition and the matching output transition of a gate or flip-flop. Maximum allowed clock frequency is set by the longest combinational path between two FFs.',
+  'glossary.term.clockSkew.name': 'Clock skew',
+  'glossary.term.clockSkew.desc':
+    'Difference in arrival time of the same clock edge at two different flip-flops. Positive skew can help (more time for the path), negative skew can violate setup or hold.',
+  'glossary.term.metastability.name': 'Metastability',
+  'glossary.term.metastability.desc':
+    'A flip-flop\'s output stuck between 0 and 1 for an unbounded time after a setup/hold violation. Resolved by adding a synchroniser chain on asynchronous inputs.',
+  'glossary.term.glitch.name': 'Glitch',
+  'glossary.term.glitch.desc':
+    'A brief unwanted pulse on a signal, usually caused by unequal propagation delays through two paths that should agree. Synchronous design tolerates glitches by sampling only on the clock edge.',
+  'glossary.term.hazard.name': 'Hazard',
+  'glossary.term.hazard.desc':
+    'A condition that produces a glitch under specific input transitions. Static-1 hazards drop briefly to 0; static-0 hazards rise to 1; dynamic hazards toggle multiple times.',
+  'glossary.term.oscillation.name': 'Oscillation',
+  'glossary.term.oscillation.desc':
+    'Combinational feedback that never settles — the engine\'s settle loop hits its iteration cap and emits a diagnostic. Break the loop with a register, or rethink the logic.',
+
+  /* --- Registers & memory --- */
+  'glossary.term.register.name': 'Register',
+  'glossary.term.register.desc':
+    'An N-bit memory cell built from N flip-flops sharing a clock. Stores its value until the next enabled clock edge.',
+  'glossary.term.shiftRegister.name': 'Shift register',
+  'glossary.term.shiftRegister.desc':
+    'A row of flip-flops where each stage\'s output feeds the next stage\'s input. Used for serial-to-parallel conversion, delay lines, and pseudo-random sequence generators (LFSRs).',
+  'glossary.term.counter.name': 'Counter',
+  'glossary.term.counter.desc':
+    'A register whose stored value increments (or decrements) on every clock edge — built from a register fed by an adder, or by a chain of T flip-flops for the ripple variant.',
+  'glossary.term.ram.name': 'RAM (random-access memory)',
+  'glossary.term.ram.desc':
+    'A read/write memory array addressed by an N-bit address bus. Synchronous RAM samples address + data + write enable on the clock; asynchronous RAM responds continuously.',
+  'glossary.term.rom.name': 'ROM (read-only memory)',
+  'glossary.term.rom.desc':
+    'A memory array whose contents are fixed at design time. Drives the address bus, reads the stored data — useful for lookup tables and microcode.',
+  'glossary.term.addressDecode.name': 'Address decoding',
+  'glossary.term.addressDecode.desc':
+    'The logic that selects which of several memory or peripheral devices is being accessed on a shared bus, based on the upper bits of the address.',
+  'glossary.term.readWriteEnable.name': 'Read / write enable',
+  'glossary.term.readWriteEnable.desc':
+    'Control lines on a memory: read-enable opens the data output, write-enable latches the data input on the clock edge. Usually mutually exclusive per cycle.',
+
+  /* --- Finite state machines --- */
+  'glossary.term.fsm.name': 'Finite state machine (FSM)',
+  'glossary.term.fsm.desc':
+    'A circuit with a finite number of named states, transition rules between them, and outputs that depend on the state (and possibly the inputs). Realised as a state register plus combinational next-state and output logic.',
+  'glossary.term.moore.name': 'Moore machine',
+  'glossary.term.moore.desc':
+    'An FSM whose outputs depend only on the current state. Slightly slower to react to inputs but produces glitch-free outputs aligned to the clock.',
+  'glossary.term.mealy.name': 'Mealy machine',
+  'glossary.term.mealy.desc':
+    'An FSM whose outputs depend on both current state and current inputs. Reacts one cycle faster than Moore but outputs can glitch between clock edges.',
+  'glossary.term.stateTransition.name': 'State transition',
+  'glossary.term.stateTransition.desc':
+    'The rule that moves the FSM from one state to another on a clock edge, gated by input conditions. The full set of transitions is the FSM\'s contract.',
+  'glossary.term.stateDiagram.name': 'State diagram',
+  'glossary.term.stateDiagram.desc':
+    'A graph of an FSM with states as nodes and transitions as labelled arcs. The standard pre-implementation deliverable when designing sequential logic.',
+
+  /* --- gatecraft internals --- */
+  'glossary.term.driver.name': 'Driver',
+  'glossary.term.driver.desc':
+    'A component output port that pushes a value onto a net. A net can have zero, one, or many drivers; many drivers raise a diagnostic unless they agree.',
+  'glossary.term.sink.name': 'Sink',
+  'glossary.term.sink.desc':
+    'A component input port that reads the value of the net it is connected to. A net can feed any number of sinks at no cost — fan-out is free in the simulator.',
+  'glossary.term.net.name': 'Net',
+  'glossary.term.net.desc':
+    'The set of ports connected by wires that are electrically the same. Each net resolves to one signal value per simulation step.',
+  'glossary.term.netlist.name': 'Netlist',
+  'glossary.term.netlist.desc':
+    'The compiled representation of a circuit — components, ports, and nets — that the simulator runs. Built by the Union-Find compiler on every edit.',
+  'glossary.term.snapshot.name': 'Snapshot',
+  'glossary.term.snapshot.desc':
+    'A read-only view of every net\'s current value, produced by the simulator on each settle/tick. The renderer redraws from the latest snapshot at 60fps.',
+  'glossary.term.diagnostic.name': 'Diagnostic',
+  'glossary.term.diagnostic.desc':
+    'A warning produced by the compiler or simulator — width-mismatch, multi-driver, oscillation, floating-input. The thing that makes "live debugging" the killer feature.',
+  'glossary.term.multiDriver.name': 'Multi-driver conflict',
+  'glossary.term.multiDriver.desc':
+    'Two or more drivers push opposite values onto the same net. The simulator resolves it to X and raises a diagnostic so you can spot the conflict immediately.',
+  'glossary.term.fanout.name': 'Fan-out',
+  'glossary.term.fanout.desc':
+    'How many sinks a single driver feeds. The number after a port in the Inspector is its fan-out count. Real silicon has a fan-out budget; the simulator does not.',
+  'glossary.term.composite.name': 'Composite',
+  'glossary.term.composite.desc':
+    'A saved circuit reused as a single block. Built once, dropped anywhere; the engine flattens it on compile so the simulator never sees the hierarchy.',
+
+  /* Lesson figure captions */
+  'fig.bits.cap': 'Each column is one bit; the column\'s weight is 2ⁿ. Add the columns that are 1.',
+  'fig.numberSystems.cap': 'Same value, three notations: 2, 10, 16.',
+  'fig.twosComplement.cap': 'To negate: flip every bit, then add 1.',
+  'fig.booleanAlgebra.cap': 'Identities that let you simplify expressions before they hit silicon.',
+  'fig.demorgan.cap': 'Bubbles "push through" gates and turn AND into OR (and vice versa).',
+  'fig.gates.cap': 'Every digital function ultimately decomposes into 1- and 2-input gates.',
+  'fig.universalGates.cap': 'NAND alone is enough — you can build any logic function out of just NAND gates.',
+  'fig.truthTable.cap': 'A full enumeration of every input combination and the expected output.',
+  'fig.sopPos.cap': 'SOP picks the 1-rows; POS picks the 0-rows. Two paths to the same circuit.',
+  'fig.karnaugh.cap': 'Adjacent cells differ by one bit — circle groups of 1s to read off the minimal cover.',
+  'fig.halfAdder.cap': 'Sum is XOR, carry is AND — the cheapest 2-input adder.',
+  'fig.fullAdder.cap': 'Two half adders + an OR on the carries — handles a carry-in.',
+  'fig.rippleAdder.cap': 'Carries ripple left-to-right; delay grows linearly with bit width.',
+  'fig.subtractor.cap': 'Invert b, set carry-in to 1 — the adder now computes a − b.',
+  'fig.comparator.cap': 'XORs check equality bit-by-bit; an AND ladder resolves ordering.',
+  'fig.decoder.cap': 'n binary inputs → exactly one of 2ⁿ outputs is high.',
+  'fig.encoder.cap': 'One-hot in, binary index out — inverse of a decoder.',
+  'fig.mux.cap': 'sel picks one of the data inputs; the rest are ignored.',
+  'fig.demux.cap': 'One input is routed to one of N outputs based on sel.',
+  'fig.triState.cap': 'When en=0 the output detaches (Z). Lets multiple drivers share one bus.',
+  'fig.srLatch.cap': 'Cross-coupled NORs store one bit. S sets, R resets, S=R=1 is illegal.',
+  'fig.dLatch.cap': 'While enable is high, Q tracks D; when enable falls, the last value is held.',
+  'fig.dFlipFlop.cap': 'q := d on every rising clock edge — ignores d at all other times.',
+  'fig.jkFlipFlop.cap': 'J/K cover hold, set, reset, and toggle in one universal element.',
+  'fig.tFlipFlop.cap': 'T=1 toggles, T=0 holds — the building block of ripple counters.',
+  'fig.clock.cap': 'A square wave paces sequential logic; flip-flops sample on the rising edge.',
+  'fig.timing.cap': 'Setup window before the edge and hold window after — violations risk metastability.',
+  'fig.register.cap': 'N D flip-flops sharing one clock — an N-bit memory cell.',
+  'fig.shiftRegister.cap': 'Each stage feeds the next; one bit shifts in per clock edge.',
+  'fig.counter.cap': 'A register plus an adder, fed back through itself: counts up every clock edge.',
+  'fig.modNCounter.cap': 'A comparator resets the counter when it reaches N — periodic count 0…N−1.',
+  'fig.ringCounter.cap': 'A one-hot pattern rotates around N flip-flops on every clock edge.',
+  'fig.rom.cap': 'Address in, fixed data out — like a printed lookup table baked into hardware.',
+  'fig.ram.cap': 'Random-access read/write memory. WE enables writes on the clock edge.',
+  'fig.addressDecode.cap': 'Upper bits select which chip; lower bits select the cell inside it.',
+  'fig.fsmIntro.cap': 'Nodes are states; edges are transitions taken on the clock edge.',
+  'fig.fsmDesign.cap': 'Sketch the state graph first — then derive state + output equations from it.',
+  'fig.alu.cap': 'Two operands + opcode → result and flag bits (carry, zero, negative, overflow).',
+  'fig.registerFile.cap': 'Two read ports + one write port; addresses pick which register is touched.',
+  'fig.datapath.cap': 'Regs → ALU → writeback, all clocked. The control unit fills in the missing arrows.',
+  'fig.controlUnit.cap': 'Opcode in, dozens of small control bits out — the brain of the CPU.',
+  'fig.hazards.cap': 'A momentary glitch on a signal that should have stayed high — the classic static-1 hazard.',
+  'fig.pipeline.cap': 'Five stages overlap: while one instruction writes back, four others are mid-flight.',
+  'fig.tooling.cap': 'gatecraft itself: model + renderer in the main thread, engine in a Web Worker.',
 
   /* Challenge mode */
   'challenge.title': 'Challenge',

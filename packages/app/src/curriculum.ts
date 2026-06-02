@@ -54,6 +54,12 @@ export function markLessonCompleted(lessonId: string): void {
   save({ ...state, completed: [...state.completed, lessonId] });
 }
 
+export function unmarkLessonCompleted(lessonId: string): void {
+  const state = load();
+  if (!state.completed.includes(lessonId)) return;
+  save({ ...state, completed: state.completed.filter((id) => id !== lessonId) });
+}
+
 export function readCurriculum(): CurriculumState {
   return load();
 }
