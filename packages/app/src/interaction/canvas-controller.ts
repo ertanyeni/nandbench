@@ -572,6 +572,55 @@ export function attachCanvasController(
     });
   };
 
+  /* ----------------------------------------------------------------- */
+  /* Pinch-to-zoom + two-finger pan (touch only)                       */
+  /*                                                                   */
+  /* Tracks every active touch pointer in a Map. When ≥ 2 are down we  */
+  /* enter "pinch" mode: zoom factor = current distance / prior        */
+  /* distance, anchored at the midpoint. Single-finger drags continue  */
+  /* to flow through the standard pointer handlers above as a normal   */
+  /* drag/pan, so touch users still get the same controls as mouse.   */
+  /* ----------------------------------------------------------------- */
+  const activeTouches = new Map<number, { x: number; y: number }>();
+  let pinchPrev: { dist: number; midX: number; midY: number } | null = null;
+
+  const onTouchPointerDown = (ev: PointerEvent): void => {
+    if (ev.pointerType !== 'touch') return;
+    activeTouches.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+    if (activeTouches.size === 2) {
+      const [a, b] = [...activeTouches.values()];
+      pinchPrev = midpointDistance(a!, b!);
+    }
+  };
+  const onTouchPointerMove = (ev: PointerEvent): void => {
+    if (ev.pointerType !== 'touch') return;
+    if (!activeTouches.has(ev.pointerId)) return;
+    activeTouches.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+    if (activeTouches.size >= 2 && pinchPrev) {
+      const [a, b] = [...activeTouches.values()];
+      const cur = midpointDistance(a!, b!);
+      const factor = cur.dist / Math.max(1, pinchPrev.dist);
+      const rect = canvas.getBoundingClientRect();
+      useAppStore.getState().zoomAt(cur.midX - rect.left, cur.midY - rect.top, factor);
+      pinchPrev = cur;
+      ev.preventDefault();
+    }
+  };
+  const onTouchPointerUp = (ev: PointerEvent): void => {
+    if (ev.pointerType !== 'touch') return;
+    activeTouches.delete(ev.pointerId);
+    if (activeTouches.size < 2) pinchPrev = null;
+  };
+  function midpointDistance(a: { x: number; y: number }, b: { x: number; y: number }): { dist: number; midX: number; midY: number } {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    return {
+      dist: Math.sqrt(dx * dx + dy * dy),
+      midX: (a.x + b.x) / 2,
+      midY: (a.y + b.y) / 2,
+    };
+  }
+
   canvas.addEventListener('pointerdown', onPointerDown);
   canvas.addEventListener('pointermove', onPointerMove);
   canvas.addEventListener('pointerup', onPointerUp);
@@ -579,6 +628,10 @@ export function attachCanvasController(
   canvas.addEventListener('dblclick', onDoubleClick);
   canvas.addEventListener('wheel', onWheel, { passive: false });
   canvas.addEventListener('contextmenu', onContextMenu);
+  canvas.addEventListener('pointerdown', onTouchPointerDown, { capture: true });
+  canvas.addEventListener('pointermove', onTouchPointerMove, { capture: true });
+  canvas.addEventListener('pointerup', onTouchPointerUp, { capture: true });
+  canvas.addEventListener('pointercancel', onTouchPointerUp, { capture: true });
   window.addEventListener('keydown', onKeyDown);
 
   return () => {
@@ -589,6 +642,10 @@ export function attachCanvasController(
     canvas.removeEventListener('dblclick', onDoubleClick);
     canvas.removeEventListener('wheel', onWheel);
     canvas.removeEventListener('contextmenu', onContextMenu);
+    canvas.removeEventListener('pointerdown', onTouchPointerDown, { capture: true } as EventListenerOptions);
+    canvas.removeEventListener('pointermove', onTouchPointerMove, { capture: true } as EventListenerOptions);
+    canvas.removeEventListener('pointerup', onTouchPointerUp, { capture: true } as EventListenerOptions);
+    canvas.removeEventListener('pointercancel', onTouchPointerUp, { capture: true } as EventListenerOptions);
     window.removeEventListener('keydown', onKeyDown);
   };
 }
