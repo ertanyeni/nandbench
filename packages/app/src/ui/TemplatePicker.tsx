@@ -18,13 +18,13 @@ export function TemplatePicker(): JSX.Element | null {
 
   useEffect(() => {
     const onOpen = (): void => setOpen(true);
-    window.addEventListener('gatecraft:open-template-picker', onOpen);
+    window.addEventListener('nandbench:open-template-picker', onOpen);
     const onKey = (ev: KeyboardEvent): void => {
       if (open && ev.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => {
-      window.removeEventListener('gatecraft:open-template-picker', onOpen);
+      window.removeEventListener('nandbench:open-template-picker', onOpen);
       window.removeEventListener('keydown', onKey);
     };
   }, [open]);

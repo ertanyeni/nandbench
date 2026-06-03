@@ -90,7 +90,7 @@ export function App(): JSX.Element {
       if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
       if ((ev.metaKey || ev.ctrlKey) && ev.key === '/') {
         ev.preventDefault();
-        window.dispatchEvent(new Event('gatecraft:open-tour'));
+        window.dispatchEvent(new Event('nandbench:open-tour'));
       } else if ((ev.metaKey || ev.ctrlKey) && (ev.key === 'f' || ev.key === 'F')) {
         ev.preventDefault();
         zoomToFit();

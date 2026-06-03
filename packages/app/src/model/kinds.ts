@@ -10,7 +10,7 @@
  * own origin is its top-left bounding-box corner.
  */
 
-import type { ComponentParams, PortDirection } from '@gatecraft/engine';
+import type { ComponentParams, PortDirection } from '@nandbench/engine';
 import type { Point } from './document.js';
 
 export const GRID = 20;

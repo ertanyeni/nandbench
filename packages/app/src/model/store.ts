@@ -18,7 +18,7 @@ import type {
   Diagnostic,
   PortRef,
   SimSnapshot,
-} from '@gatecraft/engine';
+} from '@nandbench/engine';
 import { create } from 'zustand';
 import type { Command } from '../commands/types.js';
 import { setActiveLocale, type Locale } from '../i18n/index.js';
@@ -289,10 +289,10 @@ export const useAppStore = create<AppState>((set, get) => ({
   paletteOpen: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
   snapEnabled:
     typeof localStorage !== 'undefined'
-      ? localStorage.getItem('gatecraft:snapEnabled') !== 'false'
+      ? localStorage.getItem('nandbench:snapEnabled') !== 'false'
       : true,
   colorMode:
-    typeof localStorage !== 'undefined' && localStorage.getItem('gatecraft:colorMode') === 'deuteranopia'
+    typeof localStorage !== 'undefined' && localStorage.getItem('nandbench:colorMode') === 'deuteranopia'
       ? 'deuteranopia'
       : 'default',
   /* Tabs */
@@ -461,7 +461,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   setPaletteOpen: (open) => set({ paletteOpen: open }),
   setSnapEnabled: (enabled) => {
     try {
-      localStorage.setItem('gatecraft:snapEnabled', enabled ? 'true' : 'false');
+      localStorage.setItem('nandbench:snapEnabled', enabled ? 'true' : 'false');
     } catch {
       /* ignore */
     }
@@ -469,7 +469,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   setColorMode: (mode) => {
     try {
-      localStorage.setItem('gatecraft:colorMode', mode);
+      localStorage.setItem('nandbench:colorMode', mode);
     } catch {
       /* ignore quota */
     }

@@ -157,7 +157,7 @@ export const CURRICULUM_EN = {
   'lesson.rippleAdder.step3':
     'Worst-case delay is N × t(full-adder) — the carry has to ripple through every stage. That\'s why carry-lookahead adders exist.',
   'lesson.rippleAdder.step4':
-    'In gatecraft you can build a 4-bit ripple adder by placing 4 full-adders or by using the Adder primitive with width=4.',
+    'In nandbench you can build a 4-bit ripple adder by placing 4 full-adders or by using the Adder primitive with width=4.',
   'lesson.rippleAdder.step5':
     'Drive A=0011 and B=0001 (3+1), simulate, watch the sum settle to 0100 (4) and carry-out=0.',
 
@@ -313,7 +313,7 @@ export const CURRICULUM_EN = {
   'lesson.timing.step4':
     'Real chips have an STA (static timing analysis) tool that walks every path and reports the slack. Below zero slack = the clock is too fast.',
   'lesson.timing.step5':
-    "Gatecraft's engine is event-driven, not delay-accurate — so it won't show real timing violations. But the conceptual model still applies.",
+    "nandbench's engine is event-driven, not delay-accurate — so it won't show real timing violations. But the conceptual model still applies.",
 
   /* ===== Unit 5: Registers / counters ===== */
   'lesson.register.title': '5.1 Parallel-load register',
@@ -372,7 +372,7 @@ export const CURRICULUM_EN = {
   'lesson.rom.step3':
     'ROM is great for lookup tables: trig values, character glyphs, microcode for a CPU\'s control unit, firmware boot code.',
   'lesson.rom.step4':
-    'In gatecraft, the ROM primitive exposes a data parameter — a hex string that fills the table. Open the ROM-toy template to see one in action.',
+    'In nandbench, the ROM primitive exposes a data parameter — a hex string that fills the table. Open the ROM-toy template to see one in action.',
   'lesson.rom.step5':
     'Drive the address with a counter and connect the data output to a 7-segment display — instant character ROM demo.',
 
@@ -502,7 +502,7 @@ export const CURRICULUM_EN = {
   'lesson.controlUnit.step3':
     'Microcoded control: the opcode indexes into a microprogram ROM that issues a sequence of micro-instructions. Slower but easier to evolve.',
   'lesson.controlUnit.step4':
-    'Both can be implemented in gatecraft using ROM + a small FSM for sequencing. The ROM holds the control word table.',
+    'Both can be implemented in nandbench using ROM + a small FSM for sequencing. The ROM holds the control word table.',
   'lesson.controlUnit.step5':
     'Connect this to the datapath from the previous lesson — opcode in, control signals out, and you have a tiny working CPU.',
 
@@ -530,9 +530,9 @@ export const CURRICULUM_EN = {
     'Solutions: forwarding paths, branch prediction, pipeline stalls. Beyond this course\'s scope, but the FSM/datapath foundation here is exactly what you build on.',
 
   'lesson.tooling.title': '9.3 Where to go from here',
-  'lesson.tooling.summary': 'Yosys, Icarus, FPGAs — gatecraft as a stepping stone.',
+  'lesson.tooling.summary': 'Yosys, Icarus, FPGAs — nandbench as a stepping stone.',
   'lesson.tooling.step1':
-    'gatecraft can export a structural Verilog netlist plus a self-checking testbench (Toolbar → menu → Export). Open it with any Verilog simulator.',
+    'nandbench can export a structural Verilog netlist plus a self-checking testbench (Toolbar → menu → Export). Open it with any Verilog simulator.',
   'lesson.tooling.step2':
     'Icarus Verilog (iverilog) compiles and runs the testbench from the command line. Yosys synthesizes the same Verilog into an FPGA-ready netlist.',
   'lesson.tooling.step3':

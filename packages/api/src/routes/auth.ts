@@ -81,7 +81,7 @@ auth.post('/request', ipLimit, emailLimit, async (c) => {
     // helpful message rather than silently pretending the link was
     // sent.
     // eslint-disable-next-line no-console
-    console.error('[gatecraft-api] sendMagicLink failed', err);
+    console.error('[nandbench-api] sendMagicLink failed', err);
     return c.json({ error: 'mail-failed' }, 503);
   }
   return c.json({ ok: true });

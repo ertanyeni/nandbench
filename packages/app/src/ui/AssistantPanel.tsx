@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { ComponentId, ComponentParams } from '@gatecraft/engine';
+import type { ComponentId, ComponentParams } from '@nandbench/engine';
 import { evaluateAssistant, type AssistantAction, type AssistantResponse } from '../assistant/index.js';
 import { askLlm, isLlmEnabled } from '../assistant/llm-bridge.js';
 import { TEMPLATES } from '../fixtures/templates.js';
@@ -8,7 +8,7 @@ import { useAppStore } from '../model/store.js';
 
 /**
  * Right-side slide-in assistant panel. Opens via Toolbar event
- * (`gatecraft:open-assistant`). Subscribes to enough store slices to
+ * (`nandbench:open-assistant`). Subscribes to enough store slices to
  * rebuild the assistant context on every relevant change. Each response
  * is rendered as an expandable card grouped by category.
  */
@@ -21,7 +21,7 @@ const SECTION_ORDER: readonly AssistantResponse['category'][] = [
   'quality',
 ];
 
-const PANEL_WIDTH_KEY = 'gatecraft:assistant-width';
+const PANEL_WIDTH_KEY = 'nandbench:assistant-width';
 const MIN_WIDTH = 320;
 const MAX_WIDTH = 720;
 
@@ -59,9 +59,9 @@ export function AssistantPanel(): JSX.Element | null {
   useEffect(() => {
     const onOpen = (): void => {
       // Side panels are mutually exclusive — tell siblings to close,
-      // then open ourselves. Siblings listen on `gatecraft:close-side-panels`.
+      // then open ourselves. Siblings listen on `nandbench:close-side-panels`.
       window.dispatchEvent(
-        new CustomEvent('gatecraft:close-side-panels', { detail: { except: 'assistant' } }),
+        new CustomEvent('nandbench:close-side-panels', { detail: { except: 'assistant' } }),
       );
       setOpen(true);
     };
@@ -69,15 +69,15 @@ export function AssistantPanel(): JSX.Element | null {
       const except = (ev as CustomEvent<{ except?: string }>).detail?.except;
       if (except !== 'assistant') setOpen(false);
     };
-    window.addEventListener('gatecraft:open-assistant', onOpen);
-    window.addEventListener('gatecraft:close-side-panels', onCloseSiblings);
+    window.addEventListener('nandbench:open-assistant', onOpen);
+    window.addEventListener('nandbench:close-side-panels', onCloseSiblings);
     const onKey = (ev: KeyboardEvent): void => {
       if (open && ev.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => {
-      window.removeEventListener('gatecraft:open-assistant', onOpen);
-      window.removeEventListener('gatecraft:close-side-panels', onCloseSiblings);
+      window.removeEventListener('nandbench:open-assistant', onOpen);
+      window.removeEventListener('nandbench:close-side-panels', onCloseSiblings);
       window.removeEventListener('keydown', onKey);
     };
   }, [open]);
@@ -120,17 +120,17 @@ export function AssistantPanel(): JSX.Element | null {
         return;
       }
       case 'open-lesson': {
-        window.dispatchEvent(new Event('gatecraft:open-lessons'));
+        window.dispatchEvent(new Event('nandbench:open-lessons'));
         return;
       }
       case 'open-lessons':
-        window.dispatchEvent(new Event('gatecraft:open-lessons'));
+        window.dispatchEvent(new Event('nandbench:open-lessons'));
         return;
       case 'open-glossary':
-        window.dispatchEvent(new Event('gatecraft:open-glossary'));
+        window.dispatchEvent(new Event('nandbench:open-glossary'));
         return;
       case 'open-tour':
-        window.dispatchEvent(new Event('gatecraft:open-tour'));
+        window.dispatchEvent(new Event('nandbench:open-tour'));
         return;
       case 'place-kind': {
         // Enter "place" tool for the given kind with empty params — the

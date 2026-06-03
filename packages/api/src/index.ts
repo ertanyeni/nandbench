@@ -1,5 +1,5 @@
 /**
- * gatecraft cloud API — Hono app. Wires:
+ * nandbench cloud API — Hono app. Wires:
  *
  *   POST   /circuits         create (anonymous or authed)
  *   GET    /circuits/:id     read (public or owner)
@@ -49,7 +49,7 @@ app.route('/me', me);
 const port = Number(process.env.PORT ?? 4555);
 serve({ fetch: app.fetch, port }, ({ port: p }) => {
   // eslint-disable-next-line no-console
-  console.log(`[gatecraft-api] listening on http://localhost:${p}`);
+  console.log(`[nandbench-api] listening on http://localhost:${p}`);
 });
 
 export default app;

@@ -11,8 +11,8 @@ import type {
   ComponentId,
   PortRef,
   SignalValue,
-} from '@gatecraft/engine';
-import { asComponentId, portKey } from '@gatecraft/engine';
+} from '@nandbench/engine';
+import { asComponentId, portKey } from '@nandbench/engine';
 import {
   AddComponentCommand,
   AddWireCommand,
@@ -270,7 +270,7 @@ export function attachCanvasController(
       // event so a DOM overlay can render the kind's short description.
       const sugHit = renderer.hitTestSuggestion(world.x, world.y);
       window.dispatchEvent(
-        new CustomEvent('gatecraft:hover-suggestion', {
+        new CustomEvent('nandbench:hover-suggestion', {
           detail: sugHit
             ? { kind: sugHit.kind, screenX: ev.clientX, screenY: ev.clientY }
             : null,
@@ -449,7 +449,7 @@ export function attachCanvasController(
     // Forward to React via a window event with the cursor position; the
     // ContextMenu component listens and renders the popup.
     window.dispatchEvent(
-      new CustomEvent('gatecraft:open-context-menu', {
+      new CustomEvent('nandbench:open-context-menu', {
         detail: { screenX: ev.clientX, screenY: ev.clientY, target: compHit ? 'component' : 'wire' },
       }),
     );

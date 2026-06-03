@@ -4,7 +4,7 @@
  * persistence and Yjs.
  */
 
-import type { ComponentId, ComponentParams, PortRef } from '@gatecraft/engine';
+import type { ComponentId, ComponentParams, PortRef } from '@nandbench/engine';
 import type { CircuitDocument, Point, VisualComponent, VisualWire, WireId } from '../model/document.js';
 import type { Command } from './types.js';
 

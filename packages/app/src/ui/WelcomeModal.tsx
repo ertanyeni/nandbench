@@ -11,7 +11,7 @@ import { ModalCloseButton } from './ModalCloseButton.js';
  *   - the templates picker (browse working circuits)
  *   - a blank canvas (advanced users)
  */
-const FLAG_KEY = 'gatecraft:welcomed:v1';
+const FLAG_KEY = 'nandbench:welcomed:v1';
 
 export function WelcomeModal(): JSX.Element | null {
   const [open, setOpen] = useState(() => {
@@ -30,8 +30,8 @@ export function WelcomeModal(): JSX.Element | null {
   // the user wants it back). For now Welcome is one-shot.
   useEffect(() => {
     const handler = (): void => setOpen(true);
-    window.addEventListener('gatecraft:open-welcome', handler);
-    return () => window.removeEventListener('gatecraft:open-welcome', handler);
+    window.addEventListener('nandbench:open-welcome', handler);
+    return () => window.removeEventListener('nandbench:open-welcome', handler);
   }, []);
 
   if (!open) return null;
@@ -49,15 +49,15 @@ export function WelcomeModal(): JSX.Element | null {
 
   const startTour = (): void => {
     dismiss();
-    setTimeout(() => window.dispatchEvent(new Event('gatecraft:open-tour')), 80);
+    setTimeout(() => window.dispatchEvent(new Event('nandbench:open-tour')), 80);
   };
   const startLessons = (): void => {
     dismiss();
-    setTimeout(() => window.dispatchEvent(new Event('gatecraft:open-lessons')), 80);
+    setTimeout(() => window.dispatchEvent(new Event('nandbench:open-lessons')), 80);
   };
   const openTemplates = (): void => {
     dismiss();
-    setTimeout(() => window.dispatchEvent(new Event('gatecraft:open-template-picker')), 80);
+    setTimeout(() => window.dispatchEvent(new Event('nandbench:open-template-picker')), 80);
   };
   const startEmpty = (): void => {
     loadDocument({ components: [], wires: [] });

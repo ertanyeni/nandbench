@@ -1,19 +1,19 @@
 {
-  "name": "@gatecraft/cli",
+  "name": "@nandbench/cli",
   "version": "0.0.0",
   "private": true,
-  "description": "Headless gatecraft runner — compile + simulate + grade .json projects from the shell.",
+  "description": "Headless nandbench runner — compile + simulate + grade .json projects from the shell.",
   "type": "module",
   "bin": {
-    "gatecraft-check": "./bin/gatecraft-check.js"
+    "nandbench-check": "./bin/nandbench-check.js"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "check": "tsx src/index.ts"
   },
   "dependencies": {
-    "@gatecraft/app": "workspace:*",
-    "@gatecraft/engine": "workspace:*"
+    "@nandbench/app": "workspace:*",
+    "@nandbench/engine": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",

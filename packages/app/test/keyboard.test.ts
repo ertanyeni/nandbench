@@ -6,7 +6,7 @@
  * resulting document/selection/history.
  */
 
-import { asComponentId, type ComponentId } from '@gatecraft/engine';
+import { asComponentId, type ComponentId } from '@nandbench/engine';
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   copySelection,

@@ -5,7 +5,7 @@ import { useAppStore } from '../model/store.js';
 
 /**
  * Canvas right-click menu. The canvas controller pre-selects whatever
- * is under the cursor, then dispatches `gatecraft:open-context-menu`
+ * is under the cursor, then dispatches `nandbench:open-context-menu`
  * with the screen position. We listen + render a small popup, close on
  * outside-click or Esc.
  */
@@ -35,11 +35,11 @@ export function ContextMenu(): JSX.Element | null {
     const onKey = (ev: KeyboardEvent): void => {
       if (ev.key === 'Escape') setState({ open: false });
     };
-    window.addEventListener('gatecraft:open-context-menu', onOpen);
+    window.addEventListener('nandbench:open-context-menu', onOpen);
     window.addEventListener('mousedown', onAway);
     window.addEventListener('keydown', onKey);
     return () => {
-      window.removeEventListener('gatecraft:open-context-menu', onOpen);
+      window.removeEventListener('nandbench:open-context-menu', onOpen);
       window.removeEventListener('mousedown', onAway);
       window.removeEventListener('keydown', onKey);
     };

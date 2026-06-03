@@ -1,6 +1,6 @@
 /**
  * LLM bridge — optional remote AI assist. Disabled by default; the user
- * has to set `endpoint` + `token` in localStorage (`gatecraft:llm:v1`).
+ * has to set `endpoint` + `token` in localStorage (`nandbench:llm:v1`).
  *
  * The bridge wraps an Ollama-compatible `/api/chat` endpoint behind a
  * shared bearer token. Errors are caught and returned as a structured
@@ -12,7 +12,7 @@
  * caller controls payload contents.
  */
 
-const STORAGE_KEY = 'gatecraft:llm:v1';
+const STORAGE_KEY = 'nandbench:llm:v1';
 
 export interface LlmConfig {
   readonly endpoint: string;

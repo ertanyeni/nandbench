@@ -5,7 +5,7 @@ import { useAppStore } from '../model/store.js';
 /**
  * Interactive 5-step tour.
  *
- * Opens via a window event (`gatecraft:open-tour`). For each step we find
+ * Opens via a window event (`nandbench:open-tour`). For each step we find
  * the target element by data-tour attribute, measure its bounding rect,
  * and overlay:
  *   - a "spotlight" hole (cut from a translucent backdrop using inset
@@ -43,7 +43,7 @@ export function TourOverlay(): JSX.Element | null {
       setStep(0);
       setOpen(true);
     };
-    window.addEventListener('gatecraft:open-tour', onOpen);
+    window.addEventListener('nandbench:open-tour', onOpen);
     const onKey = (ev: KeyboardEvent): void => {
       if (!open) return;
       if (ev.key === 'Escape') setOpen(false);
@@ -51,7 +51,7 @@ export function TourOverlay(): JSX.Element | null {
     };
     window.addEventListener('keydown', onKey);
     return () => {
-      window.removeEventListener('gatecraft:open-tour', onOpen);
+      window.removeEventListener('nandbench:open-tour', onOpen);
       window.removeEventListener('keydown', onKey);
     };
   }, [open]);

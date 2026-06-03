@@ -4,7 +4,7 @@
 # Multi-stage:
 #   1. builder — pnpm install + vite build for the whole workspace
 #      (engine + cli + app are all needed because app imports
-#      @gatecraft/engine via workspace protocol)
+#      @nandbench/engine via workspace protocol)
 #   2. output — minimal alpine that copies the built dist/ into a
 #      volume on container start and exits.
 
@@ -29,12 +29,12 @@ COPY packages/engine packages/engine
 COPY packages/app packages/app
 COPY packages/multiplayer packages/multiplayer
 
-# VITE_GATECRAFT_API is baked into the bundle at build time. The
+# VITE_NANDBENCH_API is baked into the bundle at build time. The
 # infra/docker-compose passes it via build args.
-ARG VITE_GATECRAFT_API=https://api.nandbench.ertanyeni.com
-ENV VITE_GATECRAFT_API=${VITE_GATECRAFT_API}
+ARG VITE_NANDBENCH_API=https://api.nandbench.ertanyeni.com
+ENV VITE_NANDBENCH_API=${VITE_NANDBENCH_API}
 
-RUN pnpm --filter @gatecraft/app build
+RUN pnpm --filter @nandbench/app build
 
 FROM alpine:3.20 AS output
 COPY --from=builder /repo/packages/app/dist /app/dist

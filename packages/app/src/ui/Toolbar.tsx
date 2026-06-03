@@ -102,7 +102,7 @@ export function Toolbar(): JSX.Element {
     const a = document.createElement('a');
     const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
     a.href = url;
-    a.download = `gatecraft-${stamp}.json`;
+    a.download = `nandbench-${stamp}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -172,27 +172,27 @@ export function Toolbar(): JSX.Element {
   };
 
   const openTemplatePicker = (): void => {
-    window.dispatchEvent(new Event('gatecraft:open-template-picker'));
+    window.dispatchEvent(new Event('nandbench:open-template-picker'));
   };
 
   const openLessons = (): void => {
-    window.dispatchEvent(new Event('gatecraft:open-lessons'));
+    window.dispatchEvent(new Event('nandbench:open-lessons'));
   };
   const openGlossary = (): void => {
-    window.dispatchEvent(new Event('gatecraft:open-glossary'));
+    window.dispatchEvent(new Event('nandbench:open-glossary'));
   };
   const openAssistant = (): void => {
-    window.dispatchEvent(new Event('gatecraft:open-assistant'));
+    window.dispatchEvent(new Event('nandbench:open-assistant'));
   };
 
   const exportAsVerilog = (): void => {
     // Modal asks for module name + optional testbench from a lesson
     // challenge spec — replaces the old one-tap direct download.
-    window.dispatchEvent(new Event('gatecraft:open-verilog-export'));
+    window.dispatchEvent(new Event('nandbench:open-verilog-export'));
   };
 
   const openCloud = (): void => {
-    window.dispatchEvent(new Event('gatecraft:open-cloud'));
+    window.dispatchEvent(new Event('nandbench:open-cloud'));
   };
 
   const saveToFolder = async (): Promise<void> => {
@@ -367,28 +367,28 @@ export function Toolbar(): JSX.Element {
           { label: t('toolbar.glossary'), onClick: openGlossary },
           {
             label: t('toolbar.welcome'),
-            onClick: () => window.dispatchEvent(new Event('gatecraft:open-welcome')),
+            onClick: () => window.dispatchEvent(new Event('nandbench:open-welcome')),
           },
           { label: t('toolbar.publishTab'), onClick: publishTab },
           { label: t('toolbar.saveLabel'), onClick: saveAsComposite },
           { label: t('toolbar.export'), onClick: exportFile },
           { label: t('toolbar.import'), onClick: importFile },
-          { label: `✦ ${t('explain.button')}`, onClick: () => window.dispatchEvent(new CustomEvent('gatecraft:explain', { detail: {} })) },
-          { label: t('toolbar.shortcuts'), onClick: () => window.dispatchEvent(new Event('gatecraft:open-shortcuts')) },
-          { label: t('toolbar.export.long'), onClick: () => window.dispatchEvent(new Event('gatecraft:open-export')) },
+          { label: `✦ ${t('explain.button')}`, onClick: () => window.dispatchEvent(new CustomEvent('nandbench:explain', { detail: {} })) },
+          { label: t('toolbar.shortcuts'), onClick: () => window.dispatchEvent(new Event('nandbench:open-shortcuts')) },
+          { label: t('toolbar.export.long'), onClick: () => window.dispatchEvent(new Event('nandbench:open-export')) },
           { label: t('toolbar.exportVerilog'), onClick: exportAsVerilog },
           { label: t('toolbar.cloud'), onClick: openCloud },
           {
             label: t('toolbar.waveform'),
-            onClick: () => window.dispatchEvent(new Event('gatecraft:open-waveform')),
+            onClick: () => window.dispatchEvent(new Event('nandbench:open-waveform')),
           },
           {
             label: t('toolbar.history'),
-            onClick: () => window.dispatchEvent(new Event('gatecraft:open-history')),
+            onClick: () => window.dispatchEvent(new Event('nandbench:open-history')),
           },
           {
             label: t('toolbar.llmSettings'),
-            onClick: () => window.dispatchEvent(new Event('gatecraft:open-llm-settings')),
+            onClick: () => window.dispatchEvent(new Event('nandbench:open-llm-settings')),
           },
           {
             label: t(useAppStore.getState().colorMode === 'deuteranopia'

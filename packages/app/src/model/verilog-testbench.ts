@@ -4,7 +4,7 @@
  * truth-table case at the DUT and asserts the expected outputs.
  *
  * The DUT module is whatever name `exportVerilog` used (default
- * `gatecraft_top`). The user supplies that name to the exporter.
+ * `nandbench_top`). The user supplies that name to the exporter.
  */
 
 import type { Challenge } from '../challenges.js';

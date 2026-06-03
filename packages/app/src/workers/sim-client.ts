@@ -13,7 +13,7 @@ import type {
   PortRef,
   SignalValue,
   SimSnapshot,
-} from '@gatecraft/engine';
+} from '@nandbench/engine';
 import SimWorkerCtor from './sim.worker?worker';
 import type { WorkerInMsg, WorkerOutMsg } from './sim.worker.js';
 

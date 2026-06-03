@@ -16,7 +16,7 @@ COPY packages/app/package.json packages/app/
 COPY packages/cli/package.json packages/cli/
 COPY packages/multiplayer/package.json packages/multiplayer/
 
-RUN pnpm install --frozen-lockfile --ignore-scripts --filter @gatecraft/api...
+RUN pnpm install --frozen-lockfile --ignore-scripts --filter @nandbench/api...
 
 FROM node:20-alpine AS runtime
 WORKDIR /repo

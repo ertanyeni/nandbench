@@ -1,4 +1,4 @@
-import type { ComponentId, SignalValue } from '@gatecraft/engine';
+import type { ComponentId, SignalValue } from '@nandbench/engine';
 import { useEffect, useRef, useState } from 'react';
 import { t } from '../i18n/index.js';
 import { useAppStore } from '../model/store.js';
@@ -51,7 +51,7 @@ export function WaveformPanel(): JSX.Element | null {
 
   useEffect(() => {
     const onOpen = (): void => setOpen(true);
-    window.addEventListener('gatecraft:open-waveform', onOpen);
+    window.addEventListener('nandbench:open-waveform', onOpen);
     const onKey = (ev: KeyboardEvent): void => {
       if (open && ev.key === 'Escape') setOpen(false);
     };
@@ -76,11 +76,11 @@ export function WaveformPanel(): JSX.Element | null {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     };
-    window.addEventListener('gatecraft:waveform-export-vcd', onVcdExport);
+    window.addEventListener('nandbench:waveform-export-vcd', onVcdExport);
     return () => {
-      window.removeEventListener('gatecraft:open-waveform', onOpen);
+      window.removeEventListener('nandbench:open-waveform', onOpen);
       window.removeEventListener('keydown', onKey);
-      window.removeEventListener('gatecraft:waveform-export-vcd', onVcdExport);
+      window.removeEventListener('nandbench:waveform-export-vcd', onVcdExport);
     };
   }, [open]);
 

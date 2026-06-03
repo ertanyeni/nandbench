@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Minimal y-websocket relay for gatecraft rooms.
+ * Minimal y-websocket relay for nandbench rooms.
  *
  * Drop this on the Hetzner box (or any Node host):
  *   cd packages/multiplayer
@@ -26,7 +26,7 @@ const httpServer = createServer((req, res) => {
     return;
   }
   res.writeHead(200, { 'content-type': 'text/plain' });
-  res.end('gatecraft y-websocket relay — connect via ws://host:port/<room>\n');
+  res.end('nandbench y-websocket relay — connect via ws://host:port/<room>\n');
 });
 
 const wss = new WebSocketServer({ noServer: true });
@@ -45,5 +45,5 @@ httpServer.on('upgrade', (req, socket, head) => {
 
 httpServer.listen(port, host, () => {
   // eslint-disable-next-line no-console
-  console.log(`[gatecraft multiplayer] listening on ws://${host}:${port}/<room>`);
+  console.log(`[nandbench multiplayer] listening on ws://${host}:${port}/<room>`);
 });

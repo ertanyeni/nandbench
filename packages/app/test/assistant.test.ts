@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { asComponentId } from '@gatecraft/engine';
+import { asComponentId } from '@nandbench/engine';
 import { ALL_RULES, evaluateAssistant } from '../src/assistant/index.js';
 import { CONCEPT_RULES } from '../src/assistant/rules/concepts.js';
 import { CURRICULUM_RULES } from '../src/assistant/rules/curriculum.js';

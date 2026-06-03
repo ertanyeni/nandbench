@@ -11,8 +11,8 @@ export function StatusBar(): JSX.Element {
       setSavedFlash(true);
       window.setTimeout(() => setSavedFlash(false), 1500);
     };
-    window.addEventListener('gatecraft:saved-toast', handler);
-    return () => window.removeEventListener('gatecraft:saved-toast', handler);
+    window.addEventListener('nandbench:saved-toast', handler);
+    return () => window.removeEventListener('nandbench:saved-toast', handler);
   }, []);
   const viewport = useAppStore((s) => s.viewport);
   const selection = useAppStore((s) => s.selection);
@@ -135,7 +135,7 @@ export function StatusBar(): JSX.Element {
             : t('statusBar.selectedMulti', { n: selCount })}
       </span>
       <a
-        href="https://github.com/ertanyeni/gatecraft"
+        href="https://github.com/ertanyeni/nandbench"
         target="_blank"
         rel="noopener noreferrer"
         title={t('statusBar.sourceTitle')}

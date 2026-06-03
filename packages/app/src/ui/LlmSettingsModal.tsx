@@ -6,9 +6,9 @@ import { ModalCloseButton } from './ModalCloseButton.js';
 /**
  * LLM settings modal — collects the endpoint / token / model for the
  * optional self-hosted (or BYO) LLM. Everything stays in localStorage;
- * the gatecraft.app servers never see these values.
+ * the nandbench.app servers never see these values.
  *
- * Opens via window event `gatecraft:open-llm-settings`.
+ * Opens via window event `nandbench:open-llm-settings`.
  */
 export function LlmSettingsModal(): JSX.Element | null {
   const [open, setOpen] = useState(false);
@@ -20,13 +20,13 @@ export function LlmSettingsModal(): JSX.Element | null {
       setDraft(cfg ?? { endpoint: '', token: '', model: 'qwen2.5:3b-instruct' });
       setOpen(true);
     };
-    window.addEventListener('gatecraft:open-llm-settings', handler);
+    window.addEventListener('nandbench:open-llm-settings', handler);
     const onKey = (ev: KeyboardEvent): void => {
       if (open && ev.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => {
-      window.removeEventListener('gatecraft:open-llm-settings', handler);
+      window.removeEventListener('nandbench:open-llm-settings', handler);
       window.removeEventListener('keydown', onKey);
     };
   }, [open]);

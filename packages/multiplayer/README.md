@@ -1,4 +1,4 @@
-# @gatecraft/multiplayer
+# @nandbench/multiplayer
 
 Yjs-based real-time collaboration. Self-host the relay; the browser app
 opts in via Toolbar → "Share". V1 syncs document content + cursor
@@ -16,23 +16,23 @@ to each peer.
 ## Run the relay (Hetzner)
 
 ```bash
-cd /home/deploy/gatecraft
+cd /home/deploy/nandbench
 pnpm install
-pnpm --filter @gatecraft/multiplayer server     # listens on :4444 by default
+pnpm --filter @nandbench/multiplayer server     # listens on :4444 by default
 ```
 
 Put Caddy in front for TLS:
 
 ```
-mp.gatecraft.example {
+mp.nandbench.example {
     reverse_proxy localhost:4444
 }
 ```
 
 ## Connect from the app
 
-In gatecraft → Toolbar ☰ → "Multiplayer…" set:
-- WebSocket URL: `wss://mp.gatecraft.example`
+In nandbench → Toolbar ☰ → "Multiplayer…" set:
+- WebSocket URL: `wss://mp.nandbench.example`
 - Room: any string (the URL fragment people share)
 - Display name + color: shown on other peers' cursors
 

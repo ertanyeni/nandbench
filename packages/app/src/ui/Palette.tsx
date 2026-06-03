@@ -1,4 +1,4 @@
-import type { ComponentParams } from '@gatecraft/engine';
+import type { ComponentParams } from '@nandbench/engine';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { t } from '../i18n/index.js';
 import { getShape } from '../model/kinds.js';

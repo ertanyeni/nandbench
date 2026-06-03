@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * gatecraft-check — headless project verifier.
+ * nandbench-check — headless project verifier.
  *
  * Usage:
- *   gatecraft-check <file.json> [--challenge=<lessonId>] [--tab=<id|name>]
+ *   nandbench-check <file.json> [--challenge=<lessonId>] [--tab=<id|name>]
  *
- * Reads a Gatecraft project JSON (v3) — compiles the first (or named) tab,
+ * Reads a nandbench project JSON (v3) — compiles the first (or named) tab,
  * runs the simulator to a fixed point, and reports compile + sim
  * diagnostics. If `--challenge` is provided, looks up the corresponding
  * lesson challenge from the app's challenge registry and grades the
@@ -17,11 +17,11 @@
 
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { createRegistry, createSimulator, registerPrimitives } from '@gatecraft/engine';
-import { CHALLENGES } from '@gatecraft/app/src/challenges.js';
-import { runChallenge } from '@gatecraft/app/src/model/challenge-runner.js';
-import { compileDocument } from '@gatecraft/app/src/model/netlist-sync.js';
-import { fromJSON } from '@gatecraft/app/src/model/persistence.js';
+import { createRegistry, createSimulator, registerPrimitives } from '@nandbench/engine';
+import { CHALLENGES } from '@nandbench/app/src/challenges.js';
+import { runChallenge } from '@nandbench/app/src/model/challenge-runner.js';
+import { compileDocument } from '@nandbench/app/src/model/netlist-sync.js';
+import { fromJSON } from '@nandbench/app/src/model/persistence.js';
 
 interface CliArgs {
   readonly file: string;
@@ -45,7 +45,7 @@ function parseArgs(argv: readonly string[]): CliArgs | null {
 
 function usage(): void {
   console.error(
-    'Usage: gatecraft-check <file.json> [--challenge=<lessonId>] [--tab=<id|name>]',
+    'Usage: nandbench-check <file.json> [--challenge=<lessonId>] [--tab=<id|name>]',
   );
   console.error('');
   console.error('Known challenges:');
@@ -92,7 +92,7 @@ if (!tab) {
 }
 
 console.log(
-  `[gatecraft-check] tab "${tab.name}" — ${tab.document.components.length} components, ${tab.document.wires.length} wires`,
+  `[nandbench-check] tab "${tab.name}" — ${tab.document.components.length} components, ${tab.document.wires.length} wires`,
 );
 
 const { netlist, diagnostics: compileDiags } = compileDocument(tab.document, project.library);

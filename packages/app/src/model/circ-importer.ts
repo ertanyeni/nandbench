@@ -20,7 +20,7 @@
  * unsupported.
  */
 
-import { asComponentId, type ComponentParams, type PortRef } from '@gatecraft/engine';
+import { asComponentId, type ComponentParams, type PortRef } from '@nandbench/engine';
 import {
   asWireId,
   type CircuitDocument,

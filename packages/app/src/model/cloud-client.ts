@@ -1,7 +1,7 @@
 /**
- * Cloud API client — thin fetch wrapper around the gatecraft API.
+ * Cloud API client — thin fetch wrapper around the nandbench API.
  *
- * The API base is picked from `VITE_GATECRAFT_API` at build time, falling
+ * The API base is picked from `VITE_NANDBENCH_API` at build time, falling
  * back to `http://localhost:4555` for local dev. All calls include
  * `credentials: 'include'` so the session cookie travels round-trip.
  *
@@ -16,9 +16,9 @@ import type { Locale } from '../i18n/index.js';
 
 const API_BASE =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (import.meta as any).env?.VITE_GATECRAFT_API ?? 'http://localhost:4555';
+  (import.meta as any).env?.VITE_NANDBENCH_API ?? 'http://localhost:4555';
 
-const EDIT_TOKEN_PREFIX = 'gatecraft:editToken:';
+const EDIT_TOKEN_PREFIX = 'nandbench:editToken:';
 
 export interface CloudDoc {
   version: number;

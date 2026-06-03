@@ -10,7 +10,7 @@ const { Pool } = pg;
 
 const databaseUrl =
   process.env.DATABASE_URL ??
-  'postgres://gatecraft:gatecraft@localhost:5432/gatecraft';
+  'postgres://nandbench:nandbench@localhost:5432/nandbench';
 
 export const pool = new Pool({
   connectionString: databaseUrl,

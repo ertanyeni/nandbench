@@ -488,7 +488,7 @@ function Tab({
         // Tells the browser this is a move op + minimal payload so Firefox
         // actually emits the drag events. We track the source via React state.
         ev.dataTransfer.effectAllowed = 'move';
-        ev.dataTransfer.setData('text/x-gatecraft-tab', id);
+        ev.dataTransfer.setData('text/x-nandbench-tab', id);
         onDragStart?.();
       }}
       onDragEnd={() => onDragEnd?.()}

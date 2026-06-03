@@ -14,7 +14,7 @@ import {
   registerPrimitives,
   type ComponentRegistry,
   type PortRef,
-} from '@gatecraft/engine';
+} from '@nandbench/engine';
 import type { Challenge } from '../challenges.js';
 import type { CircuitDocument, VisualComponent } from './document.js';
 import type { SavedCircuit } from './library.js';

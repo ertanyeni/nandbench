@@ -1,10 +1,10 @@
 version: "3.9"
-# Self-hosted LLM stack for gatecraft. Run on the Hetzner box:
-#   cd /home/deploy/gatecraft/infra/llm
+# Self-hosted LLM stack for nandbench. Run on the Hetzner box:
+#   cd /home/deploy/nandbench/infra/llm
 #   docker compose up -d
 #
 # Ollama exposes a JSON API on :11434. Caddy fronts it with a public TLS
-# domain and a single shared secret in the Authorization header — gatecraft's
+# domain and a single shared secret in the Authorization header — nandbench's
 # `AssistantBridge` sends the same header from the browser.
 #
 # Recommended models (CPU-friendly, ≤8GB RAM):
@@ -16,7 +16,7 @@ version: "3.9"
 services:
   ollama:
     image: ollama/ollama:latest
-    container_name: gatecraft-ollama
+    container_name: nandbench-ollama
     restart: unless-stopped
     volumes:
       - ./ollama-data:/root/.ollama
@@ -29,7 +29,7 @@ services:
 
   caddy:
     image: caddy:2
-    container_name: gatecraft-llm-proxy
+    container_name: nandbench-llm-proxy
     restart: unless-stopped
     ports:
       - "8443:443"

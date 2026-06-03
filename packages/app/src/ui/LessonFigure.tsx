@@ -1110,7 +1110,7 @@ function pipelineFigure(): () => JSX.Element {
   };
 }
 
-/** Tooling: gatecraft layers diagram. */
+/** Tooling: nandbench layers diagram. */
 function toolingFigure(): () => JSX.Element {
   return () => (
     <>

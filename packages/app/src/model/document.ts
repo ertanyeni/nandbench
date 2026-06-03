@@ -15,7 +15,7 @@
  * lands in Faz 2.
  */
 
-import type { ComponentId, ComponentParams, PortRef } from '@gatecraft/engine';
+import type { ComponentId, ComponentParams, PortRef } from '@nandbench/engine';
 
 export type WireId = string & { readonly __brand: 'WireId' };
 

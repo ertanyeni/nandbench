@@ -8,7 +8,7 @@ import {
   type Diagnostic,
   type PortRef,
   type SignalValue,
-} from '@gatecraft/engine';
+} from '@nandbench/engine';
 import { useEffect, useState } from 'react';
 import { UpdateParamsCommand } from '../commands/index.js';
 import { t } from '../i18n/index.js';
@@ -126,7 +126,7 @@ export function Inspector(): JSX.Element | null {
         <button
           onClick={() =>
             window.dispatchEvent(
-              new CustomEvent('gatecraft:explain', {
+              new CustomEvent('nandbench:explain', {
                 detail: { componentId: component.id },
               }),
             )
@@ -1031,7 +1031,7 @@ function ConnectionsSection({ component }: { component: VisualComponent }): JSX.
       });
       // Pulse the landing spot so the user catches what just moved.
       window.dispatchEvent(
-        new CustomEvent('gatecraft:pulse-at', { detail: { x: cx, y: cy } }),
+        new CustomEvent('nandbench:pulse-at', { detail: { x: cx, y: cy } }),
       );
     } catch {
       /* shape missing — selection alone is fine */
@@ -1148,7 +1148,7 @@ void (null as unknown as PortRef);
 
 /* ------------------------ atoms ---------------------------------- */
 
-const INSPECTOR_WIDTH_KEY = 'gatecraft:inspector-width';
+const INSPECTOR_WIDTH_KEY = 'nandbench:inspector-width';
 function readInspectorWidth(): number {
   try {
     const raw = localStorage.getItem(INSPECTOR_WIDTH_KEY);

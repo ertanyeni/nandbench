@@ -9,7 +9,7 @@
  *   - testbench drives every challenge case as $display lines
  */
 
-import { asComponentId } from '@gatecraft/engine';
+import { asComponentId } from '@nandbench/engine';
 import { describe, expect, it } from 'vitest';
 import {
   asWireId,

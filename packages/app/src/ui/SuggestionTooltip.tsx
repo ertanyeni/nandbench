@@ -10,7 +10,7 @@ interface TipState {
 
 /**
  * DOM-side tooltip for suggestion-hint hover. The canvas-controller
- * emits `gatecraft:hover-suggestion` events whenever the pointer is
+ * emits `nandbench:hover-suggestion` events whenever the pointer is
  * over a "+ kind" bubble; we paint a tiny chip with the kind's
  * one-line description from helpForKind.
  */
@@ -21,8 +21,8 @@ export function SuggestionTooltip(): JSX.Element | null {
       const detail = (ev as CustomEvent<TipState | null>).detail;
       setTip(detail ?? null);
     };
-    window.addEventListener('gatecraft:hover-suggestion', onHover);
-    return () => window.removeEventListener('gatecraft:hover-suggestion', onHover);
+    window.addEventListener('nandbench:hover-suggestion', onHover);
+    return () => window.removeEventListener('nandbench:hover-suggestion', onHover);
   }, []);
 
   if (!tip) return null;

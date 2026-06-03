@@ -1,11 +1,11 @@
 /**
- * Local app-side glue for @gatecraft/multiplayer. The adapter is loaded
+ * Local app-side glue for @nandbench/multiplayer. The adapter is loaded
  * lazily (dynamic import) so peers who never enable multiplayer don't
  * pay the Yjs bundle cost. Connection state lives in a module-local
  * variable since only one room can be active at a time per browser.
  */
 
-import type { MultiplayerSession, SessionConfig } from '@gatecraft/multiplayer';
+import type { MultiplayerSession, SessionConfig } from '@nandbench/multiplayer';
 import type { CircuitDocument } from './model/document.js';
 import { useAppStore } from './model/store.js';
 
@@ -13,7 +13,7 @@ let active: MultiplayerSession | null = null;
 let unsubRemote: (() => void) | null = null;
 let unsubLocal: (() => void) | null = null;
 
-const CONFIG_KEY = 'gatecraft:multiplayer:v1';
+const CONFIG_KEY = 'nandbench:multiplayer:v1';
 
 export interface MultiplayerConfig {
   readonly endpoint: string;
@@ -51,7 +51,7 @@ export function isConnected(): boolean {
 
 export async function connect(cfg: SessionConfig): Promise<void> {
   if (active) disconnect();
-  const mod = await import('@gatecraft/multiplayer');
+  const mod = await import('@nandbench/multiplayer');
   const session = mod.joinSession(cfg);
 
   // Mirror local edits → Y.Doc.

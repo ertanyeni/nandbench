@@ -151,7 +151,7 @@ export const CURRICULUM_TR = {
   'lesson.rippleAdder.step3':
     'En kötü gecikme N × t(tam-toplayıcı)\'dır — elde her aşamada yayılır. Carry-lookahead toplayıcı bu yüzden var.',
   'lesson.rippleAdder.step4':
-    'gatecraft\'ta 4-bit ripple\'ı 4 tam-toplayıcı yerleştirerek veya genişlik=4 Adder ilkelini kullanarak kurabilirsin.',
+    'nandbench\'ta 4-bit ripple\'ı 4 tam-toplayıcı yerleştirerek veya genişlik=4 Adder ilkelini kullanarak kurabilirsin.',
   'lesson.rippleAdder.step5':
     'A=0011 ve B=0001 ver (3+1), simüle et; toplamın 0100 (4) ve carry-out\'un 0 olduğunu gör.',
 
@@ -307,7 +307,7 @@ export const CURRICULUM_TR = {
   'lesson.timing.step4':
     'Gerçek çiplerde STA (static timing analysis) aracı her yolu yürür ve slack\'i raporlar. Sıfır altı slack = saat çok hızlı.',
   'lesson.timing.step5':
-    'gatecraft\'ın motoru olay tabanlıdır, gecikme doğru değil — yani gerçek zamanlama ihlalleri görmezsin. Ama kavramsal model hâlâ geçerli.',
+    'nandbench\'ın motoru olay tabanlıdır, gecikme doğru değil — yani gerçek zamanlama ihlalleri görmezsin. Ama kavramsal model hâlâ geçerli.',
 
   /* ===== Ünite 5: Yazmaçlar / sayaçlar ===== */
   'lesson.register.title': '5.1 Paralel-yüklü yazmaç',
@@ -366,7 +366,7 @@ export const CURRICULUM_TR = {
   'lesson.rom.step3':
     'ROM, arama tabloları için harikadır: trig değerleri, karakter glyph\'leri, CPU kontrol birimi mikrokodu, firmware boot kodu.',
   'lesson.rom.step4':
-    'gatecraft\'ta ROM ilkeli bir data parametresi sunar — tabloyu dolduran hex string. ROM-toy şablonunu aç.',
+    'nandbench\'ta ROM ilkeli bir data parametresi sunar — tabloyu dolduran hex string. ROM-toy şablonunu aç.',
   'lesson.rom.step5':
     'Adresi bir sayaçla sür ve veri çıkışını bir 7-segment göstergeye bağla — anında karakter ROM demosu.',
 
@@ -496,7 +496,7 @@ export const CURRICULUM_TR = {
   'lesson.controlUnit.step3':
     'Mikrokodlu kontrol: opcode bir mikroprogram ROM\'unu indeksler ve birkaç mikro-komut üretir. Yavaş ama değişime açık.',
   'lesson.controlUnit.step4':
-    'İkisi de gatecraft\'ta ROM + sıralama için küçük bir FSM ile kurulabilir. ROM kontrol sözcük tablosunu tutar.',
+    'İkisi de nandbench\'ta ROM + sıralama için küçük bir FSM ile kurulabilir. ROM kontrol sözcük tablosunu tutar.',
   'lesson.controlUnit.step5':
     'Bunu önceki dersteki veri yoluna bağla — opcode in, kontrol sinyalleri out — küçük çalışan bir CPU\'n olur.',
 
@@ -524,9 +524,9 @@ export const CURRICULUM_TR = {
     'Çözümler: forwarding, branch tahmin, pipeline stall. Bu dersin kapsamı dışı ama FSM/datapath temeli üstüne kurulur.',
 
   'lesson.tooling.title': '9.3 Buradan sonra nereye?',
-  'lesson.tooling.summary': 'Yosys, Icarus, FPGA — gatecraft basamak taşıdır.',
+  'lesson.tooling.summary': 'Yosys, Icarus, FPGA — nandbench basamak taşıdır.',
   'lesson.tooling.step1':
-    'gatecraft yapısal Verilog netlist\'i ve self-checking testbench üretir (Toolbar → menü → Export). Herhangi bir Verilog simülatörüne yükle.',
+    'nandbench yapısal Verilog netlist\'i ve self-checking testbench üretir (Toolbar → menü → Export). Herhangi bir Verilog simülatörüne yükle.',
   'lesson.tooling.step2':
     'Icarus Verilog (iverilog) testbench\'i komut satırından derleyip çalıştırır. Yosys aynı Verilog\'u FPGA\'ya hazır netlist\'e sentezler.',
   'lesson.tooling.step3':

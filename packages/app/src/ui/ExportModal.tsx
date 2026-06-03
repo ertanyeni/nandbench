@@ -9,8 +9,8 @@
  *     a note)
  *   - Full report → single .md
  *
- * Opens via `gatecraft:open-export`. Back-compat: the existing
- * `gatecraft:open-verilog-export` event also opens this modal and
+ * Opens via `nandbench:open-export`. Back-compat: the existing
+ * `nandbench:open-verilog-export` event also opens this modal and
  * jumps to the Verilog tab.
  */
 
@@ -102,15 +102,15 @@ export function ExportModal(): JSX.Element | null {
       setTab(initialTab);
       setOpen(true);
     };
-    window.addEventListener('gatecraft:open-export', onOpen('schematic'));
-    window.addEventListener('gatecraft:open-verilog-export', onOpen('verilog'));
+    window.addEventListener('nandbench:open-export', onOpen('schematic'));
+    window.addEventListener('nandbench:open-verilog-export', onOpen('verilog'));
     const esc = (ev: KeyboardEvent): void => {
       if (open && ev.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', esc);
     return () => {
-      window.removeEventListener('gatecraft:open-export', onOpen('schematic'));
-      window.removeEventListener('gatecraft:open-verilog-export', onOpen('verilog'));
+      window.removeEventListener('nandbench:open-export', onOpen('schematic'));
+      window.removeEventListener('nandbench:open-verilog-export', onOpen('verilog'));
       window.removeEventListener('keydown', esc);
     };
   }, [open]);
@@ -239,7 +239,7 @@ export function ExportModal(): JSX.Element | null {
             <WaveformTab
               onDownload={() => {
                 window.dispatchEvent(
-                  new CustomEvent('gatecraft:waveform-export-vcd', {
+                  new CustomEvent('nandbench:waveform-export-vcd', {
                     detail: { filename: `${safeName}.vcd` },
                   }),
                 );

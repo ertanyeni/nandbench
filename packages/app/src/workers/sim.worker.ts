@@ -21,7 +21,7 @@ import {
   type SignalValue,
   type SimSnapshot,
   type Simulator,
-} from '@gatecraft/engine';
+} from '@nandbench/engine';
 
 export type WorkerInMsg =
   | { readonly type: 'load'; readonly netlist: CompiledNetlist }

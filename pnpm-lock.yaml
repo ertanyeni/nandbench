@@ -42,10 +42,10 @@ importers:
 
   packages/app:
     dependencies:
-      '@gatecraft/engine':
+      '@nandbench/engine':
         specifier: workspace:*
         version: link:../engine
-      '@gatecraft/multiplayer':
+      '@nandbench/multiplayer':
         specifier: workspace:*
         version: link:../multiplayer
       react:
@@ -82,10 +82,10 @@ importers:
 
   packages/cli:
     dependencies:
-      '@gatecraft/app':
+      '@nandbench/app':
         specifier: workspace:*
         version: link:../app
-      '@gatecraft/engine':
+      '@nandbench/engine':
         specifier: workspace:*
         version: link:../engine
     devDependencies:

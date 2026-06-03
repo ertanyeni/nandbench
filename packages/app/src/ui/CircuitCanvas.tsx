@@ -71,7 +71,7 @@ export function CircuitCanvas(): JSX.Element {
       ref={canvasRef}
       data-tour="canvas"
       role="application"
-      aria-label="gatecraft circuit canvas"
+      aria-label="nandbench circuit canvas"
       tabIndex={0}
       style={{
         display: 'block',

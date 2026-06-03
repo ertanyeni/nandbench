@@ -16,9 +16,9 @@ import type { CircuitDocument, VisualComponent, VisualWire } from './document.js
 import type { SavedCircuit, SavedCircuitId } from './library.js';
 
 export const FORMAT_VERSION = 3;
-const STORAGE_KEY = 'gatecraft:state:v3';
-const LEGACY_STORAGE_KEY_V2 = 'gatecraft:state:v2';
-const LEGACY_STORAGE_KEY_V1 = 'gatecraft:state:v1';
+const STORAGE_KEY = 'nandbench:state:v3';
+const LEGACY_STORAGE_KEY_V2 = 'nandbench:state:v2';
+const LEGACY_STORAGE_KEY_V1 = 'nandbench:state:v1';
 
 /**
  * Persistable summary of one tab. Sim/history state is intentionally
@@ -271,7 +271,7 @@ export function loadFromStorage(): PersistedState | null {
     if (!raw) return null;
     return fromJSON(raw);
   } catch (e) {
-    console.warn('gatecraft: failed to restore state from localStorage', e);
+    console.warn('nandbench: failed to restore state from localStorage', e);
     return null;
   }
 }
@@ -280,7 +280,7 @@ export function saveToStorage(state: PersistedState): void {
   try {
     localStorage.setItem(STORAGE_KEY, toJSON(state));
   } catch (e) {
-    console.warn('gatecraft: failed to persist state to localStorage', e);
+    console.warn('nandbench: failed to persist state to localStorage', e);
   }
 }
 

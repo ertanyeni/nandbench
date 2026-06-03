@@ -1,8 +1,8 @@
 {
-  "name": "@gatecraft/api",
+  "name": "@nandbench/api",
   "version": "0.0.0",
   "private": true,
-  "description": "gatecraft cloud persistence + magic-link auth — Hono + Postgres.",
+  "description": "nandbench cloud persistence + magic-link auth — Hono + Postgres.",
   "type": "module",
   "main": "./src/index.ts",
   "scripts": {

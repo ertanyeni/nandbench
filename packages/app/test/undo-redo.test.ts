@@ -10,7 +10,7 @@
  *   - canUndo / canRedo flags reflect stack sizes
  */
 
-import { asComponentId, type ComponentId } from '@gatecraft/engine';
+import { asComponentId, type ComponentId } from '@nandbench/engine';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { AddComponentCommand, DeleteCommand } from '../src/commands/index.js';
 import { type VisualComponent } from '../src/model/document.js';

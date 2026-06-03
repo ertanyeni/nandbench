@@ -13,7 +13,7 @@
 
 import type { CircuitDocument, VisualComponent, VisualWire } from '../model/document.js';
 import type { SavedCircuit } from '../model/library.js';
-import type { Diagnostic } from '@gatecraft/engine';
+import type { Diagnostic } from '@nandbench/engine';
 
 /** Snapshot of editor state the rule engine sees. Read-only. */
 export interface AssistantContext {

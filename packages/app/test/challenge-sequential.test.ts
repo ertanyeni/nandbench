@@ -7,7 +7,7 @@
  * reset / toggle by setting J + K and pulsing the clock once.
  */
 
-import { asComponentId } from '@gatecraft/engine';
+import { asComponentId } from '@nandbench/engine';
 import { describe, expect, it } from 'vitest';
 import {
   asWireId,

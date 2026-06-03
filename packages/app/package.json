@@ -1,5 +1,5 @@
 {
-  "name": "@gatecraft/app",
+  "name": "@nandbench/app",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,8 +12,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@gatecraft/engine": "workspace:*",
-    "@gatecraft/multiplayer": "workspace:*",
+    "@nandbench/engine": "workspace:*",
+    "@nandbench/multiplayer": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^4.5.5"

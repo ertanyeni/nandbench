@@ -37,13 +37,13 @@ export function LessonsPanel(): JSX.Element | null {
 
   useEffect(() => {
     const handler = (): void => setOpen(true);
-    window.addEventListener('gatecraft:open-lessons', handler);
+    window.addEventListener('nandbench:open-lessons', handler);
     const esc = (ev: KeyboardEvent): void => {
       if (open && ev.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', esc);
     return () => {
-      window.removeEventListener('gatecraft:open-lessons', handler);
+      window.removeEventListener('nandbench:open-lessons', handler);
       window.removeEventListener('keydown', esc);
     };
   }, [open]);
@@ -78,7 +78,7 @@ export function LessonsPanel(): JSX.Element | null {
     if (completedSet.has(active.id)) unmarkLessonCompleted(active.id);
     else markLessonCompleted(active.id);
     setProgressTick((n) => n + 1);
-    window.dispatchEvent(new Event('gatecraft:lesson-progress-changed'));
+    window.dispatchEvent(new Event('nandbench:lesson-progress-changed'));
   };
 
   // Group lessons by unit for the left nav.

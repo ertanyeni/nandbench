@@ -1,5 +1,5 @@
 {
-  "name": "@gatecraft/engine",
+  "name": "@nandbench/engine",
   "version": "0.0.0",
   "private": true,
   "description": "Framework-agnostic digital logic simulation engine. No React, no DOM.",

@@ -23,7 +23,7 @@ export function GlossaryPanel(): JSX.Element | null {
   useEffect(() => {
     const onOpen = (): void => {
       window.dispatchEvent(
-        new CustomEvent('gatecraft:close-side-panels', { detail: { except: 'glossary' } }),
+        new CustomEvent('nandbench:close-side-panels', { detail: { except: 'glossary' } }),
       );
       setOpen(true);
     };
@@ -31,15 +31,15 @@ export function GlossaryPanel(): JSX.Element | null {
       const except = (ev as CustomEvent<{ except?: string }>).detail?.except;
       if (except !== 'glossary') setOpen(false);
     };
-    window.addEventListener('gatecraft:open-glossary', onOpen);
-    window.addEventListener('gatecraft:close-side-panels', onCloseSiblings);
+    window.addEventListener('nandbench:open-glossary', onOpen);
+    window.addEventListener('nandbench:close-side-panels', onCloseSiblings);
     const onKey = (ev: KeyboardEvent): void => {
       if (open && ev.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => {
-      window.removeEventListener('gatecraft:open-glossary', onOpen);
-      window.removeEventListener('gatecraft:close-side-panels', onCloseSiblings);
+      window.removeEventListener('nandbench:open-glossary', onOpen);
+      window.removeEventListener('nandbench:close-side-panels', onCloseSiblings);
       window.removeEventListener('keydown', onKey);
     };
   }, [open]);

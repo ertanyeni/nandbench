@@ -1,4 +1,4 @@
-# gatecraft — Deployment notes
+# nandbench — Deployment notes
 
 Living checklist for the **Hetzner box** + **optional services**.
 Update as we ship. Order is intentional: app first, opt-in services
@@ -12,12 +12,12 @@ Standard pattern from `~/.claude/CLAUDE.md`:
 
 ```bash
 # First-time
-deploy-new gatecraft
+deploy-new nandbench
 
 # Subsequent
-ssh server "cd ~/gatecraft && git pull origin main \
+ssh server "cd ~/nandbench && git pull origin main \
   && pnpm install \
-  && pnpm --filter @gatecraft/app build \
+  && pnpm --filter @nandbench/app build \
   && docker compose build --no-cache \
   && docker compose up -d --force-recreate"
 ```
@@ -32,10 +32,10 @@ Caddy/nginx image.
 DNS:
 
 ```bash
-dns setup gatecraft.example   # or whatever domain
+dns setup nandbench.example   # or whatever domain
 ```
 
-`gatecraft.example` + `www.gatecraft.example` A records → server IP.
+`nandbench.example` + `www.nandbench.example` A records → server IP.
 Caddy auto-provisions TLS.
 
 ---
@@ -47,10 +47,10 @@ provider…`). Not connected yet — runs only after the Hetzner stack is up.
 
 ```bash
 ssh server
-cd ~/gatecraft/infra/llm
-echo "GATECRAFT_LLM_TOKEN=$(openssl rand -hex 32)" > .env
+cd ~/nandbench/infra/llm
+echo "NANDBENCH_LLM_TOKEN=$(openssl rand -hex 32)" > .env
 
-# Edit Caddyfile: replace ai.gatecraft.example with your real subdomain
+# Edit Caddyfile: replace ai.nandbench.example with your real subdomain
 # (or the placeholder if you already have a wildcard cert).
 
 docker compose up -d
@@ -62,14 +62,14 @@ docker compose exec ollama ollama pull qwen2.5:3b-instruct
 DNS:
 
 ```bash
-dns add ai.gatecraft.example
+dns add ai.nandbench.example
 ```
 
-Caddy `ai.gatecraft.example` block (already in `infra/llm/Caddyfile`):
+Caddy `ai.nandbench.example` block (already in `infra/llm/Caddyfile`):
 
 ```caddyfile
-ai.gatecraft.example {
-    @authorized header Authorization "Bearer {$GATECRAFT_LLM_TOKEN}"
+ai.nandbench.example {
+    @authorized header Authorization "Bearer {$NANDBENCH_LLM_TOKEN}"
     handle @authorized {
         reverse_proxy ollama:11434 {
             transport http { read_timeout 120s }
@@ -89,11 +89,11 @@ docker compose restart caddy
 
 **Client setup (browser):**
 - App → toolbar ☰ → **AI provider…**
-- Endpoint: `https://ai.gatecraft.example`
-- Token: contents of `.env` (`GATECRAFT_LLM_TOKEN`)
+- Endpoint: `https://ai.nandbench.example`
+- Token: contents of `.env` (`NANDBENCH_LLM_TOKEN`)
 - Model: `qwen2.5:3b-instruct`
 
-Token stays in localStorage only; never sent to gatecraft itself.
+Token stays in localStorage only; never sent to nandbench itself.
 
 **Verification:**
 - Open Assistant panel
@@ -121,21 +121,21 @@ Will resurface when we focus on collaboration. Until then:
 ```bash
 # Reference setup for future-us — DO NOT run yet, no client UI hooks.
 ssh server
-cd ~/gatecraft
+cd ~/nandbench
 pnpm install
-PORT=4444 pnpm --filter @gatecraft/multiplayer server
+PORT=4444 pnpm --filter @nandbench/multiplayer server
 ```
 
 DNS:
 
 ```bash
-dns add mp.gatecraft.example
+dns add mp.nandbench.example
 ```
 
 Caddy block:
 
 ```caddyfile
-mp.gatecraft.example {
+mp.nandbench.example {
     reverse_proxy localhost:4444
 }
 ```
@@ -154,9 +154,9 @@ mp.gatecraft.example {
 
 | Service | Domain (suggested) | Port | Status |
 |---|---|---|---|
-| Web app (Vite build) | `gatecraft.example` | 443 (Caddy) | not deployed |
-| LLM proxy (Ollama via Caddy) | `ai.gatecraft.example` | 443 | backend ready, awaits Hetzner |
-| Multiplayer relay | `mp.gatecraft.example` | 443 (WSS) | backend ready, **client UI pending** |
+| Web app (Vite build) | `nandbench.example` | 443 (Caddy) | not deployed |
+| LLM proxy (Ollama via Caddy) | `ai.nandbench.example` | 443 | backend ready, awaits Hetzner |
+| Multiplayer relay | `mp.nandbench.example` | 443 (WSS) | backend ready, **client UI pending** |
 
 ---
 
@@ -170,7 +170,7 @@ brew install ollama   # or use the official Ollama installer
 ollama pull qwen2.5:1.5b-instruct
 ollama serve          # default port 11434
 
-# In gatecraft → AI provider…:
+# In nandbench → AI provider…:
 # Endpoint: http://localhost:11434
 # Token: anything (Ollama doesn't require auth by default)
 # Model: qwen2.5:1.5b-instruct

@@ -64,7 +64,7 @@ export function ShortcutsModal(): JSX.Element | null {
 
   useEffect(() => {
     const onOpen = (): void => setOpen(true);
-    window.addEventListener('gatecraft:open-shortcuts', onOpen);
+    window.addEventListener('nandbench:open-shortcuts', onOpen);
     const onKey = (ev: KeyboardEvent): void => {
       if (ev.key === '?' && !ev.metaKey && !ev.ctrlKey && !ev.altKey) {
         // Skip when typing inside a text input or contenteditable.
@@ -79,7 +79,7 @@ export function ShortcutsModal(): JSX.Element | null {
     };
     window.addEventListener('keydown', onKey);
     return () => {
-      window.removeEventListener('gatecraft:open-shortcuts', onOpen);
+      window.removeEventListener('nandbench:open-shortcuts', onOpen);
       window.removeEventListener('keydown', onKey);
     };
   }, [open]);

@@ -14,7 +14,7 @@
  *   - suggestion-hint click promotes to place tool with that kind
  */
 
-import { asComponentId, type ComponentId } from '@gatecraft/engine';
+import { asComponentId, type ComponentId } from '@nandbench/engine';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { attachCanvasController } from '../src/interaction/canvas-controller.js';
 import { asWireId, type Point, type VisualComponent } from '../src/model/document.js';

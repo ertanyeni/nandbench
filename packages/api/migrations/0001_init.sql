@@ -1,4 +1,4 @@
--- gatecraft cloud schema v1.
+-- nandbench cloud schema v1.
 --
 -- Two tables:
 --   circuits — every saved circuit document. owner_email is NULL for

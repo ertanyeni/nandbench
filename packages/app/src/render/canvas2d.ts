@@ -18,8 +18,8 @@ import type {
   PortRef,
   SignalValue,
   SimSnapshot,
-} from '@gatecraft/engine';
-import { portKey } from '@gatecraft/engine';
+} from '@nandbench/engine';
+import { portKey } from '@nandbench/engine';
 import {
   componentWorldBox,
   compositeShape,
@@ -130,13 +130,13 @@ export class Canvas2DRenderer implements Renderer {
     this.handleResize();
     this.resizeObserver = new ResizeObserver(() => this.handleResize());
     this.resizeObserver.observe(canvas);
-    window.addEventListener('gatecraft:pulse-at', this.onPulseEvent);
+    window.addEventListener('nandbench:pulse-at', this.onPulseEvent);
   }
 
   dispose(): void {
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
-    window.removeEventListener('gatecraft:pulse-at', this.onPulseEvent);
+    window.removeEventListener('nandbench:pulse-at', this.onPulseEvent);
   }
 
   setDocument(doc: CircuitDocument): void {

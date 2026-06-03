@@ -211,7 +211,7 @@ export const EN = {
   'toolbar.cloudTooltip': 'Save or open from the cloud',
   'cloud.title': 'Cloud',
   'cloud.subtitle':
-    'Save this circuit to the gatecraft server so you can come back to it from any browser. Anyone with the share link can view it; only you (or anyone with the edit link) can change it.',
+    'Save this circuit to the nandbench server so you can come back to it from any browser. Anyone with the share link can view it; only you (or anyone with the edit link) can change it.',
   'cloud.signedInAs': 'Signed in as {email}',
   'cloud.signOut': 'Sign out',
   'cloud.anonymous': 'Anonymous — saves work but are tied to this browser.',
@@ -235,7 +235,7 @@ export const EN = {
   'toolbar.publishedToast': 'Published "{name}" to the library (id {id}…). Other tabs can now drop it from the Library section of the palette; edits here auto-sync.',
   'toolbar.llmSettings': 'AI provider…',
   'llm.title': 'AI provider (optional)',
-  'llm.subtitle': 'Bring your own LLM. Endpoint, token, and model stay in your browser — gatecraft never sees them. Default rule-based assistant keeps working with this disabled.',
+  'llm.subtitle': 'Bring your own LLM. Endpoint, token, and model stay in your browser — nandbench never sees them. Default rule-based assistant keeps working with this disabled.',
   'llm.endpoint': 'Endpoint URL',
   'llm.token': 'Bearer token',
   'llm.model': 'Model name',
@@ -412,7 +412,7 @@ export const EN = {
     'Composites are nested more than 32 levels — usually a mistake. Collapse some intermediate layers, or store the deeply-nested block as a single composite at the top level.',
   'assistant.diag.reassure.title': '{n} diagnostics — not all are errors',
   'assistant.diag.reassure.body':
-    'Diagnostics are gatecraft\'s live feedback. Half-built circuits naturally have floating inputs while you\'re wiring them. The ones to fix urgently are multi-driver and oscillation — those mean something is contradicting itself.',
+    'Diagnostics are nandbench\'s live feedback. Half-built circuits naturally have floating inputs while you\'re wiring them. The ones to fix urgently are multi-driver and oscillation — those mean something is contradicting itself.',
 
   /* Pattern cards */
   'assistant.pattern.halfAdder.title': 'Looks like a half-adder',
@@ -545,7 +545,7 @@ export const EN = {
   'statusBar.toolMove': 'move {n}',
   'statusBar.suggestion': 'Suggested next: {kinds}',
   'statusBar.source': 'Source',
-  'statusBar.sourceTitle': 'gatecraft is open source (AGPL-3.0) — view the code on GitHub',
+  'statusBar.sourceTitle': 'nandbench is open source (AGPL-3.0) — view the code on GitHub',
 
   /* Diagnostics panel */
   'diagnostics.title': 'Diagnostics ({n})',
@@ -743,12 +743,12 @@ export const EN = {
   'glossary.cat.timing': 'Timing',
   'glossary.cat.memory': 'Registers & memory',
   'glossary.cat.fsm': 'Finite state machines',
-  'glossary.cat.tooling': 'gatecraft internals',
+  'glossary.cat.tooling': 'nandbench internals',
 
   /* --- Foundations --- */
   'glossary.term.bit.name': 'Bit',
   'glossary.term.bit.desc':
-    'A single binary signal — 0 (low) or 1 (high). The atom of every digital system. In gatecraft a 1-bit wire is drawn thin; wider buses get a stroke proportional to their width.',
+    'A single binary signal — 0 (low) or 1 (high). The atom of every digital system. In nandbench a 1-bit wire is drawn thin; wider buses get a stroke proportional to their width.',
   'glossary.term.bus.name': 'Bus',
   'glossary.term.bus.desc':
     'A wire carrying multiple bits at once. Components declare per-port widths (e.g. 4-bit, 8-bit) and the compiler enforces that drivers and sinks agree.',
@@ -757,7 +757,7 @@ export const EN = {
     'The number of bits a wire or port carries. Width mismatches raise a compile-time diagnostic — a 4-bit bus cannot drop into a 1-bit gate without a Splitter.',
   'glossary.term.endian.name': 'Endianness',
   'glossary.term.endian.desc':
-    'The convention for which bit position is "first." Little-endian puts bit 0 at the low address; big-endian puts the most significant bit first. gatecraft is little-endian throughout.',
+    'The convention for which bit position is "first." Little-endian puts bit 0 at the low address; big-endian puts the most significant bit first. nandbench is little-endian throughout.',
   'glossary.term.signed.name': 'Signed number',
   'glossary.term.signed.desc':
     'A binary value whose most-significant bit encodes sign rather than magnitude. The other bits typically use two\'s complement so that addition works the same as for unsigned values.',
@@ -795,10 +795,10 @@ export const EN = {
     'A 1-input gate whose output is the logical complement of its input. Drawn as a triangle with a bubble on the tip.',
   'glossary.term.buffer.name': 'Buffer',
   'glossary.term.buffer.desc':
-    'Logically a pass-through (out = in) but with a real-world propagation delay and drive strength. Used in gatecraft mostly for explicit fan-out boosting or tri-state gating.',
+    'Logically a pass-through (out = in) but with a real-world propagation delay and drive strength. Used in nandbench mostly for explicit fan-out boosting or tri-state gating.',
   'glossary.term.and.name': 'AND',
   'glossary.term.and.desc':
-    'Output is 1 only when every input is 1. Boolean: y = a · b. Two ANDs in series implement a 3-input AND; gatecraft\'s built-in widens to any input count.',
+    'Output is 1 only when every input is 1. Boolean: y = a · b. Two ANDs in series implement a 3-input AND; nandbench\'s built-in widens to any input count.',
   'glossary.term.or.name': 'OR',
   'glossary.term.or.desc':
     'Output is 1 when at least one input is 1. Boolean: y = a + b. Pairs with AND to form sum-of-products forms.',
@@ -1002,7 +1002,7 @@ export const EN = {
   'glossary.term.stateDiagram.desc':
     'A graph of an FSM with states as nodes and transitions as labelled arcs. The standard pre-implementation deliverable when designing sequential logic.',
 
-  /* --- gatecraft internals --- */
+  /* --- nandbench internals --- */
   'glossary.term.driver.name': 'Driver',
   'glossary.term.driver.desc':
     'A component output port that pushes a value onto a net. A net can have zero, one, or many drivers; many drivers raise a diagnostic unless they agree.',
@@ -1075,7 +1075,7 @@ export const EN = {
   'fig.controlUnit.cap': 'Opcode in, dozens of small control bits out — the brain of the CPU.',
   'fig.hazards.cap': 'A momentary glitch on a signal that should have stayed high — the classic static-1 hazard.',
   'fig.pipeline.cap': 'Five stages overlap: while one instruction writes back, four others are mid-flight.',
-  'fig.tooling.cap': 'gatecraft itself: model + renderer in the main thread, engine in a Web Worker.',
+  'fig.tooling.cap': 'nandbench itself: model + renderer in the main thread, engine in a Web Worker.',
 
   /* Challenge mode */
   'challenge.title': 'Challenge',

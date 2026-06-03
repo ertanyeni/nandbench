@@ -7,7 +7,7 @@ import { useAppStore } from '../model/store.js';
  * vertical timeline. Click any past entry to "jump back" (multi-undo).
  * Click any future entry to redo up to it.
  *
- * Opens via the `gatecraft:open-history` window event.
+ * Opens via the `nandbench:open-history` window event.
  */
 export function HistoryPanel(): JSX.Element | null {
   const [open, setOpen] = useState(false);
@@ -19,7 +19,7 @@ export function HistoryPanel(): JSX.Element | null {
   useEffect(() => {
     const onOpen = (): void => {
       window.dispatchEvent(
-        new CustomEvent('gatecraft:close-side-panels', { detail: { except: 'history' } }),
+        new CustomEvent('nandbench:close-side-panels', { detail: { except: 'history' } }),
       );
       setOpen(true);
     };
@@ -27,15 +27,15 @@ export function HistoryPanel(): JSX.Element | null {
       const except = (ev as CustomEvent<{ except?: string }>).detail?.except;
       if (except !== 'history') setOpen(false);
     };
-    window.addEventListener('gatecraft:open-history', onOpen);
-    window.addEventListener('gatecraft:close-side-panels', onCloseSiblings);
+    window.addEventListener('nandbench:open-history', onOpen);
+    window.addEventListener('nandbench:close-side-panels', onCloseSiblings);
     const onKey = (ev: KeyboardEvent): void => {
       if (open && ev.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => {
-      window.removeEventListener('gatecraft:open-history', onOpen);
-      window.removeEventListener('gatecraft:close-side-panels', onCloseSiblings);
+      window.removeEventListener('nandbench:open-history', onOpen);
+      window.removeEventListener('nandbench:close-side-panels', onCloseSiblings);
       window.removeEventListener('keydown', onKey);
     };
   }, [open]);

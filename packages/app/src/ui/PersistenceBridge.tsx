@@ -49,7 +49,7 @@ export function PersistenceBridge(): null {
           const id = st.publishActiveTab();
           st.setPublishedFlash({ id, name: st.activeDocumentName });
         } else {
-          window.dispatchEvent(new Event('gatecraft:saved-toast'));
+          window.dispatchEvent(new Event('nandbench:saved-toast'));
         }
         useAppStore.setState({ activeDocumentDirty: false });
       }

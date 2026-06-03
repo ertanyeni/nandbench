@@ -1,5 +1,5 @@
 /*
- * gatecraft animations — GPU-cheap, never block input.
+ * nandbench animations — GPU-cheap, never block input.
  * Every animation uses `opacity` + `transform` only (compositor-only
  * paints), durations cap at 200ms so they feel "polish, not weight".
  *

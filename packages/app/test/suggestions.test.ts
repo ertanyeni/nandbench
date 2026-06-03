@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createRegistry, registerPrimitives } from '@gatecraft/engine';
+import { createRegistry, registerPrimitives } from '@nandbench/engine';
 import { referencedKinds, SUGGESTIONS, suggestionsFor } from '../src/model/suggestions.js';
 
 describe('Suggestions table', () => {

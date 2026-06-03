@@ -14,7 +14,7 @@
  * exporter is text-only — the round-trip is validated by eye via Icarus.
  */
 
-import { portKey } from '@gatecraft/engine';
+import { portKey } from '@nandbench/engine';
 import type { CircuitDocument } from './document.js';
 import { compileDocument } from './netlist-sync.js';
 import type { SavedCircuit } from './library.js';
@@ -30,7 +30,7 @@ function wireDecl(name: string, width: number): string {
   return `wire [${width - 1}:0] ${name};`;
 }
 
-const PREAMBLE = `// gatecraft → Verilog (structural)
+const PREAMBLE = `// nandbench → Verilog (structural)
 // Auto-generated. Edit at your own risk.
 
 \`timescale 1ns / 1ps
@@ -108,7 +108,7 @@ function emitInstance(
 export function exportVerilog(
   doc: CircuitDocument,
   library: readonly SavedCircuit[] = [],
-  moduleName = 'gatecraft_top',
+  moduleName = 'nandbench_top',
 ): string {
   // Verilog identifiers can only contain [a-zA-Z0-9_$], so scrub the
   // user-supplied module name before stamping it into the source.

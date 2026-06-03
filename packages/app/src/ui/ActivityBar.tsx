@@ -37,8 +37,8 @@ export function ActivityBar(): JSX.Element {
   useEffect(() => {
     const sync = (): void => setLessonsDone(readCurriculum().completed.length);
     sync();
-    window.addEventListener('gatecraft:lesson-progress-changed', sync);
-    return () => window.removeEventListener('gatecraft:lesson-progress-changed', sync);
+    window.addEventListener('nandbench:lesson-progress-changed', sync);
+    return () => window.removeEventListener('nandbench:lesson-progress-changed', sync);
   }, []);
   useEffect(() => {
     const onOpen = (which: string) => () => setActive(which);
@@ -52,12 +52,12 @@ export function ActivityBar(): JSX.Element {
       if (ev.key === 'Escape') setActive(null);
     };
     const handlers: Array<[string, EventListener]> = [
-      ['gatecraft:open-assistant', onOpen('assistant')],
-      ['gatecraft:open-lessons', onOpen('lessons')],
-      ['gatecraft:open-glossary', onOpen('glossary')],
-      ['gatecraft:open-history', onOpen('history')],
-      ['gatecraft:open-waveform', onOpen('waveform')],
-      ['gatecraft:close-side-panels', onClose as EventListener],
+      ['nandbench:open-assistant', onOpen('assistant')],
+      ['nandbench:open-lessons', onOpen('lessons')],
+      ['nandbench:open-glossary', onOpen('glossary')],
+      ['nandbench:open-history', onOpen('history')],
+      ['nandbench:open-waveform', onOpen('waveform')],
+      ['nandbench:close-side-panels', onClose as EventListener],
     ];
     for (const [k, h] of handlers) window.addEventListener(k, h);
     window.addEventListener('keydown', onEsc);
@@ -93,32 +93,32 @@ export function ActivityBar(): JSX.Element {
         accent="#a78bfa"
         badge={assistantDiagCount > 0}
         isActive={active === 'assistant'}
-        onClick={() => window.dispatchEvent(new Event('gatecraft:open-assistant'))}
+        onClick={() => window.dispatchEvent(new Event('nandbench:open-assistant'))}
       />
       <ActivityIcon
         icon={<LessonsIcon />}
         label={t('lessons.progressTooltip', { done: String(lessonsDone), total: String(LESSONS.length) })}
         isActive={active === 'lessons'}
         countLabel={lessonsDone > 0 ? `${lessonsDone}` : undefined}
-        onClick={() => window.dispatchEvent(new Event('gatecraft:open-lessons'))}
+        onClick={() => window.dispatchEvent(new Event('nandbench:open-lessons'))}
       />
       <ActivityIcon
         icon={<GlossaryIcon />}
         label={t('toolbar.glossary')}
         isActive={active === 'glossary'}
-        onClick={() => window.dispatchEvent(new Event('gatecraft:open-glossary'))}
+        onClick={() => window.dispatchEvent(new Event('nandbench:open-glossary'))}
       />
       <ActivityIcon
         icon={<HistoryIcon />}
         label={t('toolbar.history')}
         isActive={active === 'history'}
-        onClick={() => window.dispatchEvent(new Event('gatecraft:open-history'))}
+        onClick={() => window.dispatchEvent(new Event('nandbench:open-history'))}
       />
       <ActivityIcon
         icon={<WaveformIcon />}
         label={t('toolbar.waveform')}
         isActive={active === 'waveform'}
-        onClick={() => window.dispatchEvent(new Event('gatecraft:open-waveform'))}
+        onClick={() => window.dispatchEvent(new Event('nandbench:open-waveform'))}
       />
     </div>
   );

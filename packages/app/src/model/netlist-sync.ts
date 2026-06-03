@@ -25,7 +25,7 @@ import {
   type Diagnostic,
   type NetlistInput,
   type PortRef,
-} from '@gatecraft/engine';
+} from '@nandbench/engine';
 import type { CircuitDocument, VisualComponent, VisualWire } from './document.js';
 import type { CompositePort, SavedCircuit } from './library.js';
 

@@ -38,7 +38,7 @@ export function ChallengePanel({ lessonId }: { lessonId: string }): JSX.Element 
     setResult(r);
     if (r.kind === 'pass') {
       markLessonCompleted(lessonId);
-      window.dispatchEvent(new Event('gatecraft:lesson-progress-changed'));
+      window.dispatchEvent(new Event('nandbench:lesson-progress-changed'));
     }
   };
 
@@ -161,7 +161,7 @@ function downloadTestbench(
   challenge: ReturnType<typeof challengeFor> & {},
 ): void {
   const v = exportTestbench(challenge, {
-    dutModuleName: useAppStore.getState().activeDocumentName || 'gatecraft_top',
+    dutModuleName: useAppStore.getState().activeDocumentName || 'nandbench_top',
     lessonId,
   });
   const blob = new Blob([v], { type: 'text/plain' });

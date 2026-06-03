@@ -1,5 +1,5 @@
 /**
- * Gatecraft icon set — small monochrome stroke icons used in the
+ * nandbench icon set — small monochrome stroke icons used in the
  * ActivityBar (and reusable elsewhere). Each icon is a self-contained
  * SVG component that paints with `currentColor`, so the parent button's
  * `color` style alone decides the rendered tone.
@@ -7,7 +7,7 @@
  * Design notes:
  *   - 22×22 viewbox, 1.6 stroke, round line caps + joins — reads cleanly
  *     at the 22px ActivityBar size and remains crisp at 2× DPR.
- *   - Slight gatecraft personality:
+ *   - Slight nandbench personality:
  *       Assistant → 4-point sparkle with twin accent dots (the rule-
  *                   based + LLM duality).
  *       Lessons   → open book with a bookmark ribbon.

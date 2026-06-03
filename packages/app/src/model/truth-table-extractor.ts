@@ -22,7 +22,7 @@ import {
   registerPrimitives,
   type ComponentRegistry,
   type PortRef,
-} from '@gatecraft/engine';
+} from '@nandbench/engine';
 import type { CircuitDocument, VisualComponent } from './document.js';
 import type { SavedCircuit } from './library.js';
 import { compileDocument } from './netlist-sync.js';

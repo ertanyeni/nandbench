@@ -15,7 +15,7 @@ import {
   lit,
   registerPrimitives,
   type ComponentInstance,
-} from '@gatecraft/engine';
+} from '@nandbench/engine';
 import { asWireId, type CircuitDocument, type VisualComponent, type VisualWire } from '../src/model/document.js';
 import { asSavedCircuitId, snapshotAsSavedCircuit } from '../src/model/library.js';
 import { compileDocument } from '../src/model/netlist-sync.js';

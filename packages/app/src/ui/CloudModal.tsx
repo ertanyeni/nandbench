@@ -26,7 +26,7 @@ import { ModalCloseButton } from './ModalCloseButton.js';
  *   2. This circuit — save / update / share / claim.
  *   3. My circuits — listing for signed-in users.
  *
- * Opens via the `gatecraft:open-cloud` event (dispatched by the Toolbar).
+ * Opens via the `nandbench:open-cloud` event (dispatched by the Toolbar).
  */
 export function CloudModal(): JSX.Element | null {
   const [open, setOpen] = useState(false);
@@ -62,13 +62,13 @@ export function CloudModal(): JSX.Element | null {
         setErr(t('cloud.errorGeneric'));
       }
     };
-    window.addEventListener('gatecraft:open-cloud', onOpen);
+    window.addEventListener('nandbench:open-cloud', onOpen);
     const esc = (ev: KeyboardEvent): void => {
       if (ev.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', esc);
     return () => {
-      window.removeEventListener('gatecraft:open-cloud', onOpen);
+      window.removeEventListener('nandbench:open-cloud', onOpen);
       window.removeEventListener('keydown', esc);
     };
   }, []);

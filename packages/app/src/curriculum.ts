@@ -9,7 +9,7 @@
 
 import { LESSONS } from './lessons.js';
 
-const STORAGE_KEY = 'gatecraft:curriculum:v1';
+const STORAGE_KEY = 'nandbench:curriculum:v1';
 
 interface CurriculumState {
   /** Lesson ids the user has actively opened. */

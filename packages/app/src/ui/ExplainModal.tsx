@@ -45,13 +45,13 @@ export function ExplainModal(): JSX.Element | null {
         setBusy(false);
       });
     };
-    window.addEventListener('gatecraft:explain', onOpen);
+    window.addEventListener('nandbench:explain', onOpen);
     const esc = (ev: KeyboardEvent): void => {
       if (open && ev.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', esc);
     return () => {
-      window.removeEventListener('gatecraft:explain', onOpen);
+      window.removeEventListener('nandbench:explain', onOpen);
       window.removeEventListener('keydown', esc);
     };
   }, [open]);
@@ -132,7 +132,7 @@ export function ExplainModal(): JSX.Element | null {
         )}
         {!isLlmEnabled() ? (
           <button
-            onClick={() => window.dispatchEvent(new Event('gatecraft:open-llm-settings'))}
+            onClick={() => window.dispatchEvent(new Event('nandbench:open-llm-settings'))}
             style={{
               background: 'transparent',
               border: '1px solid #2a3548',

@@ -31,7 +31,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
   override componentDidCatch(error: Error, info: ErrorInfo): void {
     // Surface to the console — useful when the user reports it.
     // eslint-disable-next-line no-console
-    console.error('[gatecraft] render error caught by ErrorBoundary', error, info);
+    console.error('[nandbench] render error caught by ErrorBoundary', error, info);
     this.setState({ info });
   }
 
@@ -47,12 +47,12 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
   private clearStorage = (): void => {
     // Defensive: localStorage may itself throw (private mode).
     try {
-      // Only wipe gatecraft-prefixed keys so we don't clobber other apps
+      // Only wipe nandbench-prefixed keys so we don't clobber other apps
       // sharing the origin.
       const remove: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
-        if (k && k.startsWith('gatecraft:')) remove.push(k);
+        if (k && k.startsWith('nandbench:')) remove.push(k);
       }
       for (const k of remove) localStorage.removeItem(k);
     } catch {
@@ -64,7 +64,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
   private detail(): string {
     const { error, info } = this.state;
     return [
-      `gatecraft error report — ${new Date().toISOString()}`,
+      `nandbench error report — ${new Date().toISOString()}`,
       '',
       `Message: ${error?.message ?? '(none)'}`,
       '',
@@ -151,7 +151,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
             </button>
           </div>
           <div style={{ fontSize: 11, color: '#5b6573' }}>
-            &quot;Reset local state&quot; wipes only gatecraft keys from localStorage —
+            &quot;Reset local state&quot; wipes only nandbench keys from localStorage —
             other sites are untouched.
           </div>
         </div>

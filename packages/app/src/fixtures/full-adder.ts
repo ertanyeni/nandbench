@@ -10,7 +10,7 @@
  * dots will be drawn in Faz 2 once the editor exists.
  */
 
-import { asComponentId, type ComponentId, type PortRef } from '@gatecraft/engine';
+import { asComponentId, type ComponentId, type PortRef } from '@nandbench/engine';
 import { asWireId, type CircuitDocument, type VisualComponent, type VisualWire } from '../model/document.js';
 
 const port = (id: string, name: string): PortRef => ({

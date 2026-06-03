@@ -214,7 +214,7 @@ export const TR: Record<EnKey, string> = {
   'toolbar.cloudTooltip': 'Buluta kaydet veya buluttan aç',
   'cloud.title': 'Bulut',
   'cloud.subtitle':
-    'Bu devreyi gatecraft sunucusuna kaydet, başka bir tarayıcıdan da kaldığın yerden devam et. Paylaşım linkine sahip herkes görüntüleyebilir; düzenleme yalnızca senin ya da düzenleme tokenını bilen birine açıktır.',
+    'Bu devreyi nandbench sunucusuna kaydet, başka bir tarayıcıdan da kaldığın yerden devam et. Paylaşım linkine sahip herkes görüntüleyebilir; düzenleme yalnızca senin ya da düzenleme tokenını bilen birine açıktır.',
   'cloud.signedInAs': '{email} olarak giriş yapıldı',
   'cloud.signOut': 'Çıkış',
   'cloud.anonymous': 'Anonim — kayıtların bu tarayıcıya bağlı kalır.',
@@ -238,7 +238,7 @@ export const TR: Record<EnKey, string> = {
   'toolbar.publishedToast': '"{name}" kütüphaneye yayınlandı (id {id}…). Diğer sekmeler artık palette\'in Library bölümünden kullanabilir; buradaki düzenlemeler otomatik senkronize olur.',
   'toolbar.llmSettings': 'AI sağlayıcı…',
   'llm.title': 'AI sağlayıcı (opsiyonel)',
-  'llm.subtitle': 'Kendi LLM\'ini bağla. Endpoint, token ve model tarayıcında kalır — gatecraft hiç görmez. Kapalıyken varsayılan kural tabanlı asistan çalışmaya devam eder.',
+  'llm.subtitle': 'Kendi LLM\'ini bağla. Endpoint, token ve model tarayıcında kalır — nandbench hiç görmez. Kapalıyken varsayılan kural tabanlı asistan çalışmaya devam eder.',
   'llm.endpoint': 'Endpoint URL',
   'llm.token': 'Bearer token',
   'llm.model': 'Model adı',
@@ -415,7 +415,7 @@ export const TR: Record<EnKey, string> = {
     'Bileşikler 32 seviyeden daha fazla iç içe — genelde hata. Bazı ara katmanları sadeleştir, ya da derinde gömülü bloğu üst seviyede tek bir bileşik olarak sakla.',
   'assistant.diag.reassure.title': '{n} tanı — hepsi hata değil',
   'assistant.diag.reassure.body':
-    'Tanılar gatecraft\'ın canlı geri bildirimidir. Yarı kurulu devrelerde doğal olarak boşta giriş görürsün. Hızla düzeltilmesi gerekenler çoklu-sürücü ve salınımdır — bunlar gerçek çelişkilerdir.',
+    'Tanılar nandbench\'ın canlı geri bildirimidir. Yarı kurulu devrelerde doğal olarak boşta giriş görürsün. Hızla düzeltilmesi gerekenler çoklu-sürücü ve salınımdır — bunlar gerçek çelişkilerdir.',
 
   /* Desen kartları */
   'assistant.pattern.halfAdder.title': 'Yarım toplayıcıya benziyor',
@@ -548,7 +548,7 @@ export const TR: Record<EnKey, string> = {
   'statusBar.toolMove': '{n} taşı',
   'statusBar.suggestion': 'Öneri: {kinds}',
   'statusBar.source': 'Kaynak',
-  'statusBar.sourceTitle': 'gatecraft açık kaynaktır (AGPL-3.0) — kodu GitHub\'ta görüntüle',
+  'statusBar.sourceTitle': 'nandbench açık kaynaktır (AGPL-3.0) — kodu GitHub\'ta görüntüle',
 
   /* Diagnostics */
   'diagnostics.title': 'Tanılar ({n})',
@@ -746,12 +746,12 @@ export const TR: Record<EnKey, string> = {
   'glossary.cat.timing': 'Zamanlama',
   'glossary.cat.memory': 'Yazmaç ve bellek',
   'glossary.cat.fsm': 'Sonlu durum makineleri',
-  'glossary.cat.tooling': 'gatecraft iç kavramları',
+  'glossary.cat.tooling': 'nandbench iç kavramları',
 
   /* --- Temeller --- */
   'glossary.term.bit.name': 'Bit',
   'glossary.term.bit.desc':
-    'Tek bir ikili sinyal — 0 (düşük) ya da 1 (yüksek). Her sayısal sistemin atomu. gatecraft\'ta 1-bitlik teller ince çizilir; daha geniş buslar genişliğiyle orantılı kalınlıkta görünür.',
+    'Tek bir ikili sinyal — 0 (düşük) ya da 1 (yüksek). Her sayısal sistemin atomu. nandbench\'ta 1-bitlik teller ince çizilir; daha geniş buslar genişliğiyle orantılı kalınlıkta görünür.',
   'glossary.term.bus.name': 'Bus',
   'glossary.term.bus.desc':
     'Aynı anda birden çok bit taşıyan tel. Bileşenler portları için genişlik (örn. 4-bit, 8-bit) bildirir; derleyici sürücü ile alıcının uyumlu olmasını şart koşar.',
@@ -760,7 +760,7 @@ export const TR: Record<EnKey, string> = {
     'Bir telin veya portun taşıdığı bit sayısı. Genişlik uyumsuzlukları derleme-zamanı tanısı tetikler — 4-bit bir bus Splitter olmadan 1-bitlik bir kapıya bağlanamaz.',
   'glossary.term.endian.name': 'Endian (sıralama)',
   'glossary.term.endian.desc':
-    'Hangi bitin "ilk" sayılacağına dair konvansiyon. Little-endian 0. biti düşük adrese koyar; big-endian en anlamlı biti başa alır. gatecraft tamamen little-endian.',
+    'Hangi bitin "ilk" sayılacağına dair konvansiyon. Little-endian 0. biti düşük adrese koyar; big-endian en anlamlı biti başa alır. nandbench tamamen little-endian.',
   'glossary.term.signed.name': 'İşaretli sayı',
   'glossary.term.signed.desc':
     'En anlamlı biti büyüklük yerine işareti kodlayan ikili değer. Diğer bitler genelde ikinin tümleyeni kullanır, böylece toplama işareti olmayan sayılardakiyle aynı şekilde çalışır.',
@@ -798,10 +798,10 @@ export const TR: Record<EnKey, string> = {
     '1-girişli kapı; çıkışı girişinin mantıksal tümleyeni. Ucunda kabarcık olan üçgen olarak çizilir.',
   'glossary.term.buffer.name': 'Buffer (tampon)',
   'glossary.term.buffer.desc':
-    'Mantıksal olarak pas-geç (out = in) ama gerçek dünyada yayılım gecikmesi ve sürüş gücü taşır. gatecraft\'ta çoğunlukla fan-out artırma ya da tri-state kapılama için kullanılır.',
+    'Mantıksal olarak pas-geç (out = in) ama gerçek dünyada yayılım gecikmesi ve sürüş gücü taşır. nandbench\'ta çoğunlukla fan-out artırma ya da tri-state kapılama için kullanılır.',
   'glossary.term.and.name': 'AND (VE)',
   'glossary.term.and.desc':
-    'Çıkış yalnızca tüm girişler 1 olduğunda 1\'dir. Boole: y = a · b. Seri iki AND, 3-girişli AND eder; gatecraft\'in yerleşik kapısı istenen sayıda girişi destekler.',
+    'Çıkış yalnızca tüm girişler 1 olduğunda 1\'dir. Boole: y = a · b. Seri iki AND, 3-girişli AND eder; nandbench\'in yerleşik kapısı istenen sayıda girişi destekler.',
   'glossary.term.or.name': 'OR (VEYA)',
   'glossary.term.or.desc':
     'Çıkış en az bir giriş 1 iken 1\'dir. Boole: y = a + b. AND ile birleşince çarpımların toplamı formunu kurar.',
@@ -1005,7 +1005,7 @@ export const TR: Record<EnKey, string> = {
   'glossary.term.stateDiagram.desc':
     'FSM\'in grafiği — düğümler durumlar, kenarlar etiketli geçişlerdir. Ardışıl mantık tasarlarken uygulamadan önce çizilen standart çıktı.',
 
-  /* --- gatecraft iç kavramları --- */
+  /* --- nandbench iç kavramları --- */
   'glossary.term.driver.name': 'Sürücü',
   'glossary.term.driver.desc':
     'Bir bileşenin çıkış portu net\'e değer iter. Bir net\'in 0, 1 ya da çok sürücüsü olabilir; çoğu uyuşmazsa tanı tetiklenir.',
@@ -1078,7 +1078,7 @@ export const TR: Record<EnKey, string> = {
   'fig.controlUnit.cap': 'Opcode içeri, onlarca küçük kontrol biti dışarı — CPU\'nun beyni.',
   'fig.hazards.cap': 'Yukarıda kalması gereken sinyalde anlık çukur — klasik static-1 hazard.',
   'fig.pipeline.cap': 'Beş aşama örtüşür: biri writeback yaparken dört tanesi havadadır.',
-  'fig.tooling.cap': 'gatecraft\'ın kendisi: model + renderer ana thread\'de, engine Web Worker\'da.',
+  'fig.tooling.cap': 'nandbench\'ın kendisi: model + renderer ana thread\'de, engine Web Worker\'da.',
 
   /* Challenge mode */
   'challenge.title': 'Pratik (Challenge)',

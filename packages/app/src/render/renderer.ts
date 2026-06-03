@@ -19,7 +19,7 @@ import type {
   Diagnostic,
   PortRef,
   SimSnapshot,
-} from '@gatecraft/engine';
+} from '@nandbench/engine';
 import type { CircuitDocument, Point, WireId } from '../model/document.js';
 import type { SavedCircuit } from '../model/library.js';
 import type { Tool, Viewport } from '../model/store.js';

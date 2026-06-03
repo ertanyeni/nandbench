@@ -27,9 +27,9 @@ export function exportVCD(input: {
   const ts = input.timescale ?? '1ns';
   const lines: string[] = [];
   lines.push(`$date\n  ${new Date().toISOString()}\n$end`);
-  lines.push('$version\n  gatecraft VCD export 1\n$end');
+  lines.push('$version\n  nandbench VCD export 1\n$end');
   lines.push(`$timescale ${ts} $end`);
-  lines.push('$scope module gatecraft $end');
+  lines.push('$scope module nandbench $end');
   // VCD short-id alphabet is `!` (33) through `~` (126).
   const idFor = (i: number): string => {
     const base = 126 - 33 + 1;

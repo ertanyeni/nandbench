@@ -8,7 +8,7 @@
  * centralized here.
  */
 
-import type { ComponentParams } from '@gatecraft/engine';
+import type { ComponentParams } from '@nandbench/engine';
 
 export type ParamField =
   | {

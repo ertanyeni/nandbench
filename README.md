@@ -1,4 +1,4 @@
-# gatecraft
+# nandbench
 
 A web-based, real-time digital logic circuit simulator and editor — a
 modern, professional alternative to Logisim and CircuitVerse.
@@ -62,7 +62,7 @@ Requires Node ≥ 20 and pnpm 10.
 pnpm install
 pnpm -r typecheck
 pnpm test          # engine + app test suites
-pnpm --filter @gatecraft/app dev   # editor at http://localhost:5175
+pnpm --filter @nandbench/app dev   # editor at http://localhost:5175
 ```
 
 ### Optional: cloud save backend
@@ -72,16 +72,16 @@ sync is only needed if you want a server-backed save.
 
 ```sh
 # 1. Bring up Postgres any way you like, then point the API at it:
-export DATABASE_URL=postgres://gatecraft:gatecraft@localhost:5432/gatecraft
+export DATABASE_URL=postgres://nandbench:nandbench@localhost:5432/nandbench
 
 # 2. Apply migrations:
-pnpm --filter @gatecraft/api migrate
+pnpm --filter @nandbench/api migrate
 
 # 3. Run the API:
-pnpm --filter @gatecraft/api dev   # http://localhost:4555
+pnpm --filter @nandbench/api dev   # http://localhost:4555
 
 # 4. Point the editor at it (defaults to http://localhost:4555):
-VITE_GATECRAFT_API=http://localhost:4555 pnpm --filter @gatecraft/app dev
+VITE_NANDBENCH_API=http://localhost:4555 pnpm --filter @nandbench/app dev
 ```
 
 Use the **cloud…** entry in the toolbar overflow menu to save the
@@ -103,5 +103,5 @@ death-by-a-thousand-cuts. Full reasoning in
 ## License
 
 [AGPL-3.0](LICENSE). You're free to use, study, share, and modify
-gatecraft. If you run a modified version as a network service, the AGPL
+nandbench. If you run a modified version as a network service, the AGPL
 requires you to offer your users its source code.

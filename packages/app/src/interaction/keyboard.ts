@@ -6,8 +6,8 @@
  * the browser default.
  */
 
-import type { ComponentId, PortRef } from '@gatecraft/engine';
-import { asComponentId } from '@gatecraft/engine';
+import type { ComponentId, PortRef } from '@nandbench/engine';
+import { asComponentId } from '@nandbench/engine';
 import {
   AddComponentCommand,
   AddWireCommand,

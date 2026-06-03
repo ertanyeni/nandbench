@@ -10,7 +10,7 @@
  * the user drives the relevant pins — that's pedagogical, not a bug.
  */
 
-import { asComponentId, type ComponentParams, type PortRef } from '@gatecraft/engine';
+import { asComponentId, type ComponentParams, type PortRef } from '@nandbench/engine';
 import {
   asWireId,
   type CircuitDocument,

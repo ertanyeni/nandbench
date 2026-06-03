@@ -1,16 +1,16 @@
 # Caddy reverse proxy for the Ollama API.
 #
-# Replace `ai.gatecraft.example` with your real domain and set
-# `GATECRAFT_LLM_TOKEN` to a long random string. Caddy validates the
+# Replace `ai.nandbench.example` with your real domain and set
+# `NANDBENCH_LLM_TOKEN` to a long random string. Caddy validates the
 # token via the `Authorization: Bearer <token>` header before
 # forwarding to Ollama — no token, no request.
 #
 # Optional: pin an allow-list of model names via the
 # `header_regexp X-Ollama-Allowed ^(qwen2.5|llama3.2)` directive.
 
-ai.gatecraft.example {
+ai.nandbench.example {
     encode gzip
-    @authorized header Authorization "Bearer {$GATECRAFT_LLM_TOKEN}"
+    @authorized header Authorization "Bearer {$NANDBENCH_LLM_TOKEN}"
     handle @authorized {
         reverse_proxy ollama:11434 {
             transport http {

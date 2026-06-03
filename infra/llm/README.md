@@ -1,4 +1,4 @@
-# gatecraft self-host LLM stack
+# nandbench self-host LLM stack
 
 Optional Ollama-based AI assist endpoint. Runs on a single Hetzner box
 (or any Docker host). The browser app only talks to this if the user has
@@ -15,25 +15,25 @@ the assistant remains 100% rule-based.
 
 ```bash
 # On the server
-cd /home/deploy/gatecraft/infra/llm
-echo "GATECRAFT_LLM_TOKEN=$(openssl rand -hex 32)" > .env
+cd /home/deploy/nandbench/infra/llm
+echo "NANDBENCH_LLM_TOKEN=$(openssl rand -hex 32)" > .env
 docker compose up -d
 docker compose exec ollama ollama pull qwen2.5:3b-instruct
 ```
 
-Add the domain (e.g. `ai.gatecraft.example`) to your DNS pointing at the
+Add the domain (e.g. `ai.nandbench.example`) to your DNS pointing at the
 server, edit `Caddyfile` to use it, and Caddy will provision a TLS cert
 on first request.
 
 ## Browser configuration
 
-In gatecraft → Toolbar ☰ → "AI provider":
-- Endpoint: `https://ai.gatecraft.example`
-- Token: the value of `GATECRAFT_LLM_TOKEN`
+In nandbench → Toolbar ☰ → "AI provider":
+- Endpoint: `https://ai.nandbench.example`
+- Token: the value of `NANDBENCH_LLM_TOKEN`
 - Model: `qwen2.5:3b-instruct`
 
 Both fields stay in `localStorage`; they never round-trip through any
-gatecraft.app server.
+nandbench.app server.
 
 ## Security
 

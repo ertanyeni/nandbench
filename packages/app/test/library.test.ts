@@ -15,7 +15,7 @@ import {
   lit,
   portKey,
   registerPrimitives,
-} from '@gatecraft/engine';
+} from '@nandbench/engine';
 import { describe, expect, it } from 'vitest';
 import {
   asWireId,

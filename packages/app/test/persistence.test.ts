@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { asComponentId } from '@gatecraft/engine';
+import { asComponentId } from '@nandbench/engine';
 import { asWireId, type CircuitDocument } from '../src/model/document.js';
 import { asSavedCircuitId, snapshotAsSavedCircuit } from '../src/model/library.js';
 import { FORMAT_VERSION, fromJSON, toJSON, type PersistedState } from '../src/model/persistence.js';

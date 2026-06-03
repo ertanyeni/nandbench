@@ -1,4 +1,4 @@
-import type { ComponentId, Diagnostic, PortRef } from '@gatecraft/engine';
+import type { ComponentId, Diagnostic, PortRef } from '@nandbench/engine';
 import { useEffect, useRef, useState } from 'react';
 import { t } from '../i18n/index.js';
 import { getShape, pinWorldPosition } from '../model/kinds.js';
@@ -268,7 +268,7 @@ function focusOnDiagnostic(diag: Diagnostic): void {
     // Ask the renderer to flash a halo at that world point so the user
     // visually catches what we just panned to.
     window.dispatchEvent(
-      new CustomEvent('gatecraft:pulse-at', { detail: { x: world.x, y: world.y } }),
+      new CustomEvent('nandbench:pulse-at', { detail: { x: world.x, y: world.y } }),
     );
   }
 }

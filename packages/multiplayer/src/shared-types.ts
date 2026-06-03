@@ -1,6 +1,6 @@
 /**
  * Local mirror of the few document types we need to read/write Yjs maps.
- * Duplicating them keeps `@gatecraft/multiplayer` independent of the app
+ * Duplicating them keeps `@nandbench/multiplayer` independent of the app
  * package — both packages settle on the same JSON shape, and the doc
  * round-trip is enforced by the persistence schema tests in the app.
  */

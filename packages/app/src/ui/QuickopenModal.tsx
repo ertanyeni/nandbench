@@ -3,7 +3,7 @@ import { t } from '../i18n/index.js';
 import { LESSONS } from '../lessons.js';
 import { PALETTE_CATEGORIES } from './Palette.js';
 import { useAppStore } from '../model/store.js';
-import type { ComponentParams } from '@gatecraft/engine';
+import type { ComponentParams } from '@nandbench/engine';
 
 interface QuickItem {
   readonly id: string;
@@ -98,7 +98,7 @@ export function QuickopenModal(): JSX.Element | null {
         label: t(lesson.titleKey),
         hint: t('quickopen.lessonHint'),
         group: 'lesson',
-        perform: () => window.dispatchEvent(new Event('gatecraft:open-lessons')),
+        perform: () => window.dispatchEvent(new Event('nandbench:open-lessons')),
       });
     }
     // Built-in actions.
@@ -108,35 +108,35 @@ export function QuickopenModal(): JSX.Element | null {
         label: t('toolbar.assistantLong'),
         hint: t('quickopen.actionHint'),
         group: 'action',
-        perform: () => window.dispatchEvent(new Event('gatecraft:open-assistant')),
+        perform: () => window.dispatchEvent(new Event('nandbench:open-assistant')),
       },
       {
         id: 'a:glossary',
         label: t('toolbar.glossary'),
         hint: t('quickopen.actionHint'),
         group: 'action',
-        perform: () => window.dispatchEvent(new Event('gatecraft:open-glossary')),
+        perform: () => window.dispatchEvent(new Event('nandbench:open-glossary')),
       },
       {
         id: 'a:history',
         label: t('toolbar.history'),
         hint: t('quickopen.actionHint'),
         group: 'action',
-        perform: () => window.dispatchEvent(new Event('gatecraft:open-history')),
+        perform: () => window.dispatchEvent(new Event('nandbench:open-history')),
       },
       {
         id: 'a:waveform',
         label: t('toolbar.waveform'),
         hint: t('quickopen.actionHint'),
         group: 'action',
-        perform: () => window.dispatchEvent(new Event('gatecraft:open-waveform')),
+        perform: () => window.dispatchEvent(new Event('nandbench:open-waveform')),
       },
       {
         id: 'a:newCircuit',
         label: t('toolbar.newCircuitLong'),
         hint: t('quickopen.actionHint'),
         group: 'action',
-        perform: () => window.dispatchEvent(new Event('gatecraft:open-template-picker')),
+        perform: () => window.dispatchEvent(new Event('nandbench:open-template-picker')),
       },
     );
     return out;

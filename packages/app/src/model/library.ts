@@ -12,7 +12,7 @@
  * This is why the engine's contract doesn't need to know about hierarchy.
  */
 
-import type { ComponentId, ComponentParams, PortDirection } from '@gatecraft/engine';
+import type { ComponentId, ComponentParams, PortDirection } from '@nandbench/engine';
 import type { CircuitDocument, VisualComponent } from './document.js';
 
 export type SavedCircuitId = string & { readonly __brand: 'SavedCircuitId' };

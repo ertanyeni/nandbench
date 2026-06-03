@@ -20,7 +20,7 @@ services:
       context: ..
       dockerfile: packages/app/Dockerfile
       args:
-        VITE_GATECRAFT_API: ${PUBLIC_API_URL:-https://api.nandbench.ertanyeni.com}
+        VITE_NANDBENCH_API: ${PUBLIC_API_URL:-https://api.nandbench.ertanyeni.com}
     container_name: gatecraft-build
     volumes:
       - gatecraft_dist:/dist

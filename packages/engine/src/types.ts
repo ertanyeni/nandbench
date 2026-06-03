@@ -1,5 +1,5 @@
 /**
- * Faz 0 — Engine type contract  (project: gatecraft)
+ * Faz 0 — Engine type contract  (project: nandbench)
  *
  * This is the SHAPE of the simulation engine, not its implementation.
  * Rules from CLAUDE.md apply:
