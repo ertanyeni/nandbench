@@ -544,6 +544,8 @@ export const EN = {
   'statusBar.toolWire': 'wire from {comp}:{port}',
   'statusBar.toolMove': 'move {n}',
   'statusBar.suggestion': 'Suggested next: {kinds}',
+  'statusBar.source': 'Source',
+  'statusBar.sourceTitle': 'gatecraft is open source (AGPL-3.0) — view the code on GitHub',
 
   /* Diagnostics panel */
   'diagnostics.title': 'Diagnostics ({n})',

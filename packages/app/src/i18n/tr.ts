@@ -547,6 +547,8 @@ export const TR: Record<EnKey, string> = {
   'statusBar.toolWire': '{comp}:{port} kablosu',
   'statusBar.toolMove': '{n} taşı',
   'statusBar.suggestion': 'Öneri: {kinds}',
+  'statusBar.source': 'Kaynak',
+  'statusBar.sourceTitle': 'gatecraft açık kaynaktır (AGPL-3.0) — kodu GitHub\'ta görüntüle',
 
   /* Diagnostics */
   'diagnostics.title': 'Tanılar ({n})',
