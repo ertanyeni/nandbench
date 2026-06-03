@@ -100,6 +100,17 @@ death-by-a-thousand-cuts. Full reasoning in
 4. Every entity has a stable UUID — never reference by array index.
 5. The engine has zero React/DOM imports and runs in a Web Worker.
 
+## Support
+
+gatecraft is free and open source, built for students and educators. If
+it saved you a late-night debugging session, you can buy me a coffee —
+it keeps the project moving.
+
+- ☕ [Buy me a coffee](https://www.buymeacoffee.com/REPLACE_ME)
+- 💖 [GitHub Sponsors](https://github.com/sponsors/ertanyeni)
+
 ## License
 
-MIT — see [`LICENSE`](LICENSE).
+[AGPL-3.0](LICENSE). You're free to use, study, share, and modify
+gatecraft. If you run a modified version as a network service, the AGPL
+requires you to offer your users its source code.
