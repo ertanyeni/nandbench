@@ -1,12 +1,11 @@
-# TEMPORARY one-off — force Caddy to re-attempt the Let's Encrypt cert for
-# nandbench.com.tr now that DNS resolves to the origin. Delete after use.
+# TEMPORARY diagnostic — find why the nandbench.com.tr cert isn't issuing.
 name: Server Inspect
 
 on:
   workflow_dispatch:
 
 jobs:
-  cert:
+  diag:
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/ssh-action@v1
@@ -16,10 +15,12 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           command_timeout: 10m
           script: |
-            echo "=== reload caddy to trigger fresh ACME attempt ==="
-            docker exec infrastructure-caddy-1 caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
-            echo "=== wait for issuance ==="
-            sleep 30
-            echo "=== caddy logs: nandbench.com.tr / acme ==="
-            docker logs infrastructure-caddy-1 --since 2m 2>&1 | grep -iE 'nandbench\.com\.tr|acme|obtain|certificate|challenge|error' | tail -40 || echo "(no matching log lines)"
+            echo "=== all caddy log lines mentioning nandbench.com.tr (full history in container) ==="
+            docker logs infrastructure-caddy-1 2>&1 | grep 'nandbench.com.tr' | tail -50 || echo "(none)"
+            echo "=== recent acme / rate / error lines ==="
+            docker logs infrastructure-caddy-1 --since 30m 2>&1 | grep -iE 'acme|rate|too many|error|fail|challenge' | tail -40 || echo "(none)"
+            echo "=== does the ACME challenge path serve from origin? (self-test on :80) ==="
+            curl -s -o /dev/null -w "  acme path HTTP %{http_code}\n" "http://nandbench.com.tr/.well-known/acme-challenge/selftest" || true
+            echo "=== existing cert files for the domain on disk ==="
+            docker exec infrastructure-caddy-1 sh -c 'find /data -iname "*nandbench.com.tr*" 2>/dev/null | head' || echo "(none / no /data)"
             echo "=== DONE ==="
