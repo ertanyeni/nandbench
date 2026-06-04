@@ -1,0 +1,25 @@
+# TEMPORARY one-off — force Caddy to re-attempt the Let's Encrypt cert for
+# nandbench.com.tr now that DNS resolves to the origin. Delete after use.
+name: Server Inspect
+
+on:
+  workflow_dispatch:
+
+jobs:
+  cert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command_timeout: 10m
+          script: |
+            echo "=== reload caddy to trigger fresh ACME attempt ==="
+            docker exec infrastructure-caddy-1 caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
+            echo "=== wait for issuance ==="
+            sleep 30
+            echo "=== caddy logs: nandbench.com.tr / acme ==="
+            docker logs infrastructure-caddy-1 --since 2m 2>&1 | grep -iE 'nandbench\.com\.tr|acme|obtain|certificate|challenge|error' | tail -40 || echo "(no matching log lines)"
+            echo "=== DONE ==="
