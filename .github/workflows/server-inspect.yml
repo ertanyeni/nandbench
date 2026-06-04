@@ -1,12 +1,13 @@
-# TEMPORARY read-only inspection — dump the Caddyfile blocks + API CORS so
-# the nandbench.com.tr domain can be wired in safely. Delete after use.
+# TEMPORARY one-off — wire nandbench.com.tr into the shared Caddy + API CORS.
+# Additive change only (adds hostnames to existing site blocks), validated
+# before reload, with automatic rollback. Delete after use.
 name: Server Inspect
 
 on:
   workflow_dispatch:
 
 jobs:
-  inspect:
+  wire-domain:
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/ssh-action@v1
@@ -14,13 +15,38 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command_timeout: 10m
           script: |
-            echo "===== Caddyfile nandbench blocks (lines 135-185) ====="
-            sed -n '135,185p' /home/deploy/infrastructure/Caddyfile
-            echo "===== exact site-opening lines ====="
-            grep -n 'nandbench.ertanyeni.com' /home/deploy/infrastructure/Caddyfile
-            echo "===== API .env.production CORS / PUBLIC lines ====="
-            grep -nE 'CORS|PUBLIC_FRONTEND|PUBLIC_API' /home/deploy/gatecraft/infra/.env.production 2>/dev/null
-            echo "===== caddy container name ====="
-            docker ps --format '{{.Names}}' | grep -i caddy
+            set -e
+            echo "===== CADDY ====="
+            cd /home/deploy/infrastructure
+            if grep -q 'nandbench\.com\.tr' Caddyfile; then
+              echo "Caddyfile already references nandbench.com.tr — skipping edit"
+            else
+              BAK="Caddyfile.bak.pre_nandbench_$(date +%Y%m%d%H%M%S)"
+              cp Caddyfile "$BAK"
+              echo "backup: $BAK"
+              sed -i 's/^nandbench\.ertanyeni\.com {/nandbench.ertanyeni.com, nandbench.com.tr, www.nandbench.com.tr {/' Caddyfile
+              sed -i 's/^api\.nandbench\.ertanyeni\.com {/api.nandbench.ertanyeni.com, api.nandbench.com.tr {/' Caddyfile
+              echo "--- new opening lines ---"
+              grep -nE '^(www\.)?(api\.)?nandbench' Caddyfile | grep '{'
+              echo "--- validate (one-off container, independent of running mount) ---"
+              if docker run --rm -v "$PWD/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2-alpine caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile; then
+                echo "VALIDATE OK — reloading running caddy"
+                docker exec infrastructure-caddy-1 caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
+                echo "CADDY RELOADED OK"
+              else
+                echo "VALIDATE FAILED — restoring backup, no reload"
+                cp "$BAK" Caddyfile
+                exit 1
+              fi
+            fi
+
+            echo "===== API CORS ====="
+            cd /home/deploy/gatecraft/infra
+            cp .env.production ".env.production.bak.$(date +%Y%m%d%H%M%S)"
+            sed -i 's#^CORS_ORIGINS=.*#CORS_ORIGINS=https://nandbench.ertanyeni.com,https://nandbench.com.tr,https://www.nandbench.com.tr#' .env.production
+            echo "--- new CORS line ---"
+            grep '^CORS_ORIGINS=' .env.production
+            docker compose up -d --force-recreate gatecraft-api
             echo "===== DONE ====="
