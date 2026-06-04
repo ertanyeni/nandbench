@@ -34,22 +34,11 @@ jobs:
             echo "===== Caddy: drop ertanyeni from live blocks + add 301 redirects ====="
             cd /home/deploy/infrastructure
             cp Caddyfile "Caddyfile.bak.canonical_$(date +%s)"
-            sed -e 's/^nandbench\.ertanyeni\.com, nandbench\.com\.tr, www\.nandbench\.com\.tr {/nandbench.com.tr, www.nandbench.com.tr {/' \
-                -e 's/^api\.nandbench\.ertanyeni\.com, api\.nandbench\.com\.tr {/api.nandbench.com.tr {/' \
-                Caddyfile > /tmp/Caddyfile.new
-            cat >> /tmp/Caddyfile.new <<'EOF'
-
-# nandbench.ertanyeni.com -> canonical nandbench.com.tr (301)
-nandbench.ertanyeni.com {
-    redir https://nandbench.com.tr{uri} permanent
-}
-api.nandbench.ertanyeni.com {
-    redir https://api.nandbench.com.tr{uri} permanent
-}
-EOF
+            sed -e 's/^nandbench\.ertanyeni\.com, nandbench\.com\.tr, www\.nandbench\.com\.tr {/nandbench.com.tr, www.nandbench.com.tr {/' -e 's/^api\.nandbench\.ertanyeni\.com, api\.nandbench\.com\.tr {/api.nandbench.com.tr {/' Caddyfile > /tmp/Caddyfile.new
+            printf '%s\n' '' '# nandbench.ertanyeni.com -> canonical nandbench.com.tr (301)' 'nandbench.ertanyeni.com {' '    redir https://nandbench.com.tr{uri} permanent' '}' 'api.nandbench.ertanyeni.com {' '    redir https://api.nandbench.com.tr{uri} permanent' '}' >> /tmp/Caddyfile.new
             echo "--- validate new config (one-off container) ---"
             if docker run --rm -v /tmp/Caddyfile.new:/etc/caddy/Caddyfile:ro caddy:2-alpine caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile; then
-              cat /tmp/Caddyfile.new > Caddyfile   # inode-preserving in-place write
+              cat /tmp/Caddyfile.new > Caddyfile
               docker exec infrastructure-caddy-1 caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
               echo "CADDY RELOADED OK"
             else
@@ -57,10 +46,8 @@ EOF
               exit 1
             fi
             sleep 3
-            echo "--- in-container config now: nandbench blocks ---"
-            docker exec infrastructure-caddy-1 grep -nE 'nandbench' /etc/caddy/Caddyfile | grep -E '\{|redir'
-            echo "===== sanity: other shared sites ====="
-            for h in nandbench.com.tr favradar.com calofeed.com.tr mysticmind.com.tr; do
-              curl -s -o /dev/null -w "  $h -> %{http_code}\n" --max-time 10 "https://$h" || echo "  $h ERR"
-            done
+            echo "--- in-container nandbench blocks now ---"
+            docker exec infrastructure-caddy-1 grep -nE 'nandbench' /etc/caddy/Caddyfile | grep -E 'redir|com.tr \{|com \{'
+            echo "===== sanity: shared sites ====="
+            for h in nandbench.com.tr favradar.com calofeed.com.tr mysticmind.com.tr; do curl -s -o /dev/null -w "  $h -> %{http_code}\n" --max-time 10 "https://$h" || echo "  $h ERR"; done
             echo "===== DONE ====="
