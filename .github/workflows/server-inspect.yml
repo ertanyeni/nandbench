@@ -1,12 +1,12 @@
-# TEMPORARY one-off — recover gatecraft-api after a failed recreate and
-# bring it up cleanly with the new CORS env. Delete after use.
+# TEMPORARY one-off — clean up temp-renamed orphan containers left by a
+# concurrent deploy + manual recreate, then reconcile to desired state.
 name: Server Inspect
 
 on:
   workflow_dispatch:
 
 jobs:
-  fix-api:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/ssh-action@v1
@@ -18,15 +18,15 @@ jobs:
           script: |
             set -e
             cd /home/deploy/gatecraft/infra
-            echo "=== current gatecraft containers ==="
-            docker ps -a --format '{{.Names}}  {{.Status}}' | grep -i gatecraft || echo "none"
-            echo "=== remove any stale gatecraft-api (incl temp-renamed) ==="
-            docker ps -a --format '{{.Names}}' | grep 'gatecraft-api' | xargs -r docker rm -f || true
-            echo "=== recreate gatecraft-api from compose ==="
-            docker compose up -d gatecraft-api
+            echo "=== before ==="
+            docker ps -a --format '{{.Names}}  {{.Status}}' | grep -i gatecraft || echo none
+            echo "=== remove temp-renamed orphans (<id>_gatecraft-*) ==="
+            docker ps -a --format '{{.Names}}' | grep -E '_gatecraft-(api|build)$' | xargs -r docker rm -f || true
+            echo "=== reconcile (no force-recreate) ==="
+            docker compose up -d
             sleep 6
-            echo "=== post state ==="
-            docker ps --format '{{.Names}}  {{.Status}}' | grep gatecraft-api || echo "STILL NOT RUNNING"
-            echo "=== last 20 log lines ==="
-            docker logs gatecraft-api --tail 20 2>&1 || true
+            echo "=== after ==="
+            docker ps -a --format '{{.Names}}  {{.Status}}' | grep -i gatecraft || echo none
+            echo "=== api log tail ==="
+            docker logs gatecraft-api --tail 6 2>&1 || true
             echo "=== DONE ==="
