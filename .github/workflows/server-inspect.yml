@@ -1,4 +1,5 @@
-# TEMPORARY diagnostic — find why the nandbench.com.tr cert isn't issuing.
+# TEMPORARY diagnostic — is the edited Caddyfile actually what the running
+# caddy loaded? Check mounts, in-container file, and live config.
 name: Server Inspect
 
 on:
@@ -15,12 +16,14 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           command_timeout: 10m
           script: |
-            echo "=== all caddy log lines mentioning nandbench.com.tr (full history in container) ==="
-            docker logs infrastructure-caddy-1 2>&1 | grep 'nandbench.com.tr' | tail -50 || echo "(none)"
-            echo "=== recent acme / rate / error lines ==="
-            docker logs infrastructure-caddy-1 --since 30m 2>&1 | grep -iE 'acme|rate|too many|error|fail|challenge' | tail -40 || echo "(none)"
-            echo "=== does the ACME challenge path serve from origin? (self-test on :80) ==="
-            curl -s -o /dev/null -w "  acme path HTTP %{http_code}\n" "http://nandbench.com.tr/.well-known/acme-challenge/selftest" || true
-            echo "=== existing cert files for the domain on disk ==="
-            docker exec infrastructure-caddy-1 sh -c 'find /data -iname "*nandbench.com.tr*" 2>/dev/null | head' || echo "(none / no /data)"
+            echo "=== caddy container mounts ==="
+            docker inspect infrastructure-caddy-1 --format '{{range .Mounts}}{{.Source}} -> {{.Destination}} ({{.Type}}){{println}}{{end}}'
+            echo "=== does /etc/caddy/Caddyfile inside container have nandbench.com.tr? ==="
+            docker exec infrastructure-caddy-1 sh -c 'grep -n "nandbench" /etc/caddy/Caddyfile | grep "{" || echo "NOT FOUND in /etc/caddy/Caddyfile"'
+            echo "=== caddy command it was started with ==="
+            docker inspect infrastructure-caddy-1 --format '{{.Config.Cmd}} | {{.Path}} {{.Args}}'
+            echo "=== live admin config: nandbench.com.tr present? ==="
+            docker exec infrastructure-caddy-1 sh -c 'wget -qO- localhost:2019/config/ 2>/dev/null | grep -o "nandbench.com.tr" | head' || echo "(admin query failed / not present)"
+            echo "=== host Caddyfile opening lines ==="
+            grep -nE '^(www\.|api\.)?nandbench' /home/deploy/infrastructure/Caddyfile | grep '{'
             echo "=== DONE ==="
