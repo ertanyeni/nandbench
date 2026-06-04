@@ -31,7 +31,7 @@ COPY packages/multiplayer packages/multiplayer
 
 # VITE_NANDBENCH_API is baked into the bundle at build time. The
 # infra/docker-compose passes it via build args.
-ARG VITE_NANDBENCH_API=https://api.nandbench.ertanyeni.com
+ARG VITE_NANDBENCH_API=https://api.nandbench.com.tr
 ENV VITE_NANDBENCH_API=${VITE_NANDBENCH_API}
 
 RUN pnpm --filter @nandbench/app build

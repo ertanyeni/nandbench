@@ -1,4 +1,5 @@
-# Production stack for nandbench.ertanyeni.com + api.nandbench.ertanyeni.com.
+# Production stack for nandbench.com.tr + api.nandbench.com.tr.
+# (nandbench.ertanyeni.com / api.nandbench.ertanyeni.com 301-redirect to the .com.tr canonical.)
 #
 # Services:
 #   - gatecraft-build: builds the React app and writes /dist into the
@@ -20,7 +21,7 @@ services:
       context: ..
       dockerfile: packages/app/Dockerfile
       args:
-        VITE_NANDBENCH_API: ${PUBLIC_API_URL:-https://api.nandbench.ertanyeni.com}
+        VITE_NANDBENCH_API: ${PUBLIC_API_URL:-https://api.nandbench.com.tr}
     container_name: gatecraft-build
     volumes:
       - gatecraft_dist:/dist
