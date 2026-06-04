@@ -1,13 +1,12 @@
-# TEMPORARY one-off — wire nandbench.com.tr into the shared Caddy + API CORS.
-# Additive change only (adds hostnames to existing site blocks), validated
-# before reload, with automatic rollback. Delete after use.
+# TEMPORARY one-off — recover gatecraft-api after a failed recreate and
+# bring it up cleanly with the new CORS env. Delete after use.
 name: Server Inspect
 
 on:
   workflow_dispatch:
 
 jobs:
-  wire-domain:
+  fix-api:
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/ssh-action@v1
@@ -18,35 +17,16 @@ jobs:
           command_timeout: 10m
           script: |
             set -e
-            echo "===== CADDY ====="
-            cd /home/deploy/infrastructure
-            if grep -q 'nandbench\.com\.tr' Caddyfile; then
-              echo "Caddyfile already references nandbench.com.tr — skipping edit"
-            else
-              BAK="Caddyfile.bak.pre_nandbench_$(date +%Y%m%d%H%M%S)"
-              cp Caddyfile "$BAK"
-              echo "backup: $BAK"
-              sed -i 's/^nandbench\.ertanyeni\.com {/nandbench.ertanyeni.com, nandbench.com.tr, www.nandbench.com.tr {/' Caddyfile
-              sed -i 's/^api\.nandbench\.ertanyeni\.com {/api.nandbench.ertanyeni.com, api.nandbench.com.tr {/' Caddyfile
-              echo "--- new opening lines ---"
-              grep -nE '^(www\.)?(api\.)?nandbench' Caddyfile | grep '{'
-              echo "--- validate (one-off container, independent of running mount) ---"
-              if docker run --rm -v "$PWD/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2-alpine caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile; then
-                echo "VALIDATE OK — reloading running caddy"
-                docker exec infrastructure-caddy-1 caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
-                echo "CADDY RELOADED OK"
-              else
-                echo "VALIDATE FAILED — restoring backup, no reload"
-                cp "$BAK" Caddyfile
-                exit 1
-              fi
-            fi
-
-            echo "===== API CORS ====="
             cd /home/deploy/gatecraft/infra
-            cp .env.production ".env.production.bak.$(date +%Y%m%d%H%M%S)"
-            sed -i 's#^CORS_ORIGINS=.*#CORS_ORIGINS=https://nandbench.ertanyeni.com,https://nandbench.com.tr,https://www.nandbench.com.tr#' .env.production
-            echo "--- new CORS line ---"
-            grep '^CORS_ORIGINS=' .env.production
-            docker compose up -d --force-recreate gatecraft-api
-            echo "===== DONE ====="
+            echo "=== current gatecraft containers ==="
+            docker ps -a --format '{{.Names}}  {{.Status}}' | grep -i gatecraft || echo "none"
+            echo "=== remove any stale gatecraft-api (incl temp-renamed) ==="
+            docker ps -a --format '{{.Names}}' | grep 'gatecraft-api' | xargs -r docker rm -f || true
+            echo "=== recreate gatecraft-api from compose ==="
+            docker compose up -d gatecraft-api
+            sleep 6
+            echo "=== post state ==="
+            docker ps --format '{{.Names}}  {{.Status}}' | grep gatecraft-api || echo "STILL NOT RUNNING"
+            echo "=== last 20 log lines ==="
+            docker logs gatecraft-api --tail 20 2>&1 || true
+            echo "=== DONE ==="
