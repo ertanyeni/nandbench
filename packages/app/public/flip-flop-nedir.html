@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flip-Flop Nedir? SR, D, JK, T Flip-Flop ve Latch Farkı | nandbench</title>
+    <meta
+      name="description"
+      content="Flip-flop nedir, latch ile farkı nedir? SR, D, JK ve T flip-flop türleri, doğruluk tabloları ve çalışma mantığı. Ardışıl (sequential) devrelerin temeli. Tarayıcıda ücretsiz dene — nandbench."
+    />
+    <link rel="canonical" href="https://nandbench.com.tr/flip-flop-nedir.html" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Flip-Flop Nedir? (SR, D, JK, T)" />
+    <meta property="og:description" content="Flip-flop türleri, latch farkı ve doğruluk tabloları." />
+    <meta property="og:url" content="https://nandbench.com.tr/flip-flop-nedir.html" />
+    <meta property="og:image" content="https://nandbench.com.tr/logo-mark.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+    <script type="application/ld+json">
+      { "@context": "https://schema.org", "@type": "Article", "headline": "Flip-Flop Nedir? (SR, D, JK, T)", "inLanguage": "tr", "author": { "@type": "Organization", "name": "nandbench" }, "publisher": { "@type": "Organization", "name": "nandbench", "logo": { "@type": "ImageObject", "url": "https://nandbench.com.tr/logo-mark.png" } }, "mainEntityOfPage": "https://nandbench.com.tr/flip-flop-nedir.html", "image": "https://nandbench.com.tr/logo-mark.png" }
+    </script>
+    <style>
+      :root { color-scheme: dark; } * { box-sizing: border-box; }
+      body { margin: 0; background: #0f1115; color: #cdd2da; font: 16px/1.7 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Inter, sans-serif; }
+      a { color: #6cc6ff; }
+      header, main, footer { max-width: 820px; margin: 0 auto; padding: 0 22px; }
+      header { display: flex; align-items: center; gap: 12px; padding-top: 26px; padding-bottom: 8px; }
+      header img { width: 34px; height: 34px; } header .brand { font-weight: 800; color: #fff; text-decoration: none; }
+      h1 { color: #fff; font-size: clamp(1.7rem, 4.5vw, 2.6rem); letter-spacing: -0.02em; line-height: 1.15; margin: 1.2em 0 0.3em; }
+      h2 { color: #eef1f5; margin-top: 1.8em; font-size: 1.3rem; } p, li { color: #aab0ba; } .lead { font-size: 1.12rem; color: #c4cad3; }
+      table { width: 100%; border-collapse: collapse; margin: 14px 0 26px; font-variant-numeric: tabular-nums; }
+      caption { text-align: left; font-weight: 700; color: #eef1f5; padding: 8px 0; }
+      th, td { border: 1px solid #232733; padding: 7px 12px; text-align: center; } th { background: #161922; color: #cfd5df; }
+      td.out { color: #6cc6ff; font-weight: 700; }
+      .cta { display: inline-block; margin: 8px 0; padding: 11px 18px; border-radius: 10px; background: #1b6fe0; color: #fff; font-weight: 700; text-decoration: none; }
+      nav.crumbs { font-size: 0.85rem; color: #6b7280; padding-top: 16px; } nav.crumbs a { color: #8a93a0; }
+      footer { color: #6b7280; font-size: 0.9rem; padding: 40px 22px 60px; border-top: 1px solid #1c2029; margin-top: 40px; }
+    </style>
+  </head>
+  <body>
+    <header><a href="/"><img src="/logo-mark.png" alt="nandbench logosu" /></a><a href="/" class="brand">nandbench</a></header>
+    <main>
+      <nav class="crumbs"><a href="/">Ana sayfa</a> › Flip-Flop</nav>
+      <h1>Flip-Flop Nedir? (SR, D, JK, T)</h1>
+      <p class="lead">
+        <strong>Flip-flop</strong>, tek bir biti saklayabilen — yani <strong>hafızası olan</strong> —
+        temel ardışıl (sequential) devre elemanıdır. <a href="/mantik-kapilari.html">Mantık
+        kapılarından</a> farkı: çıkışı yalnızca anlık girişlere değil, geçmişe (saklanan duruma) de
+        bağlıdır. Yazmaçlar, sayaçlar ve bellekler flip-flop'lardan kurulur.
+      </p>
+
+      <h2>Latch ile flip-flop farkı</h2>
+      <p>
+        <strong>Latch</strong> seviye-tetiklemelidir: etkin (enable) sinyali aktif olduğu <em>sürece</em>
+        çıkış girişi takip eder. <strong>Flip-flop</strong> ise kenar-tetiklemelidir: yalnızca saat
+        (clock) sinyalinin <em>kenarında</em> (genelde yükselen kenar) değer alır. Bu, senkron devrelerde
+        zamanlamayı öngörülebilir kılar.
+      </p>
+
+      <h2>SR Flip-Flop (Set / Reset)</h2>
+      <p>S=1 set eder (Q=1), R=1 reset eder (Q=0). S=R=1 yasak durumdur.</p>
+      <table>
+        <caption>SR doğruluk tablosu</caption>
+        <tr><th>S</th><th>R</th><th>Q (sonraki)</th></tr>
+        <tr><td>0</td><td>0</td><td class="out">Q (değişmez)</td></tr>
+        <tr><td>0</td><td>1</td><td class="out">0</td></tr>
+        <tr><td>1</td><td>0</td><td class="out">1</td></tr>
+        <tr><td>1</td><td>1</td><td class="out">geçersiz</td></tr>
+      </table>
+
+      <h2>D Flip-Flop (Data / Delay)</h2>
+      <p>En çok kullanılanı. Saat kenarında D girişindeki değeri alır ve saklar (Q = D). Yazmaçların
+        yapı taşıdır.</p>
+      <table>
+        <caption>D doğruluk tablosu</caption>
+        <tr><th>D</th><th>Q (sonraki)</th></tr>
+        <tr><td>0</td><td class="out">0</td></tr>
+        <tr><td>1</td><td class="out">1</td></tr>
+      </table>
+
+      <h2>JK Flip-Flop</h2>
+      <p>SR'nin geliştirilmiş hâli; J=K=1 durumunda çıkışı <strong>tersler (toggle)</strong>, yasak
+        durum yoktur.</p>
+      <table>
+        <caption>JK doğruluk tablosu</caption>
+        <tr><th>J</th><th>K</th><th>Q (sonraki)</th></tr>
+        <tr><td>0</td><td>0</td><td class="out">Q (değişmez)</td></tr>
+        <tr><td>0</td><td>1</td><td class="out">0</td></tr>
+        <tr><td>1</td><td>0</td><td class="out">1</td></tr>
+        <tr><td>1</td><td>1</td><td class="out">Q' (tersler)</td></tr>
+      </table>
+
+      <h2>T Flip-Flop (Toggle)</h2>
+      <p>T=1 her saat kenarında çıkışı tersler; T=0 değeri korur. Sayaçlarda (counter) idealdir.</p>
+
+      <h2>nandbench'te dene</h2>
+      <p>
+        nandbench'te bir flip-flop yerleştirip saate bir clock bağlayabilir, dalga formu (waveform)
+        panelinde Q çıkışının saat kenarlarında nasıl değiştiğini izleyebilirsin. Yanlış kurarsan
+        salınım (oscillation) uyarısını da canlı görürsün.
+      </p>
+      <p><a class="cta" href="/">nandbench'te flip-flop kur →</a></p>
+
+      <h2>Devamı</h2>
+      <ul>
+        <li><a href="/mantik-kapilari.html">Mantık kapıları</a></li>
+        <li><a href="/sayi-sistemleri.html">Sayı sistemleri ve dönüşümler</a></li>
+        <li><a href="/sayisal-mantik-simulatoru.html">Sayısal mantık simülatörü</a></li>
+      </ul>
+    </main>
+    <footer>© nandbench — tarayıcıda çalışan ücretsiz sayısal mantık devre simülatörü · <a href="/">Simülatörü aç</a></footer>
+  </body>
+</html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yarım Toplayıcı ve Tam Toplayıcı (Half Adder / Full Adder) Nedir? | nandbench</title>
+    <meta
+      name="description"
+      content="Yarım toplayıcı (half adder) ve tam toplayıcı (full adder) nedir? Doğruluk tabloları, toplam (sum) ve elde (carry) mantığı, XOR ve AND kapılarıyla kurulumu. Tarayıcıda ücretsiz dene — nandbench."
+    />
+    <link rel="canonical" href="https://nandbench.com.tr/yarim-tam-toplayici.html" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Yarım ve Tam Toplayıcı (Half / Full Adder)" />
+    <meta property="og:description" content="Half adder ve full adder doğruluk tabloları ve kapı kurulumu." />
+    <meta property="og:url" content="https://nandbench.com.tr/yarim-tam-toplayici.html" />
+    <meta property="og:image" content="https://nandbench.com.tr/logo-mark.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+    <script type="application/ld+json">
+      { "@context": "https://schema.org", "@type": "Article", "headline": "Yarım Toplayıcı ve Tam Toplayıcı (Half / Full Adder)", "inLanguage": "tr", "author": { "@type": "Organization", "name": "nandbench" }, "publisher": { "@type": "Organization", "name": "nandbench", "logo": { "@type": "ImageObject", "url": "https://nandbench.com.tr/logo-mark.png" } }, "mainEntityOfPage": "https://nandbench.com.tr/yarim-tam-toplayici.html", "image": "https://nandbench.com.tr/logo-mark.png" }
+    </script>
+    <style>
+      :root { color-scheme: dark; } * { box-sizing: border-box; }
+      body { margin: 0; background: #0f1115; color: #cdd2da; font: 16px/1.7 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Inter, sans-serif; }
+      a { color: #6cc6ff; }
+      header, main, footer { max-width: 820px; margin: 0 auto; padding: 0 22px; }
+      header { display: flex; align-items: center; gap: 12px; padding-top: 26px; padding-bottom: 8px; }
+      header img { width: 34px; height: 34px; } header .brand { font-weight: 800; color: #fff; text-decoration: none; }
+      h1 { color: #fff; font-size: clamp(1.7rem, 4.5vw, 2.6rem); letter-spacing: -0.02em; line-height: 1.15; margin: 1.2em 0 0.3em; }
+      h2 { color: #eef1f5; margin-top: 1.8em; font-size: 1.3rem; } p, li { color: #aab0ba; } .lead { font-size: 1.12rem; color: #c4cad3; }
+      table { width: 100%; border-collapse: collapse; margin: 14px 0 26px; font-variant-numeric: tabular-nums; }
+      caption { text-align: left; font-weight: 700; color: #eef1f5; padding: 8px 0; }
+      th, td { border: 1px solid #232733; padding: 7px 12px; text-align: center; } th { background: #161922; color: #cfd5df; }
+      td.out { color: #6cc6ff; font-weight: 700; }
+      .cta { display: inline-block; margin: 8px 0; padding: 11px 18px; border-radius: 10px; background: #1b6fe0; color: #fff; font-weight: 700; text-decoration: none; }
+      nav.crumbs { font-size: 0.85rem; color: #6b7280; padding-top: 16px; } nav.crumbs a { color: #8a93a0; }
+      footer { color: #6b7280; font-size: 0.9rem; padding: 40px 22px 60px; border-top: 1px solid #1c2029; margin-top: 40px; }
+      code { background: #161922; padding: 1px 6px; border-radius: 5px; color: #d8dee8; }
+    </style>
+  </head>
+  <body>
+    <header><a href="/"><img src="/logo-mark.png" alt="nandbench logosu" /></a><a href="/" class="brand">nandbench</a></header>
+    <main>
+      <nav class="crumbs"><a href="/">Ana sayfa</a> › Toplayıcılar</nav>
+      <h1>Yarım Toplayıcı ve Tam Toplayıcı (Half / Full Adder)</h1>
+      <p class="lead">
+        Toplayıcılar, iki ikilik sayıyı toplayan kombinasyonel devrelerdir ve her işlemcinin
+        aritmetik biriminin (ALU) kalbidir. İki temel yapı taşı vardır: <strong>yarım toplayıcı</strong>
+        ve <strong>tam toplayıcı</strong>. İkisi de yalnızca <a href="/mantik-kapilari.html">mantık
+        kapılarından</a> kurulur.
+      </p>
+
+      <h2>Yarım Toplayıcı (Half Adder)</h2>
+      <p>İki biti (A, B) toplar; iki çıkış üretir: <strong>Toplam (Sum)</strong> ve <strong>Elde
+        (Carry)</strong>. <code>Sum = A XOR B</code>, <code>Carry = A AND B</code>. Eksik yanı: önceki
+        basamaktan gelen eldeyi (carry-in) hesaba katamaz.</p>
+      <table>
+        <caption>Yarım toplayıcı doğruluk tablosu</caption>
+        <tr><th>A</th><th>B</th><th>Toplam (S)</th><th>Elde (C)</th></tr>
+        <tr><td>0</td><td>0</td><td class="out">0</td><td class="out">0</td></tr>
+        <tr><td>0</td><td>1</td><td class="out">1</td><td class="out">0</td></tr>
+        <tr><td>1</td><td>0</td><td class="out">1</td><td class="out">0</td></tr>
+        <tr><td>1</td><td>1</td><td class="out">0</td><td class="out">1</td></tr>
+      </table>
+
+      <h2>Tam Toplayıcı (Full Adder)</h2>
+      <p>Üç biti toplar: A, B ve <strong>elde girişi (Cin)</strong>. Böylece çok bitlik toplayıcılar
+        zincirleme bağlanabilir. <code>Sum = A XOR B XOR Cin</code>,
+        <code>Cout = (A AND B) OR (Cin AND (A XOR B))</code>.</p>
+      <table>
+        <caption>Tam toplayıcı doğruluk tablosu</caption>
+        <tr><th>A</th><th>B</th><th>Cin</th><th>Toplam (S)</th><th>Elde (Cout)</th></tr>
+        <tr><td>0</td><td>0</td><td>0</td><td class="out">0</td><td class="out">0</td></tr>
+        <tr><td>0</td><td>0</td><td>1</td><td class="out">1</td><td class="out">0</td></tr>
+        <tr><td>0</td><td>1</td><td>0</td><td class="out">1</td><td class="out">0</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td class="out">0</td><td class="out">1</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td class="out">1</td><td class="out">0</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td><td class="out">0</td><td class="out">1</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td><td class="out">0</td><td class="out">1</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td class="out">1</td><td class="out">1</td></tr>
+      </table>
+
+      <h2>Çok bitlik toplama (ripple-carry)</h2>
+      <p>
+        n adet tam toplayıcıyı, her birinin Cout'unu bir sonrakinin Cin'ine bağlayarak zincirlersen
+        n-bitlik bir toplayıcı elde edersin (ripple-carry adder). nandbench'te hazır bir tam toplayıcı
+        şablonunu açıp girişleri değiştirerek toplam ve eldenin canlı değiştiğini görebilirsin.
+      </p>
+      <p><a class="cta" href="/">nandbench'te toplayıcı kur →</a></p>
+
+      <h2>Devamı</h2>
+      <ul>
+        <li><a href="/mantik-kapilari.html">Mantık kapıları (XOR, AND, OR…)</a></li>
+        <li><a href="/sayi-sistemleri.html">Sayı sistemleri ve ikilik toplama</a></li>
+        <li><a href="/flip-flop-nedir.html">Flip-flop ve ardışıl devreler</a></li>
+        <li><a href="/sayisal-mantik-simulatoru.html">Sayısal mantık simülatörü</a></li>
+      </ul>
+    </main>
+    <footer>© nandbench — tarayıcıda çalışan ücretsiz sayısal mantık devre simülatörü · <a href="/">Simülatörü aç</a></footer>
+  </body>
+</html>
