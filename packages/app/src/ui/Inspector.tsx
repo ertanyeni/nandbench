@@ -148,8 +148,8 @@ export function Inspector(): JSX.Element | null {
         </button>
       </div>
       {help ? <HelpBlock description={help.description} cheats={help.cheats} /> : null}
-      <InspectorTabs
-        tabs={[
+      <InspectorSections
+        sections={[
           {
             id: 'live',
             label: t('inspector.tab.live'),
@@ -177,78 +177,128 @@ function diagnosticTouchesComponent(d: Diagnostic, id: ComponentId): boolean {
   return false;
 }
 
-function InspectorTabs({
-  tabs,
+/**
+ * Inspector sections — every section is open by default. Earlier
+ * versions used a tab strip; users had to click "Connections" to
+ * notice an open wire was selected, and the second-tab content was
+ * effectively invisible. Now all three (Live / Params / Connections)
+ * stack vertically with collapsible headers.
+ *
+ * Each section header gets:
+ *   - a coloured accent rail (left edge) — the same blue used
+ *     elsewhere as the focus signal
+ *   - bold uppercase label + optional count/alert badge
+ *   - a one-shot soft pulse on first mount, so the user notices the
+ *     panel opened
+ *   - chevron toggle: click → collapse/expand (state stays per session)
+ */
+function InspectorSections({
+  sections,
 }: {
-  tabs: readonly {
+  sections: readonly {
     id: string;
     label: string;
     content: React.ReactNode;
     badge?: { kind: 'alert' | 'count'; count: number };
+    /** Optional default-collapsed (otherwise open). */
+    collapsedByDefault?: boolean;
   }[];
 }): JSX.Element {
-  const [active, setActive] = useState(tabs[0]?.id ?? '');
-  const activeTab = tabs.find((t) => t.id === active) ?? tabs[0];
+  // Track collapsed state per section id. Defaults: open unless
+  // explicitly opted out.
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(sections.map((s) => [s.id, !!s.collapsedByDefault])),
+  );
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <div
-        role="tablist"
-        style={{
-          display: 'flex',
-          gap: 2,
-          borderBottom: '1px solid #2a3548',
-        }}
-      >
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            role="tab"
-            aria-selected={tab.id === active}
-            onClick={() => setActive(tab.id)}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      {sections.map((s) => {
+        const isCollapsed = collapsed[s.id] ?? false;
+        const accent =
+          s.badge?.kind === 'alert' ? 'rgba(239, 68, 68, 0.95)' : '#60a5fa';
+        return (
+          <section
+            key={s.id}
+            className="gc-inspector-section"
             style={{
-              background: 'transparent',
-              color: tab.id === active ? '#dde4ef' : '#7c8696',
-              border: 'none',
-              borderBottom: `2px solid ${tab.id === active ? '#60a5fa' : 'transparent'}`,
-              padding: '6px 10px',
-              cursor: 'pointer',
-              font: 'inherit',
-              fontSize: 11,
-              fontWeight: tab.id === active ? 700 : 500,
-              transition: 'color 120ms, border-color 120ms',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 5,
+              borderRadius: 8,
+              background: 'linear-gradient(180deg, #10141c 0%, #0c1018 100%)',
+              border: '1px solid #1d2532',
+              overflow: 'hidden',
+              // Soft accent halo so the section reads as one unit.
+              boxShadow: `inset 3px 0 0 ${accent}, 0 0 0 1px rgba(96,165,250,0.04)`,
             }}
           >
-            <span>{tab.label}</span>
-            {tab.badge ? (
-              <span
-                aria-label={`${tab.badge.count}`}
+            <button
+              onClick={() => setCollapsed((c) => ({ ...c, [s.id]: !c[s.id] }))}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr auto auto',
+                alignItems: 'center',
+                gap: 8,
+                width: '100%',
+                padding: '8px 12px',
+                background: 'transparent',
+                border: 'none',
+                color: '#dde4ef',
+                font: 'inherit',
+                fontSize: 11,
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                letterSpacing: '0.9px',
+                cursor: 'pointer',
+                textAlign: 'left',
+              }}
+              aria-expanded={!isCollapsed}
+            >
+              <span>{s.label}</span>
+              {s.badge ? (
+                <span
+                  aria-label={`${s.badge.count}`}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minWidth: 16,
+                    height: 16,
+                    padding: '0 5px',
+                    borderRadius: 8,
+                    fontSize: 9,
+                    fontWeight: 700,
+                    color: s.badge.kind === 'alert' ? '#fee2e2' : '#dbeafe',
+                    background:
+                      s.badge.kind === 'alert'
+                        ? 'rgba(239, 68, 68, 0.85)'
+                        : 'rgba(96, 165, 250, 0.32)',
+                    boxShadow:
+                      s.badge.kind === 'alert'
+                        ? '0 0 10px rgba(239, 68, 68, 0.55)'
+                        : 'none',
+                  }}
+                >
+                  {s.badge.count}
+                </span>
+              ) : (
+                <span />
+              )}
+              <span style={{ fontSize: 9, color: '#7c8696' }}>
+                {isCollapsed ? '▶' : '▼'}
+              </span>
+            </button>
+            {!isCollapsed ? (
+              <div
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  minWidth: 14,
-                  height: 14,
-                  padding: '0 4px',
-                  borderRadius: 7,
-                  fontSize: 9,
-                  fontWeight: 700,
-                  color: tab.badge.kind === 'alert' ? '#fee2e2' : '#dbeafe',
-                  background:
-                    tab.badge.kind === 'alert'
-                      ? 'rgba(239, 68, 68, 0.85)'
-                      : 'rgba(96, 165, 250, 0.32)',
+                  padding: '4px 12px 12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 10,
                 }}
               >
-                {tab.badge.count}
-              </span>
+                {s.content}
+              </div>
             ) : null}
-          </button>
-        ))}
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>{activeTab?.content}</div>
+          </section>
+        );
+      })}
     </div>
   );
 }

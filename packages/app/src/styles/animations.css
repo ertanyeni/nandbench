@@ -147,3 +147,34 @@ button:focus-visible,
   outline: 2px solid #60a5fa;
   outline-offset: 2px;
 }
+
+/* ------------------------------------------------------------------ */
+/*  Inspector section pulse                                           */
+/*                                                                    */
+/*  Inspector sections (Live / Params / Connections) all open by      */
+/*  default. To make sure the user notices the panel populated, every */
+/*  section runs a one-shot soft blue glow when the component selection*/
+/*  changes — the box-shadow brightens then settles.                  */
+/* ------------------------------------------------------------------ */
+@keyframes gc-inspector-pulse {
+  0% {
+    box-shadow:
+      inset 3px 0 0 #60a5fa,
+      0 0 0 1px rgba(96, 165, 250, 0.04),
+      0 0 24px rgba(96, 165, 250, 0.35);
+  }
+  100% {
+    box-shadow:
+      inset 3px 0 0 #60a5fa,
+      0 0 0 1px rgba(96, 165, 250, 0.04),
+      0 0 0 rgba(96, 165, 250, 0);
+  }
+}
+.gc-inspector-section {
+  animation: gc-inspector-pulse 700ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gc-inspector-section {
+    animation-duration: 1ms;
+  }
+}

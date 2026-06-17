@@ -330,30 +330,43 @@ function CategoryHeader({
     <button
       onClick={onToggle}
       style={{
-        // Match the sidebar's title bar: no background, single bottom
-        // divider, muted text. Caret aligns to the same right column on
-        // every header so the eye can scan vertically.
+        // Darker chrome strip with a soft inner highlight + bottom rule
+        // — sits visibly above the item list, so the eye picks up the
+        // section break without reading the text.
         display: 'grid',
-        gridTemplateColumns: '1fr 16px',
+        gridTemplateColumns: '4px 1fr 16px',
         alignItems: 'center',
-        gap: 6,
+        gap: 8,
         width: '100%',
-        padding: '9px 12px 7px',
-        background: 'transparent',
+        padding: '10px 12px 9px',
+        background: 'linear-gradient(180deg, #0e131c 0%, #0a0e16 100%)',
         border: 'none',
         borderTop: `1px solid ${SURFACE.borderColor}`,
-        color: '#b5c1d6',
+        borderBottom: '1px solid #1d2532',
+        boxShadow: 'inset 0 1px 0 rgba(126, 167, 215, 0.06)',
+        color: '#cbd5e1',
         font: 'inherit',
         fontSize: 11,
-        fontWeight: 700,
+        fontWeight: 800,
         textTransform: 'uppercase',
-        letterSpacing: '0.8px',
+        letterSpacing: '0.9px',
         cursor: 'pointer',
         textAlign: 'left',
       }}
     >
+      {/* left accent rail — colored when expanded, dim when collapsed */}
+      <span
+        aria-hidden
+        style={{
+          height: 12,
+          width: 3,
+          borderRadius: 2,
+          background: collapsed ? '#2a3548' : '#60a5fa',
+          boxShadow: collapsed ? 'none' : '0 0 6px rgba(96, 165, 250, 0.55)',
+        }}
+      />
       <span style={{ whiteSpace: 'nowrap' }}>{label}</span>
-      <span style={{ fontSize: 8, opacity: 0.7, textAlign: 'right' }}>
+      <span style={{ fontSize: 9, opacity: 0.7, textAlign: 'right' }}>
         {collapsed ? '▶' : '▼'}
       </span>
     </button>
@@ -384,14 +397,15 @@ function PaletteItemRow({
       title={suggested ? t('palette.suggestion.tooltip') : hint}
       style={{
         position: 'relative',
-        // Three-column grid: [preview 40px] [label 64px] [hint flex] —
-        // sabit kolonlar her item'da label'ı aynı x'te tutar, hint
-        // uzunluğuna göre kayma yaşanmaz.
+        // Two-column grid: [preview 40px] [label + wrapped hint stack].
+        // The hint now wraps to a second line when needed so long
+        // descriptions ("Pull-up / pull-down kaynağı") stay readable
+        // instead of being truncated with an ellipsis.
         display: 'grid',
-        gridTemplateColumns: '40px 64px 1fr',
+        gridTemplateColumns: '40px 1fr',
         alignItems: 'center',
-        gap: 8,
-        padding: '5px 8px 5px 14px',
+        gap: 10,
+        padding: '7px 10px 7px 14px',
         marginLeft: 4,
         marginRight: 2,
         background: active ? PALETTE.itemBgActive : 'transparent',
@@ -427,19 +441,28 @@ function PaletteItemRow({
       <span style={{ display: 'flex', justifyContent: 'flex-start' }}>
         <PaletteShapePreview kind={kind} params={params} />
       </span>
-      <span style={{ fontWeight: 600, whiteSpace: 'nowrap', fontSize: 13 }}>{label}</span>
-      <span
-        style={{
-          color: PALETTE.itemSubColor,
-          fontWeight: 400,
-          fontSize: 11,
-          textAlign: 'right',
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        }}
-      >
-        {hint}
+      <span style={{ display: 'flex', flexDirection: 'column', minWidth: 0, gap: 2 }}>
+        <span style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: 13, color: '#e6e6e6' }}>
+          {label}
+        </span>
+        <span
+          style={{
+            color: PALETTE.itemSubColor,
+            fontWeight: 400,
+            fontSize: 11,
+            lineHeight: 1.35,
+            // Wrap to a second line; clamp at 2 lines so very long
+            // hints still cap the row height. Native title attribute on
+            // the button is the escape hatch for the full string.
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            wordBreak: 'break-word',
+          }}
+        >
+          {hint}
+        </span>
       </span>
     </button>
   );
