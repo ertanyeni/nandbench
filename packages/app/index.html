@@ -10,11 +10,117 @@
     <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#0f1115" />
+
+    <!-- ─── Primary SEO ─── -->
+    <title>nandbench — Live Digital Logic Circuit Simulator (NAND, gates, FSM, Verilog)</title>
     <meta
       name="description"
-      content="nandbench — a web-based, real-time digital logic circuit simulator with live debugging, lessons, and Verilog export."
+      content="nandbench is a free, web-based real-time digital logic circuit simulator with live error detection (bit-width mismatch, multi-driver, oscillation), 47 guided lessons, a 90-term glossary and Verilog export. Sayısal mantık devre simülatörü — tarayıcıda, kurulum yok."
     />
-    <title>nandbench — live digital logic simulator</title>
+    <meta
+      name="keywords"
+      content="digital logic simulator, logic circuit simulator, online logic gates, NAND, NOR, XOR, flip-flop, finite state machine, FSM, Verilog export, boolean algebra, sayısal mantık simülatörü, lojik devre, mantık kapıları, dijital tasarım, Logisim alternatifi, CircuitVerse alternatifi"
+    />
+    <link rel="canonical" href="https://nandbench.com.tr/" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="alternate" hreflang="en" href="https://nandbench.com.tr/" />
+    <link rel="alternate" hreflang="tr" href="https://nandbench.com.tr/" />
+    <link rel="alternate" hreflang="x-default" href="https://nandbench.com.tr/" />
+
+    <!-- ─── Open Graph ─── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="nandbench" />
+    <meta property="og:title" content="nandbench — Live Digital Logic Circuit Simulator" />
+    <meta
+      property="og:description"
+      content="Build and simulate digital logic circuits in your browser. Real-time error detection, 47 lessons, glossary and Verilog export. Free, no install."
+    />
+    <meta property="og:url" content="https://nandbench.com.tr/" />
+    <meta property="og:image" content="https://nandbench.com.tr/logo-mark.png" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="tr_TR" />
+
+    <!-- ─── Twitter ─── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="nandbench — Live Digital Logic Circuit Simulator" />
+    <meta
+      name="twitter:description"
+      content="A fast, web-based digital logic simulator with live debugging, lessons and Verilog export."
+    />
+    <meta name="twitter:image" content="https://nandbench.com.tr/logo-mark.png" />
+
+    <!-- Google Search Console verification:
+         Add your token below (GSC → Add property → URL prefix → HTML tag),
+         or verify the whole domain via a Cloudflare DNS TXT record.
+    <meta name="google-site-verification" content="REPLACE_WITH_TOKEN" /> -->
+
+    <!-- ─── Structured data ─── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "nandbench",
+            "url": "https://nandbench.com.tr/",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Web",
+            "browserRequirements": "Requires a modern browser with JavaScript",
+            "inLanguage": ["en", "tr"],
+            "description": "A free, web-based real-time digital logic circuit simulator with live error detection, guided lessons, a glossary and Verilog export.",
+            "image": "https://nandbench.com.tr/logo-mark.png",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "featureList": [
+              "Real-time, event-driven 4-valued logic simulation",
+              "Live error detection: bit-width mismatch, multi-driver conflicts, oscillation, floating inputs",
+              "47 guided lessons from number systems to a simple datapath",
+              "90-term interactive glossary",
+              "Verilog export",
+              "Hierarchical sub-circuits",
+              "Runs entirely in the browser, no install"
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What is nandbench?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "nandbench is a free, browser-based digital logic circuit simulator and editor. You can drag in gates, wire them up, and watch a real-time event-driven engine evaluate the circuit while it flags bit-width mismatches, multi-driver conflicts and oscillation as you build."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is nandbench free?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. nandbench runs entirely in your browser, with no account or installation required, and it is free to use."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I export my circuit to Verilog?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. nandbench can export the circuit you build to synthesizable Verilog."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is it a good Logisim or CircuitVerse alternative?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "nandbench is a modern, fast web alternative for learning and prototyping digital logic, with live error detection and a built-in lesson curriculum covering boolean algebra, combinational and sequential circuits, memory and finite state machines."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+
     <style>
       html,
       body,
@@ -36,10 +142,93 @@
       canvas {
         touch-action: none;
       }
+      /* SEO / first-paint splash. Lives inside #root so React's
+         createRoot().render() replaces it the instant the app mounts —
+         real users never see it, but crawlers and the initial HTML
+         response get genuine, indexable content. */
+      .seo-splash {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 8vh 24px 24px;
+        overflow: auto;
+        height: 100%;
+        box-sizing: border-box;
+        line-height: 1.6;
+      }
+      .seo-splash h1 {
+        font-size: clamp(1.8rem, 5vw, 3rem);
+        margin: 0 0 0.4em;
+        letter-spacing: -0.02em;
+      }
+      .seo-splash h2 {
+        font-size: 1.1rem;
+        margin: 1.6em 0 0.4em;
+        color: #cfd3da;
+      }
+      .seo-splash p,
+      .seo-splash li {
+        color: #9aa0aa;
+      }
+      .seo-splash a {
+        color: #6cc6ff;
+      }
     </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Replaced by the React app on mount. Crawlable content for SEO. -->
+      <main class="seo-splash">
+        <h1>nandbench — live digital logic circuit simulator</h1>
+        <p>
+          <strong>nandbench</strong> is a free, web-based, real-time
+          <strong>digital logic circuit simulator and editor</strong> that runs entirely in your
+          browser — no install, no account. Drag in logic gates, wire them up, flip inputs, and a
+          fast event-driven engine evaluates the circuit live while catching the mistakes students
+          burn hours on. <em>Sayısal mantık devre simülatörü — tarayıcıda çalışır, kurulum gerektirmez.</em>
+        </p>
+
+        <h2>What you can do</h2>
+        <ul>
+          <li>Build combinational and sequential circuits from AND, OR, NOT, NAND, NOR, XOR and more.</li>
+          <li>
+            See <strong>live error detection</strong> as you wire: bit-width mismatches,
+            multi-driver conflicts, oscillation and floating inputs.
+          </li>
+          <li>Step through <strong>47 guided lessons</strong> from bits to a small datapath.</li>
+          <li>Look up any term in a <strong>90-term interactive glossary</strong>.</li>
+          <li>Group circuits into reusable hierarchical sub-circuits.</li>
+          <li>Export your design to <strong>Verilog</strong>.</li>
+        </ul>
+
+        <h2>Learn digital logic, step by step</h2>
+        <p>The built-in curriculum follows a one-semester digital logic design course:</p>
+        <ul>
+          <li><strong>Foundations</strong> — bits, number systems, boolean algebra.</li>
+          <li><strong>Gates</strong> — logic gates and minimization.</li>
+          <li><strong>Combinational</strong> — adders, multiplexers, decoders, comparators, ALU primitives.</li>
+          <li><strong>Sequential</strong> — latches, flip-flops and timing.</li>
+          <li><strong>Registers</strong> — registers, counters, shift registers.</li>
+          <li><strong>Memory</strong> — RAM, ROM, addressable storage.</li>
+          <li><strong>Finite state machines</strong> — Moore and Mealy FSMs.</li>
+          <li><strong>Datapath</strong> — ALU, register file, a tiny CPU.</li>
+          <li><strong>Beyond</strong> — hazards, pipelining hints, tooling.</li>
+        </ul>
+
+        <h2>A modern Logisim / CircuitVerse alternative</h2>
+        <p>
+          nandbench renders on a fast canvas and simulates with an event-driven, four-valued
+          (0 / 1 / X / Z) engine, so it stays smooth on large circuits where cycle-based simulators
+          slow down. It is built for learning <strong>digital logic design</strong>, computer
+          organization and logic circuits courses.
+        </p>
+
+        <h2>SSS / FAQ</h2>
+        <p><strong>nandbench ücretsiz mi?</strong> Evet — tarayıcıda çalışır, hesap ve kurulum gerekmez.</p>
+        <p><strong>Verilog dışa aktarımı var mı?</strong> Evet, kurduğun devreyi Verilog olarak dışa aktarabilirsin.</p>
+
+        <p><a href="https://nandbench.com.tr/">Open the simulator →</a></p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
