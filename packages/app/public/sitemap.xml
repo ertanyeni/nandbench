@@ -10,4 +10,16 @@
     <xhtml:link rel="alternate" hreflang="tr" href="https://nandbench.com.tr/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://nandbench.com.tr/" />
   </url>
+  <url>
+    <loc>https://nandbench.com.tr/sayisal-mantik-simulatoru.html</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nandbench.com.tr/mantik-kapilari.html</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>

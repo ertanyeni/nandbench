@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mantık Kapıları Nedir? AND, OR, NOT, NAND, NOR, XOR (Doğruluk Tabloları) — nandbench</title>
+    <meta
+      name="description"
+      content="Mantık kapıları (logic gates) nedir? AND, OR, NOT, NAND, NOR, XOR ve XNOR kapılarının doğruluk tabloları, sembolleri ve açıklamaları. Tarayıcıda ücretsiz simüle et — nandbench."
+    />
+    <link rel="canonical" href="https://nandbench.com.tr/mantik-kapilari.html" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Mantık Kapıları Nedir? (AND, OR, NOT, NAND, NOR, XOR)" />
+    <meta
+      property="og:description"
+      content="Tüm temel mantık kapılarının doğruluk tabloları ve açıklamaları. Tarayıcıda ücretsiz simüle et."
+    />
+    <meta property="og:url" content="https://nandbench.com.tr/mantik-kapilari.html" />
+    <meta property="og:image" content="https://nandbench.com.tr/logo-mark.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "Mantık Kapıları Nedir? (AND, OR, NOT, NAND, NOR, XOR)",
+        "inLanguage": "tr",
+        "author": { "@type": "Organization", "name": "nandbench" },
+        "publisher": { "@type": "Organization", "name": "nandbench", "logo": { "@type": "ImageObject", "url": "https://nandbench.com.tr/logo-mark.png" } },
+        "mainEntityOfPage": "https://nandbench.com.tr/mantik-kapilari.html",
+        "image": "https://nandbench.com.tr/logo-mark.png"
+      }
+    </script>
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #0f1115;
+        color: #cdd2da;
+        font: 16px/1.7 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Inter, sans-serif;
+      }
+      a { color: #6cc6ff; }
+      header, main, footer { max-width: 820px; margin: 0 auto; padding: 0 22px; }
+      header { display: flex; align-items: center; gap: 12px; padding-top: 26px; padding-bottom: 8px; }
+      header img { width: 34px; height: 34px; }
+      header .brand { font-weight: 800; color: #fff; letter-spacing: -0.02em; }
+      h1 { color: #fff; font-size: clamp(1.7rem, 4.5vw, 2.6rem); letter-spacing: -0.02em; line-height: 1.15; margin: 1.2em 0 0.3em; }
+      h2 { color: #eef1f5; margin-top: 1.8em; font-size: 1.3rem; }
+      p, li { color: #aab0ba; }
+      .lead { font-size: 1.12rem; color: #c4cad3; }
+      table { width: 100%; border-collapse: collapse; margin: 14px 0 26px; font-variant-numeric: tabular-nums; }
+      caption { text-align: left; font-weight: 700; color: #eef1f5; padding: 8px 0; }
+      th, td { border: 1px solid #232733; padding: 7px 12px; text-align: center; }
+      th { background: #161922; color: #cfd5df; font-weight: 600; }
+      td.out { color: #6cc6ff; font-weight: 700; }
+      .cta {
+        display: inline-block; margin: 8px 0 4px; padding: 11px 18px; border-radius: 10px;
+        background: #1b6fe0; color: #fff; font-weight: 700; text-decoration: none;
+      }
+      .grid { display: grid; gap: 6px 28px; grid-template-columns: 1fr 1fr; }
+      footer { color: #6b7280; font-size: 0.9rem; padding: 40px 22px 60px; border-top: 1px solid #1c2029; margin-top: 40px; }
+      nav.crumbs { font-size: 0.85rem; color: #6b7280; padding-top: 16px; }
+      nav.crumbs a { color: #8a93a0; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="/"><img src="/logo-mark.png" alt="nandbench logosu" /></a>
+      <a href="/" class="brand" style="text-decoration:none">nandbench</a>
+    </header>
+
+    <main>
+      <nav class="crumbs"><a href="/">Ana sayfa</a> › Mantık Kapıları</nav>
+      <h1>Mantık Kapıları Nedir? (AND, OR, NOT, NAND, NOR, XOR)</h1>
+      <p class="lead">
+        Mantık kapıları (logic gates), bir veya daha fazla ikili (0/1) girişi alıp tek bir ikili çıkış
+        üreten temel devre elemanlarıdır. Tüm sayısal sistemler — işlemciler, bellekler, FPGA'ler —
+        bu basit kapıların milyonlarcasından kurulur. Aşağıdaki kapıların her birini
+        <a href="/">nandbench simülatöründe</a> sürükle-bırak ile kurup canlı deneyebilirsin.
+      </p>
+
+      <p>
+        <a class="cta" href="/">nandbench'te kapıları canlı dene →</a>
+      </p>
+
+      <h2>AND kapısı (VE)</h2>
+      <p>Çıkış, yalnızca <strong>tüm girişler 1 olduğunda</strong> 1'dir. Mantıksal çarpma (A·B) gibi düşün.</p>
+      <table>
+        <caption>AND doğruluk tablosu</caption>
+        <tr><th>A</th><th>B</th><th>A AND B</th></tr>
+        <tr><td>0</td><td>0</td><td class="out">0</td></tr>
+        <tr><td>0</td><td>1</td><td class="out">0</td></tr>
+        <tr><td>1</td><td>0</td><td class="out">0</td></tr>
+        <tr><td>1</td><td>1</td><td class="out">1</td></tr>
+      </table>
+
+      <h2>OR kapısı (VEYA)</h2>
+      <p>Çıkış, <strong>girişlerden en az biri 1 olduğunda</strong> 1'dir. Mantıksal toplama (A+B) gibi düşün.</p>
+      <table>
+        <caption>OR doğruluk tablosu</caption>
+        <tr><th>A</th><th>B</th><th>A OR B</th></tr>
+        <tr><td>0</td><td>0</td><td class="out">0</td></tr>
+        <tr><td>0</td><td>1</td><td class="out">1</td></tr>
+        <tr><td>1</td><td>0</td><td class="out">1</td></tr>
+        <tr><td>1</td><td>1</td><td class="out">1</td></tr>
+      </table>
+
+      <h2>NOT kapısı (DEĞİL / çevirici)</h2>
+      <p>Tek girişi tersler: 0 → 1, 1 → 0. "Inverter" olarak da bilinir.</p>
+      <table>
+        <caption>NOT doğruluk tablosu</caption>
+        <tr><th>A</th><th>NOT A</th></tr>
+        <tr><td>0</td><td class="out">1</td></tr>
+        <tr><td>1</td><td class="out">0</td></tr>
+      </table>
+
+      <h2>NAND kapısı</h2>
+      <p>
+        AND'in tersi (NOT-AND). Çıkış, tüm girişler 1 olduğunda 0; aksi halde 1'dir. NAND
+        <strong>evrensel kapıdır</strong>: yalnızca NAND kullanarak diğer tüm kapıları (ve dolayısıyla
+        herhangi bir devreyi) kurabilirsin — nandbench'in adı da buradan gelir.
+      </p>
+      <table>
+        <caption>NAND doğruluk tablosu</caption>
+        <tr><th>A</th><th>B</th><th>A NAND B</th></tr>
+        <tr><td>0</td><td>0</td><td class="out">1</td></tr>
+        <tr><td>0</td><td>1</td><td class="out">1</td></tr>
+        <tr><td>1</td><td>0</td><td class="out">1</td></tr>
+        <tr><td>1</td><td>1</td><td class="out">0</td></tr>
+      </table>
+
+      <h2>NOR kapısı</h2>
+      <p>OR'un tersi (NOT-OR). Çıkış, yalnızca tüm girişler 0 olduğunda 1'dir. NOR da evrensel bir kapıdır.</p>
+      <table>
+        <caption>NOR doğruluk tablosu</caption>
+        <tr><th>A</th><th>B</th><th>A NOR B</th></tr>
+        <tr><td>0</td><td>0</td><td class="out">1</td></tr>
+        <tr><td>0</td><td>1</td><td class="out">0</td></tr>
+        <tr><td>1</td><td>0</td><td class="out">0</td></tr>
+        <tr><td>1</td><td>1</td><td class="out">0</td></tr>
+      </table>
+
+      <h2>XOR kapısı (özel VEYA)</h2>
+      <p>Çıkış, <strong>girişler birbirinden farklıysa</strong> 1'dir. Toplayıcıların (adder) ve parite
+        devrelerinin temel taşıdır.</p>
+      <table>
+        <caption>XOR doğruluk tablosu</caption>
+        <tr><th>A</th><th>B</th><th>A XOR B</th></tr>
+        <tr><td>0</td><td>0</td><td class="out">0</td></tr>
+        <tr><td>0</td><td>1</td><td class="out">1</td></tr>
+        <tr><td>1</td><td>0</td><td class="out">1</td></tr>
+        <tr><td>1</td><td>1</td><td class="out">0</td></tr>
+      </table>
+
+      <h2>XNOR kapısı (eşitlik)</h2>
+      <p>XOR'un tersi. Çıkış, <strong>girişler eşitse</strong> 1'dir; bu yüzden "eşitlik karşılaştırıcısı"
+        olarak da kullanılır.</p>
+      <table>
+        <caption>XNOR doğruluk tablosu</caption>
+        <tr><th>A</th><th>B</th><th>A XNOR B</th></tr>
+        <tr><td>0</td><td>0</td><td class="out">1</td></tr>
+        <tr><td>0</td><td>1</td><td class="out">0</td></tr>
+        <tr><td>1</td><td>0</td><td class="out">0</td></tr>
+        <tr><td>1</td><td>1</td><td class="out">1</td></tr>
+      </table>
+
+      <h2>Kapılardan devreye</h2>
+      <p>
+        Bu kapıları birleştirerek toplayıcılar, çoklayıcılar (mux), kod çözücüler, flip-flop'lar ve
+        sonlu durum makineleri kurarsın. <a href="/">nandbench</a>, kurarken bit genişliği uyuşmazlığı,
+        çoklu sürücü çakışması ve salınım (oscillation) gibi hataları <strong>canlı</strong> yakalar —
+        ders çalışırken saatler kazandırır. Devamı için
+        <a href="/sayisal-mantik-simulatoru.html">sayısal mantık simülatörü</a> sayfasına bak.
+      </p>
+
+      <p><a class="cta" href="/">Tarayıcıda ücretsiz başla →</a></p>
+    </main>
+
+    <footer>
+      © nandbench — tarayıcıda çalışan ücretsiz sayısal mantık devre simülatörü ·
+      <a href="/">Simülatörü aç</a>
+    </footer>
+  </body>
+</html>
