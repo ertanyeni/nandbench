@@ -7,12 +7,15 @@
  * (one per glossary category, one per lesson unit) so each page is
  * substantial (many real definitions / lessons), not thin.
  *
+ * Each page gets: canonical, Open Graph (+ the 1200x630 social card),
+ * Twitter card, Article + BreadcrumbList JSON-LD.
+ *
  * Run from packages/app:
  *   pnpm dlx tsx scripts/gen-seo-pages.ts
  *
- * It overwrites the generated *.html files and prints the URL list you can
- * paste into public/sitemap.xml. Re-run whenever lesson/glossary content
- * changes. (Hand-written articles like mantik-kapilari.html are NOT touched.)
+ * It overwrites the generated *.html files and prints the URL list.
+ * Re-run whenever lesson/glossary content changes. (Hand-written articles
+ * like mantik-kapilari.html are NOT touched.)
  */
 
 import { writeFileSync } from 'node:fs';
@@ -25,6 +28,7 @@ import { TR } from '../src/i18n/tr.js';
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
 const ORIGIN = 'https://nandbench.com.tr';
+const OG_IMAGE = `${ORIGIN}/og-cover.png`;
 const TODAY = '2026-06-17';
 
 const t = (key: string): string =>
@@ -77,14 +81,51 @@ nav.crumbs{font-size:.85rem;color:#6b7280;padding-top:16px}nav.crumbs a{color:#8
 footer{color:#6b7280;font-size:.9rem;padding:40px 22px 60px;border-top:1px solid #1c2029;margin-top:40px}
 `;
 
+interface Crumb {
+  name: string;
+  slug: string;
+}
+
 function page(opts: {
   slug: string;
   title: string;
   description: string;
   body: string;
-  crumb: string;
+  breadcrumb: Crumb[];
 }): void {
   const url = `${ORIGIN}/${opts.slug}`;
+  const trail = [{ name: 'Ana sayfa', slug: '' }, ...opts.breadcrumb];
+  const crumbHtml = trail
+    .map((c, i) =>
+      i < trail.length - 1
+        ? `<a href="/${c.slug}">${esc(c.name)}</a>`
+        : `<span>${esc(c.name)}</span>`,
+    )
+    .join(' › ');
+  const breadcrumbLd = {
+    '@type': 'BreadcrumbList',
+    itemListElement: trail.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.name,
+      item: `${ORIGIN}/${c.slug}`,
+    })),
+  };
+  const articleLd = {
+    '@type': 'Article',
+    headline: opts.title,
+    inLanguage: 'tr',
+    datePublished: TODAY,
+    dateModified: TODAY,
+    author: { '@type': 'Organization', name: 'nandbench' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'nandbench',
+      logo: { '@type': 'ImageObject', url: `${ORIGIN}/logo-mark.png` },
+    },
+    mainEntityOfPage: url,
+    image: OG_IMAGE,
+  };
   const html = `<!doctype html>
 <html lang="tr">
   <head>
@@ -95,27 +136,28 @@ function page(opts: {
     <link rel="canonical" href="${url}" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="nandbench" />
     <meta property="og:title" content="${esc(opts.title)}" />
     <meta property="og:description" content="${esc(opts.description)}" />
     <meta property="og:url" content="${url}" />
-    <meta property="og:image" content="${ORIGIN}/logo-mark.png" />
+    <meta property="og:image" content="${OG_IMAGE}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${esc(opts.title)}" />
+    <meta name="twitter:description" content="${esc(opts.description)}" />
+    <meta name="twitter:image" content="${OG_IMAGE}" />
     <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
     <script type="application/ld+json">${JSON.stringify({
       '@context': 'https://schema.org',
-      '@type': 'Article',
-      headline: opts.title,
-      inLanguage: 'tr',
-      author: { '@type': 'Organization', name: 'nandbench' },
-      publisher: { '@type': 'Organization', name: 'nandbench', logo: { '@type': 'ImageObject', url: `${ORIGIN}/logo-mark.png` } },
-      mainEntityOfPage: url,
-      image: `${ORIGIN}/logo-mark.png`,
+      '@graph': [articleLd, breadcrumbLd],
     })}</script>
     <style>${STYLE}</style>
   </head>
   <body>
     <header><a href="/"><img src="/logo-mark.png" alt="nandbench logosu" /></a><a href="/" class="brand">nandbench</a></header>
     <main>
-      <nav class="crumbs"><a href="/">Ana sayfa</a> › ${esc(opts.crumb)}</nav>
+      <nav class="crumbs">${crumbHtml}</nav>
 ${opts.body}
       <p><a class="cta" href="/">nandbench'i ücretsiz aç →</a></p>
     </main>
@@ -149,7 +191,10 @@ for (const cat of GLOSSARY_CATEGORIES) {
     slug,
     title: `${catName} — Sayısal Mantık Sözlüğü | nandbench`,
     description: `Sayısal mantıkta ${catName.toLowerCase()} terimleri ve tanımları (${terms.length} terim). Tarayıcıda ücretsiz simüle et.`,
-    crumb: `Sözlük › ${catName}`,
+    breadcrumb: [
+      { name: 'Sözlük', slug: 'sozluk.html' },
+      { name: catName, slug },
+    ],
     body,
   });
   add(slug);
@@ -172,7 +217,7 @@ for (const cat of GLOSSARY_CATEGORIES) {
     slug: 'sozluk.html',
     title: `Sayısal Mantık Sözlüğü — ${GLOSSARY.length} Terim | nandbench`,
     description: `Sayısal mantık ve dijital tasarım sözlüğü: ${GLOSSARY.length} terim, kategorilere ayrılmış tanımlar. Tarayıcıda ücretsiz simüle et.`,
-    crumb: 'Sözlük',
+    breadcrumb: [{ name: 'Sözlük', slug: 'sozluk.html' }],
     body,
   });
   add('sozluk.html');
@@ -205,7 +250,10 @@ for (const unit of units) {
     slug,
     title: `${unitName} — Sayısal Mantık Dersleri | nandbench`,
     description: `${unitName}: ${lessons.length} adımlı ders, anlatım ve örneklerle. Tarayıcıda ücretsiz uygulamalı öğren — nandbench.`,
-    crumb: `Dersler › ${unitName}`,
+    breadcrumb: [
+      { name: 'Dersler', slug: 'dersler.html' },
+      { name: unitName, slug },
+    ],
     body,
   });
   add(slug);
@@ -228,17 +276,11 @@ for (const unit of units) {
     slug: 'dersler.html',
     title: `Sayısal Mantık Dersleri — ${LESSONS.length} Ders Müfredat | nandbench`,
     description: `Sayısal mantık / lojik devreler müfredatı: ${LESSONS.length} ders, ${units.length} ünite. Tarayıcıda uygulamalı, ücretsiz öğren.`,
-    crumb: 'Dersler',
+    breadcrumb: [{ name: 'Dersler', slug: 'dersler.html' }],
     body,
   });
   add('dersler.html');
 }
 
-console.log(`Generated ${urls.length} pages into public/:`);
+console.log(`Generated ${urls.length} pages into public/.`);
 for (const u of urls) console.log('  ' + u);
-console.log('\n--- sitemap <url> blocks ---');
-for (const u of urls) {
-  console.log(
-    `  <url><loc>${u}</loc><lastmod>${TODAY}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>`,
-  );
-}
