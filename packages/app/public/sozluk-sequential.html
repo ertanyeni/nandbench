@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ardışıl Devreler — Sayısal Mantık Sözlüğü | nandbench</title>
+    <meta name="description" content="Sayısal mantıkta ardışıl devreler terimleri ve tanımları (12 terim). Tarayıcıda ücretsiz simüle et." />
+    <link rel="canonical" href="https://nandbench.com.tr/sozluk-sequential.html" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Ardışıl Devreler — Sayısal Mantık Sözlüğü | nandbench" />
+    <meta property="og:description" content="Sayısal mantıkta ardışıl devreler terimleri ve tanımları (12 terim). Tarayıcıda ücretsiz simüle et." />
+    <meta property="og:url" content="https://nandbench.com.tr/sozluk-sequential.html" />
+    <meta property="og:image" content="https://nandbench.com.tr/logo-mark.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Ardışıl Devreler — Sayısal Mantık Sözlüğü | nandbench","inLanguage":"tr","author":{"@type":"Organization","name":"nandbench"},"publisher":{"@type":"Organization","name":"nandbench","logo":{"@type":"ImageObject","url":"https://nandbench.com.tr/logo-mark.png"}},"mainEntityOfPage":"https://nandbench.com.tr/sozluk-sequential.html","image":"https://nandbench.com.tr/logo-mark.png"}</script>
+    <style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;background:#0f1115;color:#cdd2da;font:16px/1.7 ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Inter,sans-serif}
+a{color:#6cc6ff}
+header,main,footer{max-width:820px;margin:0 auto;padding:0 22px}
+header{display:flex;align-items:center;gap:12px;padding-top:26px;padding-bottom:8px}
+header img{width:34px;height:34px}header .brand{font-weight:800;color:#fff;text-decoration:none}
+h1{color:#fff;font-size:clamp(1.7rem,4.5vw,2.6rem);letter-spacing:-.02em;line-height:1.15;margin:1.1em 0 .3em}
+h2{color:#eef1f5;margin-top:1.6em;font-size:1.25rem}
+p,li{color:#aab0ba}.lead{font-size:1.12rem;color:#c4cad3}
+.term{border-top:1px solid #1c2029;padding-top:14px;margin-top:18px}
+.term h2{margin:0 0 .2em}
+ol{padding-left:1.2em}ol li{margin:4px 0}
+.cta{display:inline-block;margin:14px 0 2px;padding:11px 18px;border-radius:10px;background:#1b6fe0;color:#fff;font-weight:700;text-decoration:none}
+nav.crumbs{font-size:.85rem;color:#6b7280;padding-top:16px}nav.crumbs a{color:#8a93a0}
+.cards{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin:18px 0}
+.card{display:block;border:1px solid #232733;border-radius:12px;padding:14px 16px;text-decoration:none;background:#13161d}
+.card b{color:#eef1f5}.card span{color:#8a93a0;font-size:.9rem}
+footer{color:#6b7280;font-size:.9rem;padding:40px 22px 60px;border-top:1px solid #1c2029;margin-top:40px}
+</style>
+  </head>
+  <body>
+    <header><a href="/"><img src="/logo-mark.png" alt="nandbench logosu" /></a><a href="/" class="brand">nandbench</a></header>
+    <main>
+      <nav class="crumbs"><a href="/">Ana sayfa</a> › Sözlük › Ardışıl Devreler</nav>
+      <h1>Ardışıl Devreler — Sözlük</h1>
+      <p class="lead">Sayısal mantıkta <strong>ardışıl devreler</strong> ile ilgili 12 temel terim ve tanımları. Her terimi <a href="/">nandbench</a> simülatöründe canlı görebilirsin.</p>
+      <div class="term"><h2>Ardışıl mantık</h2><p>Çıkışı yalnız mevcut girişlere değil geçmiş girişlere de bağlı; yani hafızası olan devre. Kombinasyonel ağı mandallı/flip-flop'tan geçirerek elde edilir.</p></div>
+      <div class="term"><h2>Mandallı (latch)</h2><p>Seviye duyarlı 1-bit bellek hücresi: enable yüksek iken çıkış girişi takip eder; enable düşünce son değer tutulur. Flip-flop'tan ucuz ama enable yüksek iken şeffaftır.</p></div>
+      <div class="term"><h2>Flip-flop</h2><p>Kenar duyarlı 1-bit bellek hücresi: girişini yalnız saat kenarında örnekler, başka anlarda ardışı görmezden gelir. Senkron tasarımın varsayılan yapı taşı.</p></div>
+      <div class="term"><h2>D flip-flop</h2><p>Her yükselen saat kenarında q := d. En yaygın flip-flop; yazmaçlar aynı saati paylaşan D-FF dizileridir.</p></div>
+      <div class="term"><h2>JK flip-flop</h2><p>"Evrensel" flip-flop. J=K=0 tut, J=1·K=0 set, J=0·K=1 reset, J=K=1 toggle. D-FF'ler hücre kütüphanelerinde üstün gelmeden önce çok yaygındı.</p></div>
+      <div class="term"><h2>T flip-flop</h2><p>Toggle flip-flop: T=1 iken q saat kenarında devrilir; T=0 iken tutar. Ripple sayaçlarının yapı taşı — bir kademenin q'su bir sonrakini saatler.</p></div>
+      <div class="term"><h2>SR mandallı</h2><p>Çapraz bağlı iki NOR (ya da NAND). S, q'yu 1'e set; R, 0'a reset eder; S=R=1 yasaktır. En basit bellek hücresi.</p></div>
+      <div class="term"><h2>Saat kenarı</h2><p>Saatin değiştiği an — yükselen (0→1) ya da düşen (1→0). Kenar-tetiklemeli flip-flop'lar girişlerini yalnız kenarda örnekler.</p></div>
+      <div class="term"><h2>Saat (clock)</h2><p>Ardışıl mantığı yöneten periyodik kare-dalga sinyal. Senkron bir tasarımdaki her flip-flop aynı saatin aynı kenarında örnekler.</p></div>
+      <div class="term"><h2>Enable</h2><p>Flip-flop'un saat kenarında yeni veriyi yüklemesini gateler. Enable=0 eski değeri tutar; enable=1 yeniyi kilitler.</p></div>
+      <div class="term"><h2>Reset</h2><p>Flip-flop'un çıkışını 0'a zorlayan kontrol girişi. Senkron reset saat kenarını bekler; asenkron reset anında etki eder.</p></div>
+      <div class="term"><h2>Preset</h2><p>Reset'in tümleyeni — çıkışı 1'e zorlar. Reset ile birlikte, açılışta yazmaçları bilinen değere kurmak için kullanılır.</p></div>
+      <p style="margin-top:24px"><a href="/sozluk.html">← Tüm sözlük kategorileri</a></p>
+      <p><a class="cta" href="/">nandbench'i ücretsiz aç →</a></p>
+    </main>
+    <footer>© nandbench — tarayıcıda çalışan ücretsiz sayısal mantık devre simülatörü · <a href="/sozluk.html">Sözlük</a> · <a href="/dersler.html">Dersler</a> · <a href="/">Simülatör</a></footer>
+  </body>
+</html>

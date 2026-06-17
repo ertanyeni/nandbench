@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yazmaçlar ve Sayaçlar — Sayısal Mantık Dersleri | nandbench</title>
+    <meta name="description" content="Yazmaçlar ve Sayaçlar: 5 adımlı ders, anlatım ve örneklerle. Tarayıcıda ücretsiz uygulamalı öğren — nandbench." />
+    <link rel="canonical" href="https://nandbench.com.tr/dersler-registers.html" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Yazmaçlar ve Sayaçlar — Sayısal Mantık Dersleri | nandbench" />
+    <meta property="og:description" content="Yazmaçlar ve Sayaçlar: 5 adımlı ders, anlatım ve örneklerle. Tarayıcıda ücretsiz uygulamalı öğren — nandbench." />
+    <meta property="og:url" content="https://nandbench.com.tr/dersler-registers.html" />
+    <meta property="og:image" content="https://nandbench.com.tr/logo-mark.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Yazmaçlar ve Sayaçlar — Sayısal Mantık Dersleri | nandbench","inLanguage":"tr","author":{"@type":"Organization","name":"nandbench"},"publisher":{"@type":"Organization","name":"nandbench","logo":{"@type":"ImageObject","url":"https://nandbench.com.tr/logo-mark.png"}},"mainEntityOfPage":"https://nandbench.com.tr/dersler-registers.html","image":"https://nandbench.com.tr/logo-mark.png"}</script>
+    <style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;background:#0f1115;color:#cdd2da;font:16px/1.7 ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Inter,sans-serif}
+a{color:#6cc6ff}
+header,main,footer{max-width:820px;margin:0 auto;padding:0 22px}
+header{display:flex;align-items:center;gap:12px;padding-top:26px;padding-bottom:8px}
+header img{width:34px;height:34px}header .brand{font-weight:800;color:#fff;text-decoration:none}
+h1{color:#fff;font-size:clamp(1.7rem,4.5vw,2.6rem);letter-spacing:-.02em;line-height:1.15;margin:1.1em 0 .3em}
+h2{color:#eef1f5;margin-top:1.6em;font-size:1.25rem}
+p,li{color:#aab0ba}.lead{font-size:1.12rem;color:#c4cad3}
+.term{border-top:1px solid #1c2029;padding-top:14px;margin-top:18px}
+.term h2{margin:0 0 .2em}
+ol{padding-left:1.2em}ol li{margin:4px 0}
+.cta{display:inline-block;margin:14px 0 2px;padding:11px 18px;border-radius:10px;background:#1b6fe0;color:#fff;font-weight:700;text-decoration:none}
+nav.crumbs{font-size:.85rem;color:#6b7280;padding-top:16px}nav.crumbs a{color:#8a93a0}
+.cards{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin:18px 0}
+.card{display:block;border:1px solid #232733;border-radius:12px;padding:14px 16px;text-decoration:none;background:#13161d}
+.card b{color:#eef1f5}.card span{color:#8a93a0;font-size:.9rem}
+footer{color:#6b7280;font-size:.9rem;padding:40px 22px 60px;border-top:1px solid #1c2029;margin-top:40px}
+</style>
+  </head>
+  <body>
+    <header><a href="/"><img src="/logo-mark.png" alt="nandbench logosu" /></a><a href="/" class="brand">nandbench</a></header>
+    <main>
+      <nav class="crumbs"><a href="/">Ana sayfa</a> › Dersler › Yazmaçlar ve Sayaçlar</nav>
+      <h1>Yazmaçlar ve Sayaçlar — Dersler</h1>
+      <p class="lead"><strong>Yazmaçlar ve Sayaçlar</strong> ünitesindeki 5 ders. Her ders kısa bir anlatım ve adım adım bir yürüyüştür; çoğu nandbench'te açıp denemek için bir şablonla gelir.</p>
+      <div class="term"><h2>5.1 Paralel-yüklü yazmaç</h2><p>Ortak saat + enable arkasında W D flip-flop.</p><ol>
+        <li>Yazmaç W-bit sözcüğü saklar. Her yükselen saat kenarında, enable yüksekse, giriş busunu saklanan değere kilitler.</li>
+        <li>Q çıkışları her zaman canlıdır. Yazmaç sonraki enable'li kenara kadar değerini tutar.</li>
+        <li>Reset (senkron veya asenkron) yazmacı talep üzerine temizler — tahmin edilebilir başlatma için önemlidir.</li>
+        <li>Register ilkelini bırak, genişlik=4, 4-bit Constant'ı D'ye ve Clock'u CLK'ya bağla. Enable'ı değiştir ve Q'nun D'yi bir saat sonra takip ettiğini gör.</li>
+      </ol></div>
+      <div class="term"><h2>5.2 Kaydırma yazmacı</h2><p>Her saat bitleri yana taşıyan yazmaç.</p><ol>
+        <li>N D flip-flop'u her Q'nun sonraki D'yi beslediği şekilde zincirle. Veri her saatte bir pozisyon kayar.</li>
+        <li>IO biçimine göre 4 varyant: SISO, SIPO, PISO, PIPO (seri/paralel × giriş/çıkış).</li>
+        <li>Kullanım: paralel sözcüğü iletim için seri yapma (PISO), seri akışı paralele alma (SIPO).</li>
+        <li>Kaydırma yazmacı 2 ile çarpma/bölmeyi de yapar — sol kaydırma × 2, sağ kaydırma ÷ 2 (işaretsiz için).</li>
+        <li>Shift-register ilkelini yerleştir, dört saat boyunca seri-in=1010 ver; her Q'nun bit zincirde ilerlerken yandığını gözle.</li>
+      </ol></div>
+      <div class="term"><h2>6. Sayaç + gösterge</h2><p>Yazmaçları üst üste koy → sayaç; ayırıcı ekranı besler.</p><ol>
+        <li>Sayaç temelde zincirlenmiş N yazmaçtan oluşan bir ikili sayıcıdır. Counter primitifi bunu hazır verir.</li>
+        <li>Ayırıcı bus'u tek tek bitlere böler — her bit için bir LED ile ikili gösterge elde edersin.</li>
+        <li>Sayaç + LED'ler şablonunu aç, Play'e bas. Dört LED 0→15 sayar. Aktif kablolardaki yeşil noktaları izle.</li>
+        <li>Çalışırken Reset düğmesine bas (Toolbar). Durum anında 0'a iner — senkron reset bu kadar.</li>
+      </ol></div>
+      <div class="term"><h2>5.4 Modulo-N sayaç</h2><p>İstediğin N'de sıfırlayan sayaç.</p><ol>
+        <li>Düz ikilik sayaçlar 2^W'de sıfırlanır. Mod-N sayaç N'de sıfırlanır — saat bölücü, BCD basamağı, tur sayacı için.</li>
+        <li>Tarif: sayaç çıkışını N−1'le karşılaştır; eşitlikte bir sonraki saatte artırmak yerine senkron reset yap.</li>
+        <li>Örnek mod-10: 4-bit sayaç + 1001 (9) tespit eden karşılaştırıcı; bir sonraki kenarda 1010 yerine 0'a sıfırla.</li>
+        <li>Canvas'ta kur: Counter ilkeli (genişlik 4), Comparator 9 sabitine bağlı, comparator eq çıkışı sonraki saat sinyaliyle AND'lenip sayacı temizler.</li>
+      </ol></div>
+      <div class="term"><h2>5.5 Halka &amp; Johnson sayaçları</h2><p>Döngüye bağlanmış kaydırma yazmacı — one-hot ya da burulu.</p><ol>
+        <li>Halka sayaç: son Q'su ilk D'yi besleyen N-bit kaydırma yazmacı. Desen sonsuza kadar yürür.</li>
+        <li>Tek 1 (one-hot) ile başlatılır, N durumu döner. N olayı çözücü olmadan sıralamak için harika.</li>
+        <li>Johnson sayaç: aynı fikir ama geri besleme ters çevrilmiş (son ¬Q → ilk D). N flip-floptan 2N durum üretir.</li>
+        <li>Tradeoff: halka sayaç durumları israf eder (N vs 2^N) ama her durum zaten one-hot — çözücü gerekmez.</li>
+      </ol></div>
+      <p style="margin-top:24px"><a href="/dersler.html">← Tüm üniteler</a></p>
+      <p><a class="cta" href="/">nandbench'i ücretsiz aç →</a></p>
+    </main>
+    <footer>© nandbench — tarayıcıda çalışan ücretsiz sayısal mantık devre simülatörü · <a href="/sozluk.html">Sözlük</a> · <a href="/dersler.html">Dersler</a> · <a href="/">Simülatör</a></footer>
+  </body>
+</html>

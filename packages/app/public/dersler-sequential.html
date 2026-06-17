@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ardışıl Devreler — Sayısal Mantık Dersleri | nandbench</title>
+    <meta name="description" content="Ardışıl Devreler: 7 adımlı ders, anlatım ve örneklerle. Tarayıcıda ücretsiz uygulamalı öğren — nandbench." />
+    <link rel="canonical" href="https://nandbench.com.tr/dersler-sequential.html" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Ardışıl Devreler — Sayısal Mantık Dersleri | nandbench" />
+    <meta property="og:description" content="Ardışıl Devreler: 7 adımlı ders, anlatım ve örneklerle. Tarayıcıda ücretsiz uygulamalı öğren — nandbench." />
+    <meta property="og:url" content="https://nandbench.com.tr/dersler-sequential.html" />
+    <meta property="og:image" content="https://nandbench.com.tr/logo-mark.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Ardışıl Devreler — Sayısal Mantık Dersleri | nandbench","inLanguage":"tr","author":{"@type":"Organization","name":"nandbench"},"publisher":{"@type":"Organization","name":"nandbench","logo":{"@type":"ImageObject","url":"https://nandbench.com.tr/logo-mark.png"}},"mainEntityOfPage":"https://nandbench.com.tr/dersler-sequential.html","image":"https://nandbench.com.tr/logo-mark.png"}</script>
+    <style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;background:#0f1115;color:#cdd2da;font:16px/1.7 ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Inter,sans-serif}
+a{color:#6cc6ff}
+header,main,footer{max-width:820px;margin:0 auto;padding:0 22px}
+header{display:flex;align-items:center;gap:12px;padding-top:26px;padding-bottom:8px}
+header img{width:34px;height:34px}header .brand{font-weight:800;color:#fff;text-decoration:none}
+h1{color:#fff;font-size:clamp(1.7rem,4.5vw,2.6rem);letter-spacing:-.02em;line-height:1.15;margin:1.1em 0 .3em}
+h2{color:#eef1f5;margin-top:1.6em;font-size:1.25rem}
+p,li{color:#aab0ba}.lead{font-size:1.12rem;color:#c4cad3}
+.term{border-top:1px solid #1c2029;padding-top:14px;margin-top:18px}
+.term h2{margin:0 0 .2em}
+ol{padding-left:1.2em}ol li{margin:4px 0}
+.cta{display:inline-block;margin:14px 0 2px;padding:11px 18px;border-radius:10px;background:#1b6fe0;color:#fff;font-weight:700;text-decoration:none}
+nav.crumbs{font-size:.85rem;color:#6b7280;padding-top:16px}nav.crumbs a{color:#8a93a0}
+.cards{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin:18px 0}
+.card{display:block;border:1px solid #232733;border-radius:12px;padding:14px 16px;text-decoration:none;background:#13161d}
+.card b{color:#eef1f5}.card span{color:#8a93a0;font-size:.9rem}
+footer{color:#6b7280;font-size:.9rem;padding:40px 22px 60px;border-top:1px solid #1c2029;margin-top:40px}
+</style>
+  </head>
+  <body>
+    <header><a href="/"><img src="/logo-mark.png" alt="nandbench logosu" /></a><a href="/" class="brand">nandbench</a></header>
+    <main>
+      <nav class="crumbs"><a href="/">Ana sayfa</a> › Dersler › Ardışıl Devreler</nav>
+      <h1>Ardışıl Devreler — Dersler</h1>
+      <p class="lead"><strong>Ardışıl Devreler</strong> ünitesindeki 7 ders. Her ders kısa bir anlatım ve adım adım bir yürüyüştür; çoğu nandbench'te açıp denemek için bir şablonla gelir.</p>
+      <div class="term"><h2>4.1 SR mandalı</h2><p>En basit bellek hücresi — iki çapraz bağlı NOR kapısı.</p><ol>
+        <li>Birbirine geri besleme yapan iki NOR kapısı SR mandalını oluşturur. Girişler S (set) ve R (reset); çıkışlar Q ve ¬Q.</li>
+        <li>S=1, R=0 → Q 1'e kilitlenir. S=0, R=1 → Q 0'a kilitlenir. S=0, R=0 → Q önceki değerini korur. İşte bellek.</li>
+        <li>S=R=1 yasak durumdur — her iki çıkış da 0'a iner, Q/¬Q değişmezliği bozulur. Gerçek tasarımlar bundan kaçınır.</li>
+        <li>SR mandalı temeldir: bir çipteki her flip-flop ve yazmaç sonunda buna benzer geri besleme döngülerine indirgenir.</li>
+        <li>SR-mandalı şablonunu aç. S=1 darbele → Q=1. R=1 darbele → Q=0. Girişler 0'a döndüğünde değerin nasıl korunduğunu gözle.</li>
+      </ol></div>
+      <div class="term"><h2>4.2 D mandalı</h2><p>D'yi etkinken kopyalayan saatli SR mandalı.</p><ol>
+        <li>C clock girişi ekle ve S=D·C, R=¬D·C'yi SR mandalına bağla. C=1 iken mandal D'yi takip eder; C=0 iken tutar.</li>
+        <li>Bu, SR'nin yasak durumunu ortadan kaldırır — bir anda yalnız S veya R'den birini sürmüş olursun.</li>
+        <li>D mandalı "seviyeye duyarlıdır": C yüksek olduğu süre boyunca D'yi kopyalar, sadece saat kenarında değil.</li>
+        <li>Çoğu tasarım kenar tetiklemeli D flip-flop tercih eder — saat çevriminde bir kez yakalama zamanlama analizini kolaylaştırır.</li>
+      </ol></div>
+      <div class="term"><h2>4.3 D flip-flop</h2><p>Kenar-tetiklemeli depolama — senkron tasarımın iş gören parçası.</p><ol>
+        <li>D flip-flop, D'yi saatin yükselen kenarında örnekler ve sonraki yükselen kenara kadar tutar.</li>
+        <li>İç yapı: birbiri ardına iki D mandalı (master-slave), biri C=0'da şeffaf, biri C=1'de. Sonuç "kenar-tetiklemeli"dir.</li>
+        <li>Setup süresi: D, kenardan önce stabil olmalı. Hold süresi: D kenardan sonra biraz daha stabil kalmalı. İhlalleri metastabil çıkış verir.</li>
+        <li>W bit genişliğinde bir yazmaç, ortak saatli W D flip-floptan ibarettir.</li>
+        <li>Bir D-flip-flop yerleştir, D'yi bir girişe, CLK'yı Clock ilkeline, Q'yu bir LED'e bağla. Q'nun yalnız saat kenarlarında değiştiğini gör.</li>
+      </ol></div>
+      <div class="term"><h2>4.4 JK flip-flop</h2><p>SR gibi ama yasak durum yerine toggle.</p><ol>
+        <li>J, S gibi; K, R gibi davranır. Bonus: J=K=1 her saat kenarında çıkışı toggle eder (yasak durum yok).</li>
+        <li>Saat kenarında doğruluk tablosu: J=0 K=0 tut; J=0 K=1 sıfırla; J=1 K=0 bir yap; J=1 K=1 toggle.</li>
+        <li>JK sayıcılar için elverişlidir — J=K=1 bağla, her saatte ücretsiz toggle alırsın.</li>
+        <li>Modern FPGA kütüphaneleri çoğunlukla yalnız D flip-flop sunar; JK'yı bir D + küçük bir MUX'tan kolayca kurarsın.</li>
+      </ol></div>
+      <div class="term"><h2>4.5 T flip-flop</h2><p>T=1 iken her saat kenarında toggle, T=0 iken tut.</p><ol>
+        <li>Tek giriş T artı bir saat. T=1 → Q kenarda dönüyor; T=0 → Q tutuyor.</li>
+        <li>T flip-flop ripple sayıcı için en doğal yapı taşıdır: her Q sonraki saatı besler şekilde zincirle.</li>
+        <li>Eşdeğer devre: D flip-flop'a D = Q XOR T, veya JK'ya J=K=T.</li>
+        <li>İki T flip-flop ile 2-bit ripple sayıcı kur: ikisi de T=1, ilkinin saatı sistem saati, ikincisi ilkinin Q'su.</li>
+      </ol></div>
+      <div class="term"><h2>5. Saat ve yazmaç — belleği eklemek</h2><p>Saat, kombinasyonel mantığı durum makinesine çevirir.</p><ol>
+        <li>Yazmaç değer saklar. Her saat kenarında, enable yüksekse, veri girişini saklı değere kilitler.</li>
+        <li>Saat ilkelesi her tick'te 0/1 arasında değişir. Yazmaca takınca bir-bit yanıp sönen yapı oluşur.</li>
+        <li>Saat yanıp sönmesi şablonunu aç, Play'e bas, LED'in her tick'te değiştiğini izle. Hz kaydırıcısını yavaşlat.</li>
+        <li>D flip-flop'lu yazmaç + saat, her senkron tasarımın temelidir. Buradan sonra her şey bunun üstüne kurulur.</li>
+      </ol></div>
+      <div class="term"><h2>4.7 Zamanlama — setup, hold ve saat periyodu</h2><p>Flip-floplar ile kombinasyonel mantık arasındaki sayısal sözleşme.</p><ol>
+        <li>Setup (t_su): D, saat kenarından t_su önce stabil olmalı. Hold (t_h): D kenardan sonra t_h boyunca stabil kalmalı.</li>
+        <li>Clock-to-Q (t_cq): kenardan sonra Q'nun yeni değeri yansıtması ne kadar sürer.</li>
+        <li>İki flop arası kombinasyonel yol (T_clock − t_cq − t_su)'dan kısa bitmeli. İhlal ederse tasarım hızda çalışmaz.</li>
+        <li>Gerçek çiplerde STA (static timing analysis) aracı her yolu yürür ve slack'i raporlar. Sıfır altı slack = saat çok hızlı.</li>
+        <li>nandbench'ın motoru olay tabanlıdır, gecikme doğru değil — yani gerçek zamanlama ihlalleri görmezsin. Ama kavramsal model hâlâ geçerli.</li>
+      </ol></div>
+      <p style="margin-top:24px"><a href="/dersler.html">← Tüm üniteler</a></p>
+      <p><a class="cta" href="/">nandbench'i ücretsiz aç →</a></p>
+    </main>
+    <footer>© nandbench — tarayıcıda çalışan ücretsiz sayısal mantık devre simülatörü · <a href="/sozluk.html">Sözlük</a> · <a href="/dersler.html">Dersler</a> · <a href="/">Simülatör</a></footer>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bellek — Sayısal Mantık Dersleri | nandbench</title>
+    <meta name="description" content="Bellek: 3 adımlı ders, anlatım ve örneklerle. Tarayıcıda ücretsiz uygulamalı öğren — nandbench." />
+    <link rel="canonical" href="https://nandbench.com.tr/dersler-memory.html" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Bellek — Sayısal Mantık Dersleri | nandbench" />
+    <meta property="og:description" content="Bellek: 3 adımlı ders, anlatım ve örneklerle. Tarayıcıda ücretsiz uygulamalı öğren — nandbench." />
+    <meta property="og:url" content="https://nandbench.com.tr/dersler-memory.html" />
+    <meta property="og:image" content="https://nandbench.com.tr/logo-mark.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bellek — Sayısal Mantık Dersleri | nandbench","inLanguage":"tr","author":{"@type":"Organization","name":"nandbench"},"publisher":{"@type":"Organization","name":"nandbench","logo":{"@type":"ImageObject","url":"https://nandbench.com.tr/logo-mark.png"}},"mainEntityOfPage":"https://nandbench.com.tr/dersler-memory.html","image":"https://nandbench.com.tr/logo-mark.png"}</script>
+    <style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;background:#0f1115;color:#cdd2da;font:16px/1.7 ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Inter,sans-serif}
+a{color:#6cc6ff}
+header,main,footer{max-width:820px;margin:0 auto;padding:0 22px}
+header{display:flex;align-items:center;gap:12px;padding-top:26px;padding-bottom:8px}
+header img{width:34px;height:34px}header .brand{font-weight:800;color:#fff;text-decoration:none}
+h1{color:#fff;font-size:clamp(1.7rem,4.5vw,2.6rem);letter-spacing:-.02em;line-height:1.15;margin:1.1em 0 .3em}
+h2{color:#eef1f5;margin-top:1.6em;font-size:1.25rem}
+p,li{color:#aab0ba}.lead{font-size:1.12rem;color:#c4cad3}
+.term{border-top:1px solid #1c2029;padding-top:14px;margin-top:18px}
+.term h2{margin:0 0 .2em}
+ol{padding-left:1.2em}ol li{margin:4px 0}
+.cta{display:inline-block;margin:14px 0 2px;padding:11px 18px;border-radius:10px;background:#1b6fe0;color:#fff;font-weight:700;text-decoration:none}
+nav.crumbs{font-size:.85rem;color:#6b7280;padding-top:16px}nav.crumbs a{color:#8a93a0}
+.cards{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin:18px 0}
+.card{display:block;border:1px solid #232733;border-radius:12px;padding:14px 16px;text-decoration:none;background:#13161d}
+.card b{color:#eef1f5}.card span{color:#8a93a0;font-size:.9rem}
+footer{color:#6b7280;font-size:.9rem;padding:40px 22px 60px;border-top:1px solid #1c2029;margin-top:40px}
+</style>
+  </head>
+  <body>
+    <header><a href="/"><img src="/logo-mark.png" alt="nandbench logosu" /></a><a href="/" class="brand">nandbench</a></header>
+    <main>
+      <nav class="crumbs"><a href="/">Ana sayfa</a> › Dersler › Bellek</nav>
+      <h1>Bellek — Dersler</h1>
+      <p class="lead"><strong>Bellek</strong> ünitesindeki 3 ders. Her ders kısa bir anlatım ve adım adım bir yürüyüştür; çoğu nandbench'te açıp denemek için bir şablonla gelir.</p>
+      <div class="term"><h2>6.1 ROM</h2><p>Kombinasyonel saklama — adres girer, veri çıkar.</p><ol>
+        <li>A adres bitli, D veri bitli ROM'un 2^A satırı vardır, her satır D bit genişliğindedir. Okuma kombinasyoneldir: adres değişir, veri izler.</li>
+        <li>İç yapı: adrese göre bir satır seçen çözücü; veri çıkışlarını süren sabit bağlantı dizisi (program).</li>
+        <li>ROM, arama tabloları için harikadır: trig değerleri, karakter glyph'leri, CPU kontrol birimi mikrokodu, firmware boot kodu.</li>
+        <li>nandbench'ta ROM ilkeli bir data parametresi sunar — tabloyu dolduran hex string. ROM-toy şablonunu aç.</li>
+        <li>Adresi bir sayaçla sür ve veri çıkışını bir 7-segment göstergeye bağla — anında karakter ROM demosu.</li>
+      </ol></div>
+      <div class="term"><h2>6.2 RAM</h2><p>Yazılabilen saklama — saat tetiklemeli.</p><ol>
+        <li>RAM'in A adres biti, D veri biti, ayrıca write-enable (WE) ve saat vardır. Okuma kombinasyonel; yazma saat kenarında.</li>
+        <li>Her saklama hücresi temelde küçük bir D flip-floptur. Çözücüler hücreyi seçer, MUX'lar okumayı, DEMUX'lar yazmayı yönlendirir.</li>
+        <li>SRAM güç açıkken veri tutar; DRAM kapasitör kullanır ve refresh ister. Sayısal tasarımcı için arayüz aynıdır.</li>
+        <li>Canvas'ta RAM ilkeli değer yazmana, adresi değiştirip yine yazmana, sonra geri okumana izin verir.</li>
+        <li>Dene: adres=0, veri=0xA, WE=1, saat. Sonra adres=1, veri=0xB, WE=1, saat. WE=0 ve adresi gez — 0xA sonra 0xB oku.</li>
+      </ol></div>
+      <div class="term"><h2>6.3 Adres çözme</h2><p>Tek bir adres uzayı birden çok bellek + IO çipine nasıl bağlanır.</p><ol>
+        <li>CPU'nun adres yolu geniştir (16/32/64 bit); her çevre birimi küçük bir aralığa cevap verir. Adres çözücüler hangi çipin cevap vereceğini seçer.</li>
+        <li>Desen: yüksek adres bitlerini sabit bir kalıba karşılaştır; çipin chip-select hattı yalnız eşleşmede yüksek olur.</li>
+        <li>Chip-select düşükken cihazın veri çıkışı tri-state (Z) olur; böylece yol diğer cihazlara serbest kalır.</li>
+        <li>Modern SoC'ler bunu tam bir ara bağlantıyla yapar (AXI, Wishbone), ama temel fikir hâlâ "yüksek bitleri çöz → hedefi aç".</li>
+      </ol></div>
+      <p style="margin-top:24px"><a href="/dersler.html">← Tüm üniteler</a></p>
+      <p><a class="cta" href="/">nandbench'i ücretsiz aç →</a></p>
+    </main>
+    <footer>© nandbench — tarayıcıda çalışan ücretsiz sayısal mantık devre simülatörü · <a href="/sozluk.html">Sözlük</a> · <a href="/dersler.html">Dersler</a> · <a href="/">Simülatör</a></footer>
+  </body>
+</html>

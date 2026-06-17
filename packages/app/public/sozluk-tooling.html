@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Araçlar — Sayısal Mantık Sözlüğü | nandbench</title>
+    <meta name="description" content="Sayısal mantıkta araçlar terimleri ve tanımları (9 terim). Tarayıcıda ücretsiz simüle et." />
+    <link rel="canonical" href="https://nandbench.com.tr/sozluk-tooling.html" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Araçlar — Sayısal Mantık Sözlüğü | nandbench" />
+    <meta property="og:description" content="Sayısal mantıkta araçlar terimleri ve tanımları (9 terim). Tarayıcıda ücretsiz simüle et." />
+    <meta property="og:url" content="https://nandbench.com.tr/sozluk-tooling.html" />
+    <meta property="og:image" content="https://nandbench.com.tr/logo-mark.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Araçlar — Sayısal Mantık Sözlüğü | nandbench","inLanguage":"tr","author":{"@type":"Organization","name":"nandbench"},"publisher":{"@type":"Organization","name":"nandbench","logo":{"@type":"ImageObject","url":"https://nandbench.com.tr/logo-mark.png"}},"mainEntityOfPage":"https://nandbench.com.tr/sozluk-tooling.html","image":"https://nandbench.com.tr/logo-mark.png"}</script>
+    <style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;background:#0f1115;color:#cdd2da;font:16px/1.7 ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Inter,sans-serif}
+a{color:#6cc6ff}
+header,main,footer{max-width:820px;margin:0 auto;padding:0 22px}
+header{display:flex;align-items:center;gap:12px;padding-top:26px;padding-bottom:8px}
+header img{width:34px;height:34px}header .brand{font-weight:800;color:#fff;text-decoration:none}
+h1{color:#fff;font-size:clamp(1.7rem,4.5vw,2.6rem);letter-spacing:-.02em;line-height:1.15;margin:1.1em 0 .3em}
+h2{color:#eef1f5;margin-top:1.6em;font-size:1.25rem}
+p,li{color:#aab0ba}.lead{font-size:1.12rem;color:#c4cad3}
+.term{border-top:1px solid #1c2029;padding-top:14px;margin-top:18px}
+.term h2{margin:0 0 .2em}
+ol{padding-left:1.2em}ol li{margin:4px 0}
+.cta{display:inline-block;margin:14px 0 2px;padding:11px 18px;border-radius:10px;background:#1b6fe0;color:#fff;font-weight:700;text-decoration:none}
+nav.crumbs{font-size:.85rem;color:#6b7280;padding-top:16px}nav.crumbs a{color:#8a93a0}
+.cards{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin:18px 0}
+.card{display:block;border:1px solid #232733;border-radius:12px;padding:14px 16px;text-decoration:none;background:#13161d}
+.card b{color:#eef1f5}.card span{color:#8a93a0;font-size:.9rem}
+footer{color:#6b7280;font-size:.9rem;padding:40px 22px 60px;border-top:1px solid #1c2029;margin-top:40px}
+</style>
+  </head>
+  <body>
+    <header><a href="/"><img src="/logo-mark.png" alt="nandbench logosu" /></a><a href="/" class="brand">nandbench</a></header>
+    <main>
+      <nav class="crumbs"><a href="/">Ana sayfa</a> › Sözlük › Araçlar</nav>
+      <h1>Araçlar — Sözlük</h1>
+      <p class="lead">Sayısal mantıkta <strong>araçlar</strong> ile ilgili 9 temel terim ve tanımları. Her terimi <a href="/">nandbench</a> simülatöründe canlı görebilirsin.</p>
+      <div class="term"><h2>Sürücü</h2><p>Bir bileşenin çıkış portu net'e değer iter. Bir net'in 0, 1 ya da çok sürücüsü olabilir; çoğu uyuşmazsa tanı tetiklenir.</p></div>
+      <div class="term"><h2>Alıcı</h2><p>Bağlı olduğu net'in değerini okuyan bileşen giriş portu. Bir net istenen sayıda alıcıyı maliyetsiz besleyebilir — fan-out simülatörde bedavadır.</p></div>
+      <div class="term"><h2>Net</h2><p>Kablo ile birbirine bağlı, elektriksel olarak aynı olan port kümesi. Her simülasyon adımında bir sinyale çözülür.</p></div>
+      <div class="term"><h2>Netlist</h2><p>Devrenin derlenmiş gösterimi — bileşenler, portlar ve net'ler — simülatörün koştuğu yapı. Union-Find derleyici her düzenlemede yeniden kurar.</p></div>
+      <div class="term"><h2>Anlık görüntü (snapshot)</h2><p>Simülatörün her settle/tick'te ürettiği, her net'in mevcut değerinin salt-okunur görünümü. Renderer 60fps'te en güncel snapshot'tan çizer.</p></div>
+      <div class="term"><h2>Tanı</h2><p>Derleyici veya simülatörün ürettiği uyarı — genişlik-uyumsuz, çoklu-sürücü, salınım, boşta-giriş. "Canlı debug"u öldürücü özellik kılan şey.</p></div>
+      <div class="term"><h2>Çoklu-sürücü çakışması</h2><p>İki ya da daha çok sürücü aynı net'e zıt değer iter. Simülatör X olarak çözer ve hemen tanı verir, çakışmayı anında görürsün.</p></div>
+      <div class="term"><h2>Fan-out</h2><p>Tek bir sürücünün beslediği alıcı sayısı. Inspector'da port satırının yanındaki sayı budur. Gerçek silikonda fan-out bütçesi vardır; simülatörde yoktur.</p></div>
+      <div class="term"><h2>Bileşik (Composite)</h2><p>Tek blok olarak yeniden kullanılan kaydedilmiş devre. Bir kez kur, dilediğin yere bırak; engine derlerken düzleştirir, simülatör hiyerarşiyi görmez.</p></div>
+      <p style="margin-top:24px"><a href="/sozluk.html">← Tüm sözlük kategorileri</a></p>
+      <p><a class="cta" href="/">nandbench'i ücretsiz aç →</a></p>
+    </main>
+    <footer>© nandbench — tarayıcıda çalışan ücretsiz sayısal mantık devre simülatörü · <a href="/sozluk.html">Sözlük</a> · <a href="/dersler.html">Dersler</a> · <a href="/">Simülatör</a></footer>
+  </body>
+</html>

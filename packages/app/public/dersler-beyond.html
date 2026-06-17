@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>İleri Konular — Sayısal Mantık Dersleri | nandbench</title>
+    <meta name="description" content="İleri Konular: 3 adımlı ders, anlatım ve örneklerle. Tarayıcıda ücretsiz uygulamalı öğren — nandbench." />
+    <link rel="canonical" href="https://nandbench.com.tr/dersler-beyond.html" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="İleri Konular — Sayısal Mantık Dersleri | nandbench" />
+    <meta property="og:description" content="İleri Konular: 3 adımlı ders, anlatım ve örneklerle. Tarayıcıda ücretsiz uygulamalı öğren — nandbench." />
+    <meta property="og:url" content="https://nandbench.com.tr/dersler-beyond.html" />
+    <meta property="og:image" content="https://nandbench.com.tr/logo-mark.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"İleri Konular — Sayısal Mantık Dersleri | nandbench","inLanguage":"tr","author":{"@type":"Organization","name":"nandbench"},"publisher":{"@type":"Organization","name":"nandbench","logo":{"@type":"ImageObject","url":"https://nandbench.com.tr/logo-mark.png"}},"mainEntityOfPage":"https://nandbench.com.tr/dersler-beyond.html","image":"https://nandbench.com.tr/logo-mark.png"}</script>
+    <style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;background:#0f1115;color:#cdd2da;font:16px/1.7 ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Inter,sans-serif}
+a{color:#6cc6ff}
+header,main,footer{max-width:820px;margin:0 auto;padding:0 22px}
+header{display:flex;align-items:center;gap:12px;padding-top:26px;padding-bottom:8px}
+header img{width:34px;height:34px}header .brand{font-weight:800;color:#fff;text-decoration:none}
+h1{color:#fff;font-size:clamp(1.7rem,4.5vw,2.6rem);letter-spacing:-.02em;line-height:1.15;margin:1.1em 0 .3em}
+h2{color:#eef1f5;margin-top:1.6em;font-size:1.25rem}
+p,li{color:#aab0ba}.lead{font-size:1.12rem;color:#c4cad3}
+.term{border-top:1px solid #1c2029;padding-top:14px;margin-top:18px}
+.term h2{margin:0 0 .2em}
+ol{padding-left:1.2em}ol li{margin:4px 0}
+.cta{display:inline-block;margin:14px 0 2px;padding:11px 18px;border-radius:10px;background:#1b6fe0;color:#fff;font-weight:700;text-decoration:none}
+nav.crumbs{font-size:.85rem;color:#6b7280;padding-top:16px}nav.crumbs a{color:#8a93a0}
+.cards{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin:18px 0}
+.card{display:block;border:1px solid #232733;border-radius:12px;padding:14px 16px;text-decoration:none;background:#13161d}
+.card b{color:#eef1f5}.card span{color:#8a93a0;font-size:.9rem}
+footer{color:#6b7280;font-size:.9rem;padding:40px 22px 60px;border-top:1px solid #1c2029;margin-top:40px}
+</style>
+  </head>
+  <body>
+    <header><a href="/"><img src="/logo-mark.png" alt="nandbench logosu" /></a><a href="/" class="brand">nandbench</a></header>
+    <main>
+      <nav class="crumbs"><a href="/">Ana sayfa</a> › Dersler › İleri Konular</nav>
+      <h1>İleri Konular — Dersler</h1>
+      <p class="lead"><strong>İleri Konular</strong> ünitesindeki 3 ders. Her ders kısa bir anlatım ve adım adım bir yürüyüştür; çoğu nandbench'te açıp denemek için bir şablonla gelir.</p>
+      <div class="term"><h2>9.1 Statik ve dinamik tehlikeler</h2><p>Kombinasyonel çıkışın giriş değişiminde neden titrediği.</p><ol>
+        <li>Statik tehlike: giriş değişirken çıkışın stabil kalması gerekirken anlık olarak yanlış değere düşmesi.</li>
+        <li>Eşitsiz kapı gecikmelerinden kaynaklanır — iki yol farklı zamanlarda sonuçlanır, aradaki fark glitch'tir.</li>
+        <li>Çözüm: geçişte çıkışı stabilize eden "consensus" / artıklı terim ekle. K-haritalarında bunlar üst üste binen gruplar olarak görünür.</li>
+        <li>Senkron tasarım çoğunlukla glitch'i yutar — çıkış yalnız saat kenarında örneklendiği için anlık glitch'ler etkilemez.</li>
+      </ol></div>
+      <div class="term"><h2>9.2 Pipeline temelleri</h2><p>Komutları üst üste bindir; saat hızını artırmadan throughput'u yükselt.</p><ol>
+        <li>Tek-çevrim veri yolunu aşamalara böl (IF, ID, EX, MEM, WB) ve aralara yazmaç koy. Her çevrimde her aşama farklı bir komutla uğraşır.</li>
+        <li>Komut başına gecikme aynı, ama eş zamanlı beş komut sırada olduğu için throughput ~5× yükselir.</li>
+        <li>Yeni sorunlar: veri tehlikeleri (sonraki komut, önceki henüz yazmadığı bir yazmacı okur), kontrol tehlikeleri (branch yönü fetch'te bilinmiyor).</li>
+        <li>Çözümler: forwarding, branch tahmin, pipeline stall. Bu dersin kapsamı dışı ama FSM/datapath temeli üstüne kurulur.</li>
+      </ol></div>
+      <div class="term"><h2>9.3 Buradan sonra nereye?</h2><p>Yosys, Icarus, FPGA — nandbench basamak taşıdır.</p><ol>
+        <li>nandbench yapısal Verilog netlist'i ve self-checking testbench üretir (Toolbar → menü → Export). Herhangi bir Verilog simülatörüne yükle.</li>
+        <li>Icarus Verilog (iverilog) testbench'i komut satırından derleyip çalıştırır. Yosys aynı Verilog'u FPGA'ya hazır netlist'e sentezler.</li>
+        <li>Gerçek FPGA akışı için Lattice iCE40 + açık kaynak Yosys → nextpnr → icestorm zincirini dene. Ücretsiz, uçtan uca.</li>
+        <li>Büyük resim: sayısal mantık mikromimarinin, sonra işletim sistemlerinin, sonra her gün kullandığın her şeyin temelidir. İşte zemin burada.</li>
+      </ol></div>
+      <p style="margin-top:24px"><a href="/dersler.html">← Tüm üniteler</a></p>
+      <p><a class="cta" href="/">nandbench'i ücretsiz aç →</a></p>
+    </main>
+    <footer>© nandbench — tarayıcıda çalışan ücretsiz sayısal mantık devre simülatörü · <a href="/sozluk.html">Sözlük</a> · <a href="/dersler.html">Dersler</a> · <a href="/">Simülatör</a></footer>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mantık Kapıları — Sayısal Mantık Sözlüğü | nandbench</title>
+    <meta name="description" content="Sayısal mantıkta mantık kapıları terimleri ve tanımları (20 terim). Tarayıcıda ücretsiz simüle et." />
+    <link rel="canonical" href="https://nandbench.com.tr/sozluk-gates.html" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Mantık Kapıları — Sayısal Mantık Sözlüğü | nandbench" />
+    <meta property="og:description" content="Sayısal mantıkta mantık kapıları terimleri ve tanımları (20 terim). Tarayıcıda ücretsiz simüle et." />
+    <meta property="og:url" content="https://nandbench.com.tr/sozluk-gates.html" />
+    <meta property="og:image" content="https://nandbench.com.tr/logo-mark.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Mantık Kapıları — Sayısal Mantık Sözlüğü | nandbench","inLanguage":"tr","author":{"@type":"Organization","name":"nandbench"},"publisher":{"@type":"Organization","name":"nandbench","logo":{"@type":"ImageObject","url":"https://nandbench.com.tr/logo-mark.png"}},"mainEntityOfPage":"https://nandbench.com.tr/sozluk-gates.html","image":"https://nandbench.com.tr/logo-mark.png"}</script>
+    <style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;background:#0f1115;color:#cdd2da;font:16px/1.7 ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Inter,sans-serif}
+a{color:#6cc6ff}
+header,main,footer{max-width:820px;margin:0 auto;padding:0 22px}
+header{display:flex;align-items:center;gap:12px;padding-top:26px;padding-bottom:8px}
+header img{width:34px;height:34px}header .brand{font-weight:800;color:#fff;text-decoration:none}
+h1{color:#fff;font-size:clamp(1.7rem,4.5vw,2.6rem);letter-spacing:-.02em;line-height:1.15;margin:1.1em 0 .3em}
+h2{color:#eef1f5;margin-top:1.6em;font-size:1.25rem}
+p,li{color:#aab0ba}.lead{font-size:1.12rem;color:#c4cad3}
+.term{border-top:1px solid #1c2029;padding-top:14px;margin-top:18px}
+.term h2{margin:0 0 .2em}
+ol{padding-left:1.2em}ol li{margin:4px 0}
+.cta{display:inline-block;margin:14px 0 2px;padding:11px 18px;border-radius:10px;background:#1b6fe0;color:#fff;font-weight:700;text-decoration:none}
+nav.crumbs{font-size:.85rem;color:#6b7280;padding-top:16px}nav.crumbs a{color:#8a93a0}
+.cards{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin:18px 0}
+.card{display:block;border:1px solid #232733;border-radius:12px;padding:14px 16px;text-decoration:none;background:#13161d}
+.card b{color:#eef1f5}.card span{color:#8a93a0;font-size:.9rem}
+footer{color:#6b7280;font-size:.9rem;padding:40px 22px 60px;border-top:1px solid #1c2029;margin-top:40px}
+</style>
+  </head>
+  <body>
+    <header><a href="/"><img src="/logo-mark.png" alt="nandbench logosu" /></a><a href="/" class="brand">nandbench</a></header>
+    <main>
+      <nav class="crumbs"><a href="/">Ana sayfa</a> › Sözlük › Mantık Kapıları</nav>
+      <h1>Mantık Kapıları — Sözlük</h1>
+      <p class="lead">Sayısal mantıkta <strong>mantık kapıları</strong> ile ilgili 20 temel terim ve tanımları. Her terimi <a href="/">nandbench</a> simülatöründe canlı görebilirsin.</p>
+      <div class="term"><h2>Kapı</h2><p>Boole mantığıyla giriş→çıkış eşleyen ilkel — VE, VEYA, DEĞİL, NAND, NOR, XOR, XNOR, tampon. Tüm kombinasyonel devreler kapılara ayrışır.</p></div>
+      <div class="term"><h2>Çevirici (NOT)</h2><p>1-girişli kapı; çıkışı girişinin mantıksal tümleyeni. Ucunda kabarcık olan üçgen olarak çizilir.</p></div>
+      <div class="term"><h2>Buffer (tampon)</h2><p>Mantıksal olarak pas-geç (out = in) ama gerçek dünyada yayılım gecikmesi ve sürüş gücü taşır. nandbench'ta çoğunlukla fan-out artırma ya da tri-state kapılama için kullanılır.</p></div>
+      <div class="term"><h2>AND (VE)</h2><p>Çıkış yalnızca tüm girişler 1 olduğunda 1'dir. Boole: y = a · b. Seri iki AND, 3-girişli AND eder; nandbench'in yerleşik kapısı istenen sayıda girişi destekler.</p></div>
+      <div class="term"><h2>OR (VEYA)</h2><p>Çıkış en az bir giriş 1 iken 1'dir. Boole: y = a + b. AND ile birleşince çarpımların toplamı formunu kurar.</p></div>
+      <div class="term"><h2>XOR (özel veya)</h2><p>Çıkış, 1 olan giriş sayısı tek olduğunda 1'dir. "Kontrollü çevirici" gibi davranır ve yarı-toplayıcının toplam bitidir.</p></div>
+      <div class="term"><h2>NAND</h2><p>AND'in çevricisi. Evrenseldir: yalnız NAND'lerle her Boole fonksiyonu inşa edilebilir. CMOS'ta ucuz ve hızlı; tarihi TTL çiplerin çoğu NAND merkezliydi.</p></div>
+      <div class="term"><h2>NOR</h2><p>OR'un çevricisi. O da evrenseldir. Çapraz bağlı bir NOR çifti klasik SR-mandallıdır.</p></div>
+      <div class="term"><h2>XNOR</h2><p>XOR'un çevricisi — girişler eşitse 1 verir. 1-bitlik eşitlik karşılaştırıcısı bir XNOR'dur.</p></div>
+      <div class="term"><h2>Evrensel kapı</h2><p>Yalnız kendi kopyalarıyla her Boole fonksiyonunu üretebilen kapı. NAND ve NOR evrenseldir; AND, OR, NOT tek başlarına değildir.</p></div>
+      <div class="term"><h2>Boole cebri</h2><p>İki-değerli mantığın cebri. AND (·), OR (+), NOT (¯) işlemleri + yasalar (birleşme, dağılma, De Morgan) ifadeleri silikona inmeden sadeleştirmeni sağlar.</p></div>
+      <div class="term"><h2>De Morgan kuralları</h2><p>NOT(A·B) = NOT(A)+NOT(B) ve NOT(A+B) = NOT(A)·NOT(B). "Kabarcığı taşı" hilesi: AND-OR yapılarını yalnızca NAND ya da yalnızca NOR olan ağlara çevirir.</p></div>
+      <div class="term"><h2>Çarpımlar toplamı (SOP)</h2><p>Standart form: doğruluk tablosundaki her 1 satırı için bir AND terimini OR'la. 2-seviyeli AND-OR (ya da eşdeğer NAND-NAND) ağına direkt eşlenir.</p></div>
+      <div class="term"><h2>Toplamlar çarpımı (POS)</h2><p>Standart form: doğruluk tablosundaki her 0 satırı için bir OR terimini AND'le (girişler terslenmiş hâliyle). SOP'un duali — 0 satırı az olduğunda daha az kapı çıkar.</p></div>
+      <div class="term"><h2>Karnaugh haritası (K-map)</h2><p>Bitişik hücrelerin tek bit farkıyla dizildiği doğruluk tablosu yerleşimi — minterm gruplarını görsel olarak en kısa örtmeye sarmak için. 4–5 değişkene kadar pratiktir.</p></div>
+      <div class="term"><h2>Önemsiz (don't-care)</h2><p>Çıkışın umursanmadığı doğruluk-tablo hücresi — genelde o girişin asla oluşmayacağı için. K-map küçültmesinde X'i 0 ya da 1 olarak alıp grupları büyütebilirsin.</p></div>
+      <div class="term"><h2>Minterm</h2><p>Yalnız bir doğruluk-tablo satırında 1 olan çarpım terimi. SOP, mintermlerin disjonksiyonudur; her minterm bir satırı "isimlendirir."</p></div>
+      <div class="term"><h2>Maxterm</h2><p>Yalnız bir doğruluk-tablo satırında 0 olan toplam terimi. POS maxtermlerin konjonksiyonudur — minterm bakışının dualidir.</p></div>
+      <div class="term"><h2>Literal</h2><p>Bir değişken ya da tümleyeni (A veya A̅). İki-seviye küçültmede maliyet ölçütü literal sayımıdır.</p></div>
+      <div class="term"><h2>Doğruluk tablosu</h2><p>Bir mantık parçasının tüm giriş kombinasyonları ve beklenen çıkışları listesi. Challenge modu spec'in tablo satırlarını tek tek koşarak devreni puanlar.</p></div>
+      <p style="margin-top:24px"><a href="/sozluk.html">← Tüm sözlük kategorileri</a></p>
+      <p><a class="cta" href="/">nandbench'i ücretsiz aç →</a></p>
+    </main>
+    <footer>© nandbench — tarayıcıda çalışan ücretsiz sayısal mantık devre simülatörü · <a href="/sozluk.html">Sözlük</a> · <a href="/dersler.html">Dersler</a> · <a href="/">Simülatör</a></footer>
+  </body>
+</html>

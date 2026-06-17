@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sonlu Durum Makineleri — Sayısal Mantık Dersleri | nandbench</title>
+    <meta name="description" content="Sonlu Durum Makineleri: 4 adımlı ders, anlatım ve örneklerle. Tarayıcıda ücretsiz uygulamalı öğren — nandbench." />
+    <link rel="canonical" href="https://nandbench.com.tr/dersler-fsm.html" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Sonlu Durum Makineleri — Sayısal Mantık Dersleri | nandbench" />
+    <meta property="og:description" content="Sonlu Durum Makineleri: 4 adımlı ders, anlatım ve örneklerle. Tarayıcıda ücretsiz uygulamalı öğren — nandbench." />
+    <meta property="og:url" content="https://nandbench.com.tr/dersler-fsm.html" />
+    <meta property="og:image" content="https://nandbench.com.tr/logo-mark.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Sonlu Durum Makineleri — Sayısal Mantık Dersleri | nandbench","inLanguage":"tr","author":{"@type":"Organization","name":"nandbench"},"publisher":{"@type":"Organization","name":"nandbench","logo":{"@type":"ImageObject","url":"https://nandbench.com.tr/logo-mark.png"}},"mainEntityOfPage":"https://nandbench.com.tr/dersler-fsm.html","image":"https://nandbench.com.tr/logo-mark.png"}</script>
+    <style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;background:#0f1115;color:#cdd2da;font:16px/1.7 ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Inter,sans-serif}
+a{color:#6cc6ff}
+header,main,footer{max-width:820px;margin:0 auto;padding:0 22px}
+header{display:flex;align-items:center;gap:12px;padding-top:26px;padding-bottom:8px}
+header img{width:34px;height:34px}header .brand{font-weight:800;color:#fff;text-decoration:none}
+h1{color:#fff;font-size:clamp(1.7rem,4.5vw,2.6rem);letter-spacing:-.02em;line-height:1.15;margin:1.1em 0 .3em}
+h2{color:#eef1f5;margin-top:1.6em;font-size:1.25rem}
+p,li{color:#aab0ba}.lead{font-size:1.12rem;color:#c4cad3}
+.term{border-top:1px solid #1c2029;padding-top:14px;margin-top:18px}
+.term h2{margin:0 0 .2em}
+ol{padding-left:1.2em}ol li{margin:4px 0}
+.cta{display:inline-block;margin:14px 0 2px;padding:11px 18px;border-radius:10px;background:#1b6fe0;color:#fff;font-weight:700;text-decoration:none}
+nav.crumbs{font-size:.85rem;color:#6b7280;padding-top:16px}nav.crumbs a{color:#8a93a0}
+.cards{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin:18px 0}
+.card{display:block;border:1px solid #232733;border-radius:12px;padding:14px 16px;text-decoration:none;background:#13161d}
+.card b{color:#eef1f5}.card span{color:#8a93a0;font-size:.9rem}
+footer{color:#6b7280;font-size:.9rem;padding:40px 22px 60px;border-top:1px solid #1c2029;margin-top:40px}
+</style>
+  </head>
+  <body>
+    <header><a href="/"><img src="/logo-mark.png" alt="nandbench logosu" /></a><a href="/" class="brand">nandbench</a></header>
+    <main>
+      <nav class="crumbs"><a href="/">Ana sayfa</a> › Dersler › Sonlu Durum Makineleri</nav>
+      <h1>Sonlu Durum Makineleri — Dersler</h1>
+      <p class="lead"><strong>Sonlu Durum Makineleri</strong> ünitesindeki 4 ders. Her ders kısa bir anlatım ve adım adım bir yürüyüştür; çoğu nandbench'te açıp denemek için bir şablonla gelir.</p>
+      <div class="term"><h2>7.1 Sonlu durum makineleri</h2><p>Sıralayıcılar, denetleyiciler, protokoller — hepsi alttan FSM.</p><ol>
+        <li>Bir FSM'in sonlu durumları, girişlerle tetiklenen geçişleri ve duruma (belki girişe) bağlı çıkışları vardır.</li>
+        <li>Donanım olarak: mevcut durumu saklayan bir yazmaç, (durum, girişler)'den (sonraki-durum, çıkış) hesaplayan kombinasyonel mantık.</li>
+        <li>Yönlü graf olarak çizilir: düğümler durumlar, kenarlar koşul etiketli geçişler.</li>
+        <li>Sayısal tasarımda hemen her denetleyici FSM'dir: trafik ışığı, otomat, UART alıcısı, CPU kontrol birimi.</li>
+        <li>FSM-toy şablonunu aç. Bir giriş, bir çıkış ve durum yazmacı olan 3-durumlu makine görürsün.</li>
+      </ol></div>
+      <div class="term"><h2>7.2 Moore vs Mealy</h2><p>Çıkışları durum makinesine bağlamanın iki yolu.</p><ol>
+        <li>Moore: çıkışlar yalnız mevcut duruma bağlıdır. Basit, glitch-free, bir ekstra saat çevrimi gecikmesi.</li>
+        <li>Mealy: çıkışlar mevcut durum VE mevcut girişe bağlıdır. Daha az durum, ama çıkışlar giriş değişimiyle glitch yapabilir.</li>
+        <li>Çizimde fark: Moore çıkışları durumların üzerinde, Mealy geçiş oklarının üzerindedir.</li>
+        <li>Pratikte sık karıştırılır — tahmin edilebilirlik için Moore taban, tek bir pipeline kazandıracak geçiş için Mealy override.</li>
+        <li>"101" arayan bir dizi tespit edicisi için ikisini de çiz. Moore ekstra durum ister; Mealy son geçişte çıkışı ateşler.</li>
+      </ol></div>
+      <div class="term"><h2>7.3 Bir spec'ten FSM tasarımı</h2><p>Tekrar edilebilir tarif — spec → durumlar → kablolar.</p><ol>
+        <li>1. Gözlenebilir davranışları listele (giriş dizileri ve eşleşen çıkışlar).</li>
+        <li>2. Durumları tespit et — sistemin bulunabileceği her "durum" bir state'tir. İsimlendir, diyagramı çiz, geçişleri etiketle.</li>
+        <li>3. Durum tablosunu kur: satırlar (durum, giriş), sütunlar (sonraki durum, çıkış).</li>
+        <li>4. Durumları bit kalıplarıyla kodla (ikilik, gray, one-hot — boyut ve zamanlamaya göre seç).</li>
+        <li>5. Kodlanmış tablodan sonraki-durum ve çıkış mantığını çıkar — küçük tablolar için K-haritası, büyükler için sentezleyici.</li>
+        <li>6. Kur: bir durum yazmacı + adım 5'teki kombinasyonel bloklar. Her zaman bilinen bir başlangıç durumuna giden reset yolu ekle.</li>
+      </ol></div>
+      <div class="term"><h2>7.4 Durum kodlaması</h2><p>Durumlarının silikona giydiği bit kalıbını seç.</p><ol>
+        <li>İkilik kodlama: N durum için log₂(N) bit. En kompakt ama sonraki-durum mantığı karışabilir.</li>
+        <li>One-hot kodlama: N durum için N bit, daima bir tanesi yüksek. Daha çok flop, ama sonraki-durum ve çıkış denklemleri çok sadeleşir.</li>
+        <li>Gray kodlama: komşu durumlar bir bit fark eder. Durum yazmacı asenkron mantıkça okunduğunda glitch'i azaltır.</li>
+        <li>FPGA'ler flip-flop zengindir, bu yüzden orta durum sayısında (≤32) one-hot varsayılandır. ASIC'ler alanı kısmak için yoğun ikiliğe yatkın.</li>
+      </ol></div>
+      <p style="margin-top:24px"><a href="/dersler.html">← Tüm üniteler</a></p>
+      <p><a class="cta" href="/">nandbench'i ücretsiz aç →</a></p>
+    </main>
+    <footer>© nandbench — tarayıcıda çalışan ücretsiz sayısal mantık devre simülatörü · <a href="/sozluk.html">Sözlük</a> · <a href="/dersler.html">Dersler</a> · <a href="/">Simülatör</a></footer>
+  </body>
+</html>
